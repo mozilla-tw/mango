@@ -1,14 +1,17 @@
 package org.mozilla.rocket.content.news.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import dagger.Lazy
 import org.mozilla.focus.R
 import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.rocket.content.appComponent
+import org.mozilla.rocket.content.getActivityViewModel
 import org.mozilla.rocket.content.news.data.NewsCategory
 import org.mozilla.rocket.content.news.data.NewsLanguage
 import org.mozilla.rocket.content.news.data.NewsSettingsRepository
@@ -16,7 +19,16 @@ import javax.inject.Inject
 
 class NewsSettingFragment : PreferenceFragmentCompat() {
 
-    @Inject lateinit var repository: NewsSettingsRepository
+    @Inject
+    lateinit var applicationContext: Context
+
+    @Inject
+    lateinit var newsSettingsViewModelCreator: Lazy<NewsSettingsViewModel>
+
+    @Inject
+    lateinit var repository: NewsSettingsRepository
+
+    private lateinit var newsSettingsViewModel: NewsSettingsViewModel
 
     private var languagePreference: NewsLanguagePreference? = null
     private var categoryPreference: NewsCategoryPreference? = null
@@ -50,11 +62,10 @@ class NewsSettingFragment : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val allLangsObserver = Observer<List<NewsLanguage>> {
-            Log.d(TAG, "language list has changed")
-            dialogHelper.updateLangList(it)
-        }
-        repository.getLanguages().observe(viewLifecycleOwner, allLangsObserver)
+        newsSettingsViewModel = getActivityViewModel(newsSettingsViewModelCreator)
+        newsSettingsViewModel.uiModel.observe(this, Observer { newsSettingsUiModel ->
+            dialogHelper.updateLangList(newsSettingsUiModel.newsLanguages)
+        })
 
         val settingObserver = Observer<Pair<NewsLanguage, List<NewsCategory>>> {
             Log.d(
