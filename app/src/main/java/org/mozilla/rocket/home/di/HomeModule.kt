@@ -1,0 +1,15 @@
+package org.mozilla.rocket.home.di
+
+import dagger.Module
+import dagger.Provides
+import org.mozilla.rocket.home.HomeViewModelFactory
+import javax.inject.Singleton
+
+@Module
+object HomeModule {
+
+    @JvmStatic
+    @Singleton
+    @Provides
+    fun provideHomeViewModelFactory(): HomeViewModelFactory = HomeViewModelFactory()
+}
