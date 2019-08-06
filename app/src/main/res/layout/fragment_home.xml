@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <org.mozilla.focus.home.HomeScreenBackground
         android:id="@+id/home_background"
@@ -22,6 +23,63 @@
         android:paddingEnd="12dp"
         android:paddingBottom="12dp"
         android:clickable="true"
-        android:focusable="true"/>
+        android:focusable="true">
+
+        <View
+            android:id="@+id/top_sites"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:background="#FFFF00"
+            android:paddingBottom="20dp"
+            android:layout_marginBottom="12dp"/>
+
+        <View
+            android:id="@+id/page_indicator"
+            android:layout_width="30dp"
+            android:layout_height="10dp"
+            android:background="#00FFFF"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="12dp"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <View
+                android:id="@+id/shopping_button"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="#FF0000"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <View
+                android:id="@+id/search_bar"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:background="#00FF00"
+                app:layout_constraintStart_toEndOf="@id/shopping_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <View
+                android:id="@+id/menu_button"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="#0000FF"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <View
+                android:id="@+id/tab_counter"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="#FF00FF"
+                app:layout_constraintEnd_toStartOf="@id/menu_button"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
 
 </FrameLayout>
