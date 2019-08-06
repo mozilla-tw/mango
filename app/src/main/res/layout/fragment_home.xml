@@ -9,5 +9,19 @@
         android:layout_height="match_parent"
         android:background="@drawable/bg_homescreen_color"
         android:scaleType="fitStart" />
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_arc_panel"
+        android:layout_gravity="bottom"
+        android:minHeight="160dp"
+        android:paddingTop="50dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="12dp"
+        android:clickable="true"
+        android:focusable="true"/>
 
 </FrameLayout>
