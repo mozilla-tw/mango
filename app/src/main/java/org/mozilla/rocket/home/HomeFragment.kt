@@ -10,10 +10,17 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_home.home_background
+import kotlinx.android.synthetic.main.fragment_home.menu_button
+import kotlinx.android.synthetic.main.fragment_home.search_bar
+import kotlinx.android.synthetic.main.fragment_home.shopping_button
+import kotlinx.android.synthetic.main.fragment_home.tab_counter
 import org.mozilla.focus.R
 import org.mozilla.focus.locale.LocaleAwareFragment
 import org.mozilla.focus.navigation.ScreenNavigator
 import org.mozilla.focus.telemetry.TelemetryWrapper
+import org.mozilla.rocket.chrome.ChromeViewModel
+import org.mozilla.rocket.chrome.ChromeViewModelFactory
+import org.mozilla.rocket.content.activityViewModelProvider
 import org.mozilla.rocket.content.appComponent
 import org.mozilla.rocket.content.viewModelProvider
 import org.mozilla.rocket.theme.ThemeManager
@@ -23,8 +30,11 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
 
     @Inject
     lateinit var homeViewModelFactory: HomeViewModelFactory
+    @Inject
+    lateinit var chromeViewModelFactory: ChromeViewModelFactory
 
     private lateinit var homeViewModel: HomeViewModel
+    private lateinit var chromeViewModel: ChromeViewModel
     private lateinit var themeManager: ThemeManager
 
     override fun onAttach(context: Context) {
@@ -36,6 +46,7 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
         appComponent().inject(this)
         super.onCreate(savedInstanceState)
         homeViewModel = viewModelProvider(homeViewModelFactory)
+        chromeViewModel = activityViewModelProvider(chromeViewModelFactory)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -44,7 +55,24 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initSearchToolBar()
         initBackgroundView()
+    }
+
+    private fun initSearchToolBar() {
+        search_bar.setOnClickListener {
+            chromeViewModel.showUrlInput.call()
+            TelemetryWrapper.showSearchBarHome()
+        }
+        menu_button.setOnClickListener {
+            chromeViewModel.showMenu.call()
+            TelemetryWrapper.showMenuHome()
+        }
+        tab_counter.setOnClickListener {
+            chromeViewModel.showTabTray.call()
+            TelemetryWrapper.showTabTrayHome()
+        }
+        shopping_button.setOnClickListener { homeViewModel.onShoppingButtonClicked() }
     }
 
     private fun initBackgroundView() {
@@ -83,10 +111,10 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
     override fun getFragment(): Fragment = this
 
     override fun onUrlInputScreenVisible(visible: Boolean) {
-        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
+        // TODO
     }
 
     override fun applyLocale() {
-        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
+        // TODO
     }
 }
