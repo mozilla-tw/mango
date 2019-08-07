@@ -25,4 +25,8 @@ class HomeViewModel(
 
         resetBackgroundColor.call()
     }
+
+    fun onShoppingButtonClicked() {
+        // TODO:
+    }
 }
