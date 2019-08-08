@@ -1,4 +1,4 @@
-package org.mozilla.focus.home.repository
+package org.mozilla.rocket.home.topsites.repository
 
 import android.content.Context
 import android.preference.PreferenceManager

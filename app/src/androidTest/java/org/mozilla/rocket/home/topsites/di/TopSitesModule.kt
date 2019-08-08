@@ -1,11 +1,11 @@
-package org.mozilla.focus.home.di
+package org.mozilla.rocket.home.topsites.di
 
 import android.content.Context
 import dagger.Module
 import dagger.Provides
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.spy
-import org.mozilla.focus.home.repository.TopSitesRepo
+import org.mozilla.rocket.home.topsites.repository.TopSitesRepo
 import javax.inject.Singleton
 
 @Module

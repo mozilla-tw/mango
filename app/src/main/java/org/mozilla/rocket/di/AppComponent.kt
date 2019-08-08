@@ -24,8 +24,8 @@ import org.mozilla.focus.fragment.BrowserFragment
 import org.mozilla.focus.fragment.DownloadsFragment
 import org.mozilla.focus.history.BrowsingHistoryFragment
 import org.mozilla.focus.home.HomeFragment
-import org.mozilla.focus.home.di.TopSitesModule
-import org.mozilla.focus.home.repository.TopSitesRepo
+import org.mozilla.rocket.home.topsites.di.TopSitesModule
+import org.mozilla.rocket.home.topsites.repository.TopSitesRepo
 import org.mozilla.focus.persistence.TabsDatabase
 import org.mozilla.focus.persistence.di.TabsModule
 import org.mozilla.focus.urlinput.UrlInputFragment
