@@ -12,16 +12,21 @@ import kotlinx.android.synthetic.main.fragment_home.home_background
 import kotlinx.android.synthetic.main.fragment_home.home_fragment_fake_input
 import kotlinx.android.synthetic.main.fragment_home.home_fragment_menu_button
 import kotlinx.android.synthetic.main.fragment_home.home_fragment_tab_counter
+import kotlinx.android.synthetic.main.fragment_home.main_list
 import kotlinx.android.synthetic.main.fragment_home.shopping_button
 import org.mozilla.focus.R
 import org.mozilla.focus.locale.LocaleAwareFragment
 import org.mozilla.focus.navigation.ScreenNavigator
 import org.mozilla.focus.telemetry.TelemetryWrapper
+import org.mozilla.rocket.adapter.AdapterDelegatesManager
+import org.mozilla.rocket.adapter.DelegateAdapter
 import org.mozilla.rocket.chrome.ChromeViewModel
 import org.mozilla.rocket.chrome.ChromeViewModelFactory
 import org.mozilla.rocket.content.activityViewModelProvider
 import org.mozilla.rocket.content.appComponent
 import org.mozilla.rocket.content.viewModelProvider
+import org.mozilla.rocket.home.topsites.SitePage
+import org.mozilla.rocket.home.topsites.SitePageAdapterDelegate
 import org.mozilla.rocket.theme.ThemeManager
 import javax.inject.Inject
 
@@ -35,6 +40,7 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var chromeViewModel: ChromeViewModel
     private lateinit var themeManager: ThemeManager
+    private lateinit var topSitesAdapter: DelegateAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         appComponent().inject(this)
@@ -52,16 +58,8 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
         themeManager = (context as ThemeManager.ThemeHost).themeManager
         initSearchToolBar()
         initBackgroundView()
+        initTopSites()
         setupFxaView(view)
-    }
-
-    private fun setupFxaView(fragmentView: View?) {
-        val view = fragmentView?.findViewById<View>(R.id.profile_buttons_container)
-        view?.setOnClickListener { showMissionFragment() }
-    }
-
-    private fun showMissionFragment() {
-        ScreenNavigator.get(context).addMissionDetail()
     }
 
     private fun initSearchToolBar() {
@@ -106,6 +104,29 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
             themeManager.resetDefaultTheme()
             TelemetryWrapper.resetThemeToDefault()
         })
+    }
+
+    private fun initTopSites() {
+        topSitesAdapter = DelegateAdapter(
+            AdapterDelegatesManager().apply {
+                add(SitePage::class, R.layout.item_top_site_page, SitePageAdapterDelegate(homeViewModel))
+            }
+        )
+        main_list.apply {
+            adapter = this@HomeFragment.topSitesAdapter
+        }
+        homeViewModel.sitePages.observe(this, Observer {
+            topSitesAdapter.setData(it)
+        })
+    }
+
+    private fun setupFxaView(fragmentView: View?) {
+        val view = fragmentView?.findViewById<View>(R.id.profile_buttons_container)
+        view?.setOnClickListener { showMissionFragment() }
+    }
+
+    private fun showMissionFragment() {
+        ScreenNavigator.get(context).addMissionDetail()
     }
 
     override fun onDestroyView() {
