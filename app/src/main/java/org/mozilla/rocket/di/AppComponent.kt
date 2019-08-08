@@ -24,7 +24,6 @@ import org.mozilla.focus.fragment.BrowserFragment
 import org.mozilla.focus.fragment.DownloadsFragment
 import org.mozilla.focus.history.BrowsingHistoryFragment
 import org.mozilla.focus.home.HomeFragment
-import org.mozilla.rocket.home.topsites.di.TopSitesModule
 import org.mozilla.rocket.home.topsites.repository.TopSitesRepo
 import org.mozilla.focus.persistence.TabsDatabase
 import org.mozilla.focus.persistence.di.TabsModule
@@ -60,8 +59,7 @@ import javax.inject.Singleton
         ContentModule::class,
         ChromeModule::class,
         TabsModule::class,
-        HomeModule::class,
-        TopSitesModule::class
+        HomeModule::class
     ]
 )
 interface AppComponent {
