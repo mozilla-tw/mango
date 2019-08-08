@@ -90,16 +90,24 @@ class SiteViewHolder(
     }
 }
 
-sealed class Site(open val title: String, open val url: String, open val iconUri: String?) : DelegateAdapter.UiModel() {
+sealed class Site(
+    open val id: Long,
+    open val title: String,
+    open val url: String,
+    open val iconUri: String?
+) : DelegateAdapter.UiModel() {
+
     data class FixedSite(
+        override val id: Long,
         override val title: String,
         override val url: String,
         override val iconUri: String?
-    ) : Site(title, url, iconUri)
+    ) : Site(id, title, url, iconUri)
 
     data class RemovableSite(
+        override val id: Long,
         override val title: String,
         override val url: String,
         override val iconUri: String?
-    ) : Site(title, url, iconUri)
+    ) : Site(id, title, url, iconUri)
 }

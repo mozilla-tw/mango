@@ -14,8 +14,10 @@ object HomeModule {
     @JvmStatic
     @Singleton
     @Provides
-    fun provideHomeViewModelFactory(settings: Settings): HomeViewModelFactory =
-            HomeViewModelFactory(settings)
+    fun provideHomeViewModelFactory(
+        settings: Settings,
+        topSitesRepo: TopSitesRepo
+    ): HomeViewModelFactory = HomeViewModelFactory(settings, topSitesRepo)
 
     @JvmStatic
     @Singleton
