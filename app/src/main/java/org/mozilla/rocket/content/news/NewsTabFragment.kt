@@ -116,7 +116,7 @@ class NewsTabFragment : Fragment() {
      */
     @Suppress("DEPRECATION")
     inner class EcFragmentAdapter(fm: FragmentManager, newsSettings: Pair<NewsLanguage, List<NewsCategory>>) :
-        FragmentPagerAdapter(fm) {
+        FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
         private val language = newsSettings.first.getApiId()
         private val displayCategories = newsSettings.second.filter { it.isSelected }

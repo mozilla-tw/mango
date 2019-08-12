@@ -9,13 +9,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceScreen;
 import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceScreen;
 
 import org.mozilla.focus.R;
 import org.mozilla.focus.activity.InfoActivity;
@@ -28,6 +28,7 @@ import org.mozilla.focus.utils.DialogUtils;
 import org.mozilla.focus.utils.FirebaseContract;
 import org.mozilla.focus.utils.FirebaseHelper;
 import org.mozilla.focus.utils.Settings;
+import org.mozilla.focus.widget.CleanBrowsingDataPreference;
 import org.mozilla.focus.widget.DefaultBrowserPreference;
 import org.mozilla.rocket.nightmode.AdjustBrightnessDialog;
 import org.mozilla.rocket.privately.ShortcutUtils;
@@ -35,7 +36,7 @@ import org.mozilla.telemetry.TelemetryHolder;
 
 import java.util.Locale;
 
-public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
     private boolean localeUpdated;
     private static int debugClicks = 0;
     private static final int DEBUG_CLICKS_THRESHOLD = 19;
@@ -45,23 +46,42 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        addPreferencesFromResource(R.xml.settings);
-        final PreferenceScreen rootPreferences = (PreferenceScreen) findPreference(PREF_KEY_ROOT);
-        if (!AppConstants.isDevBuild() && !AppConstants.isFirebaseBuild() && !AppConstants.isNightlyBuild()) {
-            Preference developmentCategory = findPreference(getString(R.string.pref_key_category_development));
-            rootPreferences.removePreference(developmentCategory);
-
-            Preference experimentCategory = findPreference(getString(R.string.pref_key_category_experiment));
-            rootPreferences.removePreference(experimentCategory);
-        }
-
-        final Preference preferenceNightMode = findPreference(getString(R.string.pref_key_night_mode_brightness));
-        preferenceNightMode.setEnabled(Settings.getInstance(getActivity()).isNightModeEnable());
 
     }
 
     @Override
-    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        setPreferencesFromResource(R.xml.settings, rootKey);
+        final PreferenceScreen rootPreferences = (PreferenceScreen) findPreference(PREF_KEY_ROOT);
+        if (!AppConstants.isDevBuild() && !AppConstants.isFirebaseBuild() && !AppConstants.isNightlyBuild()) {
+            Preference developmentCategory = findPreference(getString(R.string.pref_key_category_development));
+            if (developmentCategory != null) {
+                rootPreferences.removePreference(developmentCategory);
+            }
+
+            Preference experimentCategory = findPreference(getString(R.string.pref_key_category_experiment));
+            if (experimentCategory != null) {
+                rootPreferences.removePreference(experimentCategory);
+            }
+        }
+
+        final Preference preferenceNightMode = findPreference(getString(R.string.pref_key_night_mode_brightness));
+        if (preferenceNightMode != null) {
+            preferenceNightMode.setEnabled(Settings.getInstance(getActivity()).isNightModeEnable());
+        }
+    }
+
+    @Override
+    public void onDisplayPreferenceDialog(Preference preference) {
+        if (preference instanceof CleanBrowsingDataPreference) {
+            ((CleanBrowsingDataPreference) preference).showDialog(getFragmentManager(), this);
+        } else {
+            super.onDisplayPreferenceDialog(preference);
+        }
+    }
+
+    @Override
+    public boolean onPreferenceTreeClick(Preference preference) {
         Resources resources = getResources();
         String keyClicked = preference.getKey();
 
@@ -86,7 +106,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             ShortcutUtils.Companion.createShortcut(preference.getContext().getApplicationContext());
         }
 
-        return super.onPreferenceTreeClick(preferenceScreen, preference);
+        return super.onPreferenceTreeClick(preference);
     }
 
     private boolean debugingFirebase() {

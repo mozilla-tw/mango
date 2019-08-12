@@ -5,10 +5,11 @@
 package org.mozilla.focus.widget;
 
 import android.content.Context;
-import android.preference.ListPreference;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
+
+import androidx.preference.ListPreference;
 
 import org.mozilla.focus.R;
 import org.mozilla.focus.locale.LocaleManager;
@@ -68,18 +69,20 @@ public class LocaleListPreference extends ListPreference {
     private CharacterValidator characterValidator;
 
     public LocaleListPreference(Context context) {
-        this(context, null);
+        super(context);
     }
 
     public LocaleListPreference(Context context, AttributeSet attributes) {
         super(context, attributes);
+    }
 
+    public LocaleListPreference(Context context, AttributeSet attributes, int defStyleAttr) {
+        super(context, attributes, defStyleAttr);
     }
 
     @Override
-    protected void onAttachedToActivity() {
-        super.onAttachedToActivity();
-
+    public void onAttached() {
+        super.onAttached();
         // Thus far, missing glyphs are replaced by whitespace, not a box
         // or other Unicode codepoint.
         this.characterValidator = new CharacterValidator(" ");
@@ -232,9 +235,9 @@ public class LocaleListPreference extends ListPreference {
     }
 
     @Override
-    protected void onDialogClosed(boolean positiveResult) {
-        // The superclass will take care of persistence.
-        super.onDialogClosed(positiveResult);
+    protected void onClick() {
+        super.onClick();
+
 
         // Use this hook to try to fix up the environment ASAP.
         // Do this so that the redisplayed fragment is inflated

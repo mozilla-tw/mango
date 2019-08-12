@@ -7,12 +7,13 @@ package org.mozilla.focus.widget;
 
 import android.content.Context;
 import android.content.Intent;
-import android.preference.Preference;
+import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.Switch;
 import android.widget.TextView;
+
+import androidx.preference.PreferenceViewHolder;
+import androidx.preference.SwitchPreference;
 
 import org.mozilla.focus.R;
 import org.mozilla.focus.activity.InfoActivity;
@@ -26,38 +27,47 @@ import org.mozilla.focus.utils.SupportUtils;
  * switches used in the remaining preferences. There's no AppCompat SwitchPreference to extend,
  * so instead we just build our own preference.
  */
-public class TelemetrySwitchPreference extends Preference {
+public class TelemetrySwitchPreference extends SwitchPreference {
+
+    public TelemetrySwitchPreference(Context context) {
+        super(context);
+        init();
+    }
+
     public TelemetrySwitchPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public TelemetrySwitchPreference(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
+    public TelemetrySwitchPreference(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
         init();
     }
 
     private void init() {
-        // We are keeping track of the preference value ourselves.
-        setPersistent(false);
+        setSummaryProvider(preference -> {
+            final Resources resources = preference.getContext().getResources();
+            final String appName = resources.getString(R.string.app_name);
+            final String mozilla = resources.getString(R.string.mozilla);
+            return resources.getString(R.string.preference_mozilla_telemetry_summary, appName, mozilla);
+        });
+
+        setChecked(TelemetryWrapper.isTelemetryEnabled(getContext()));
+        setOnPreferenceChangeListener((preference, newValue) -> {
+            TelemetryWrapper.setTelemetryEnabled(getContext(), (Boolean) newValue);
+            // we should use the value from UI (isChecked) instead of relying on SharePreference.
+            FirebaseHelper.enableAnalytics(getContext().getApplicationContext(), isEnabled());
+            notifyChanged();
+            return true;
+        });
+
     }
 
     @Override
-    protected void onBindView(final View view) {
-        final Switch switchWidget = (Switch) view.findViewById(R.id.switch_widget);
+    public void onBindViewHolder(PreferenceViewHolder holder) {
+        super.onBindViewHolder(holder);
 
-        switchWidget.setChecked(TelemetryWrapper.isTelemetryEnabled(getContext()));
-
-        switchWidget.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                TelemetryWrapper.setTelemetryEnabled(getContext(), isChecked);
-                // we should use the value from UI (isChecked) instead of relying on SharePreference.
-                FirebaseHelper.enableAnalytics(getContext().getApplicationContext(), isEnabled());
-            }
-        });
-
-        final TextView learnMore = (TextView) view.findViewById(R.id.learnMore);
+        final TextView learnMore = (TextView) holder.findViewById(R.id.learnMore);
 
         learnMore.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,21 +82,5 @@ public class TelemetrySwitchPreference extends Preference {
                 TelemetryWrapper.settingsLearnMoreClickEvent(getContext().getString(R.string.pref_key_telemetry));
             }
         });
-
-        // We still want to allow toggling the pref by touching any part of the pref (except for
-        // the "learn more" link)
-        setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                switchWidget.toggle();
-                return true;
-            }
-        });
-
-        final String appName = getContext().getResources().getString(R.string.app_name);
-        final String mozilla = getContext().getResources().getString(R.string.mozilla);
-        setSummary(getContext().getResources().getString(R.string.preference_mozilla_telemetry_summary, appName, mozilla));
-
-        super.onBindView(view);
     }
 }

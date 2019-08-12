@@ -8,7 +8,11 @@ package org.mozilla.focus.widget;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
-import android.preference.Preference;
+
+import androidx.preference.Preference;
+import androidx.preference.PreferenceViewHolder;
+import androidx.preference.SwitchPreference;
+
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
@@ -26,10 +30,10 @@ import org.mozilla.focus.utils.SupportUtils;
  * Created by ylai on 2017/9/21.
  */
 
-public class TurboSwitchPreference extends Preference {
+public class TurboSwitchPreference extends SwitchPreference {
 
-    public TurboSwitchPreference(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
+    public TurboSwitchPreference(Context context) {
+        super(context);
         init();
     }
 
@@ -38,29 +42,31 @@ public class TurboSwitchPreference extends Preference {
         init();
     }
 
-    private void init() {
-        setWidgetLayoutResource(R.layout.preference_turbo);
+    public TurboSwitchPreference(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
 
+    private void init() {
         // We are keeping track of the preference value ourselves.
         setPersistent(false);
+
+        setChecked(Settings.getInstance(getContext()).shouldUseTurboMode());
+        setOnPreferenceChangeListener((preference, newValue) -> {
+            Settings.getInstance(preference.getContext()).setTurboMode((Boolean) newValue);
+            notifyChanged();
+            return true;
+        });
     }
 
     @Override
-    protected void onBindView(View view) {
-        super.onBindView(view);
+    public void onBindViewHolder(PreferenceViewHolder holder) {
+        super.onBindViewHolder(holder);
 
-        final Switch switchWidget = (Switch) view.findViewById(R.id.switch_widget);
+        final Switch switchWidget = (Switch) holder.findViewById(R.id.switch_widget);
+        switchWidget.setChecked(isChecked());
 
-        switchWidget.setChecked(Settings.getInstance(getContext()).shouldUseTurboMode());
-
-        switchWidget.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Settings.getInstance(getContext()).setTurboMode(isChecked);
-            }
-        });
-
-        final TextView summary = (TextView) view.findViewById(android.R.id.summary);
+        final TextView summary = (TextView) holder.findViewById(android.R.id.summary);
 
         TypedValue typedValue = new TypedValue();
         TypedArray ta = getContext().obtainStyledAttributes(typedValue.data, new int[]{android.R.attr.textColorLink});
@@ -79,16 +85,6 @@ public class TurboSwitchPreference extends Preference {
                 final Intent intent = InfoActivity.getIntentFor(getContext(), url, title);
                 getContext().startActivity(intent);
                 TelemetryWrapper.settingsLearnMoreClickEvent(getContext().getString(R.string.pref_key_turbo_mode));
-            }
-        });
-
-        // We still want to allow toggling the pref by touching any part of the pref (except for
-        // the "learn more" link)
-        setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                switchWidget.toggle();
-                return true;
             }
         });
     }

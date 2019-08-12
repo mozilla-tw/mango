@@ -7,9 +7,10 @@ package org.mozilla.focus.search;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.preference.DialogPreference;
 import android.util.AttributeSet;
+
+import androidx.preference.DialogPreference;
+import androidx.preference.Preference;
 
 import org.mozilla.focus.R;
 import org.mozilla.focus.utils.Settings;
@@ -20,40 +21,42 @@ import org.mozilla.focus.utils.Settings;
 public class SearchEnginePreference extends DialogPreference {
     public SearchEnginePreference(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public SearchEnginePreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init();
     }
 
-    @Override
-    protected void onAttachedToActivity() {
-        setSummary(SearchEngineManager.getInstance().getDefaultSearchEngine(getContext()).getName());
-        super.onAttachedToActivity();
+    private void init() {
+        setSummaryProvider(new SummaryProvider<SearchEnginePreference>() {
+            @Override
+            public CharSequence provideSummary(SearchEnginePreference preference) {
+                return SearchEngineManager.getInstance().getDefaultSearchEngine(getContext()).getName();
+            }
+        });
     }
 
+
     @Override
-    protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
+    protected void onClick() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
         final SearchEngineAdapter adapter = new SearchEngineAdapter(getContext());
 
         builder.setTitle(R.string.preference_dialog_title_search_engine);
 
-        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                persistSearchEngine(adapter.getItem(which));
-
-                dialog.dismiss();
-            }
+        builder.setAdapter(adapter, (dialog, which) -> {
+            persistSearchEngine(adapter.getItem(which));
+            notifyChanged();
+            dialog.dismiss();
         });
 
-        builder.setPositiveButton(null, null);
-        builder.setNegativeButton(null, this);
+        builder.create().show();
     }
 
     private void persistSearchEngine(SearchEngine searchEngine) {
-        setSummary(searchEngine.getName());
-
         Settings.getInstance(getContext())
                 .setDefaultSearchEngine(searchEngine);
     }

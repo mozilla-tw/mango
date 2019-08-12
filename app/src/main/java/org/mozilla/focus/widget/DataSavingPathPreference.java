@@ -5,8 +5,10 @@
 package org.mozilla.focus.widget;
 
 import android.content.Context;
-import android.preference.ListPreference;
+import androidx.preference.ListPreference;
 import androidx.annotation.WorkerThread;
+import androidx.preference.PreferenceViewHolder;
+
 import android.text.TextUtils;
 import android.util.AttributeSet;
 
@@ -21,19 +23,42 @@ public class DataSavingPathPreference extends ListPreference {
     private boolean hasRemovableStorage = false;
 
     public DataSavingPathPreference(Context context) {
-        this(context, null);
+        super(context);
+        init();
     }
 
     public DataSavingPathPreference(Context context, AttributeSet attributes) {
         super(context, attributes);
+        init();
+    }
+    public DataSavingPathPreference(Context context, AttributeSet attributes, int defStyle) {
+        super(context, attributes, defStyle);
+        init();
+    }
 
+    private void init() {
+        setSummaryProvider(preference -> {
+
+            // design's spec, always show 'save to internal' if there is no removable storage
+            if (!hasRemovableStorage) {
+                return getContext().getResources().getString(R.string.setting_dialog_internal_storage);
+            }
+
+            if (TextUtils.isEmpty(getEntry())) {
+                final String[] entries = getContext().getResources().getStringArray(R.array.data_saving_path_entries);
+                setValueIndex(0);
+                return entries[0];
+            }
+
+            return getEntry();
+
+        });
     }
 
     @Override
-    protected void onAttachedToActivity() {
-        super.onAttachedToActivity();
+    public void onAttached() {
+        super.onAttached();
 
-        buildList();
         // Put pingRemovableStorage() in background thread to avoid strict mode violation: disk I/O on main thread.
         ThreadUtils.postToBackgroundThread(new Runnable() {
             @Override
@@ -42,41 +67,6 @@ public class DataSavingPathPreference extends ListPreference {
             }
         });
     }
-
-    @Override
-    protected void onDialogClosed(boolean positiveResult) {
-        // The superclass will take care of persistence.
-        super.onDialogClosed(positiveResult);
-        if (positiveResult) {
-            persistString(getValue());
-        }
-
-    }
-
-    @Override
-    public CharSequence getSummary() {
-        // design's spec, always show 'save to internal' if there is no removable storage
-        if (!hasRemovableStorage) {
-            return getContext().getResources().getString(R.string.setting_dialog_internal_storage);
-        }
-
-        if (TextUtils.isEmpty(getEntry())) {
-            final String[] entries = getContext().getResources().getStringArray(R.array.data_saving_path_entries);
-            setValueIndex(0);
-            return entries[0];
-        }
-
-        return getEntry();
-    }
-
-    private void buildList() {
-        final String[] entries = getContext().getResources().getStringArray(R.array.data_saving_path_entries);
-        final String[] values = getContext().getResources().getStringArray(R.array.data_saving_path_values);
-
-        setEntries(entries);
-        setEntryValues(values);
-    }
-
 
     @WorkerThread
     private void pingRemovableStorage() {

@@ -3,102 +3,109 @@
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    android:key="root_preferences">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:key="root_preferences">
     <!-- Empty default: we use an empty string to indicate "system default" language being selected -->
     <!--suppress AndroidDomInspection -->
     <org.mozilla.focus.widget.LocaleListPreference
-        android:layout="@layout/focus_preference"
-        android:key="@string/pref_key_locale"
-        android:title="@string/preference_language"
-        android:defaultValue=""/>
+        app:defaultValue=""
+        app:key="@string/pref_key_locale"
+        app:layout="@layout/focus_preference"
+        app:title="@string/preference_language" />
 
     <org.mozilla.focus.search.SearchEnginePreference
-        android:layout="@layout/focus_preference"
-        android:title="@string/preference_search_engine_default"
-        android:key="@string/pref_key_search_engine" />
+        app:key="@string/pref_key_search_engine"
+        app:layout="@layout/focus_preference"
+        app:title="@string/preference_search_engine_default" />
 
     <org.mozilla.focus.widget.CleanBrowsingDataPreference
-        android:layout="@layout/focus_preference"
-        android:positiveButtonText="@string/setting_dialog_clear_data"
-        android:negativeButtonText="@string/setting_dialog_cancel"
-        android:defaultValue="@array/clean_browsing_data_values"
-        android:entryValues="@array/clean_browsing_data_values"
-        android:entries="@array/clean_browsing_data_entries"
-        android:title="@string/preference_privacy_storage_clear_browsing_data"
-        android:key="@string/pref_key_storage_clear_browsing_data" />
+        app:defaultValue="@array/clean_browsing_data_values"
+        app:dialogTitle="@null"
+        app:entries="@array/clean_browsing_data_entries"
+        app:entryValues="@array/clean_browsing_data_values"
+        app:key="@string/pref_key_storage_clear_browsing_data"
+        app:layout="@layout/focus_preference"
+        app:negativeButtonText="@string/setting_dialog_cancel"
+        app:positiveButtonText="@string/setting_dialog_clear_data"
+        app:title="@string/preference_privacy_storage_clear_browsing_data" />
 
     <org.mozilla.focus.widget.DataSavingPathPreference
-        android:layout="@layout/focus_preference"
-        android:title="@string/preference_privacy_storage_save_downloads_to"
-        android:key="@string/pref_key_storage_save_downloads_to" />
+        app:entries="@array/data_saving_path_entries"
+        app:entryValues="@array/data_saving_path_values"
+        app:layout="@layout/focus_preference"
+        app:title="@string/preference_privacy_storage_save_downloads_to"
+        app:key="@string/pref_key_storage_save_downloads_to" />
 
     <Preference
-        android:layout="@layout/focus_preference"
-        android:title="@string/preference_night_mode_brightness"
-        android:key="@string/pref_key_night_mode_brightness" />
+        app:key="@string/pref_key_night_mode_brightness"
+        app:layout="@layout/focus_preference"
+        app:title="@string/preference_night_mode_brightness" />
 
     <org.mozilla.focus.widget.TurboSwitchPreference
-        android:layout="@layout/focus_preference"
-        android:key="@string/pref_key_turbo_mode"
-        android:title="@string/preference_turbo_mode"
-        android:summary="@string/preference_learn_more" />
+        app:key="@string/pref_key_turbo_mode"
+        app:layout="@layout/focus_preference"
+        app:persistent="false"
+        app:summary="@string/preference_learn_more"
+        app:title="@string/preference_turbo_mode"
+        app:widgetLayout="@layout/preference_turbo" />
 
     <org.mozilla.focus.widget.DefaultBrowserPreference
-        android:layout="@layout/focus_preference"
-        android:key="@string/pref_key_default_browser"
-        android:title="@string/preference_default_browser" />
+        app:key="@string/pref_key_default_browser"
+        app:layout="@layout/focus_preference"
+        app:title="@string/preference_default_browser"
+        app:widgetLayout="@layout/preference_default_browser" />
 
     <Preference
-        android:layout="@layout/focus_preference"
-        android:title="@string/preference_add_private_browsing_shortcut"
-        android:key="@string/pref_key_private_mode_shortcut" />
+        app:key="@string/pref_key_private_mode_shortcut"
+        app:layout="@layout/focus_preference"
+        app:title="@string/preference_add_private_browsing_shortcut" />
 
     <org.mozilla.focus.widget.TelemetrySwitchPreference
-        android:layout="@layout/preference_telemetry"
-        android:title="@string/preference_mozilla_telemetry"
-        android:persistent="false" />
+        app:key="@string/pref_key_telemetry"
+        app:layout="@layout/preference_telemetry"
+        app:persistent="false"
+        app:title="@string/preference_mozilla_telemetry" />
 
     <Preference
-        android:layout="@layout/focus_preference"
-        android:title="@string/menu_give_feedback"
-        android:key="@string/pref_key_give_feedback" />
+        app:key="@string/pref_key_give_feedback"
+        app:layout="@layout/focus_preference"
+        app:title="@string/menu_give_feedback" />
 
     <Preference
-        android:layout="@layout/focus_preference"
-        android:title="@string/menu_share_with_friends"
-        android:key="@string/pref_key_share_with_friends" />
+        app:key="@string/pref_key_share_with_friends"
+        app:layout="@layout/focus_preference"
+        app:title="@string/menu_share_with_friends" />
 
-    <!-- AboutPreference performs some string substitutions, so that we can show "About <AppName>".
-         We keep a plain "About" as the title here in xml as a fallback, but AboutPreference
-         will use the substitution regardless of what is set here. -->
-    <org.mozilla.focus.widget.AboutPreference
-        android:layout="@layout/focus_preference"
-        android:title="@string/menu_about"
-        android:key="@string/pref_key_about" />
+    <Preference
+        app:key="@string/pref_key_about"
+        app:layout="@layout/focus_preference"
+        app:title="@string/preference_about" />
 
     <!-- Preferences for development purpose, only visible in dev-build -->
     <PreferenceCategory
-        android:key="@string/pref_key_category_development"
-        android:title="For development">
+        app:key="@string/pref_key_category_development"
+        app:title="For development">
 
-        <org.mozilla.focus.widget.LifeFeedPreference
-            android:dialogTitle="Life feed settings"
-            android:entries="@array/life_feed_settings_entries"
-            android:entryValues="@array/life_feed_settings_values"
-            android:key="@string/pref_key_developer_option_life_feed"
-            android:title="Life feed settings" />
+        <ListPreference
+            app:dialogTitle="Life feed settings"
+            app:entries="@array/life_feed_settings_entries"
+            app:entryValues="@array/life_feed_settings_values"
+            app:key="@string/pref_key_developer_option_life_feed"
+            app:layout="@layout/focus_preference"
+            app:title="Life feed settings"
+            app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
 
     <!-- Preferences for experimental features, only visible in dev-build -->
     <PreferenceCategory
-        android:key="@string/pref_key_category_experiment"
-        android:title="For experiment">
+        app:key="@string/pref_key_category_experiment"
+        app:title="For experiment">
 
         <SwitchPreference
-            android:key="@string/pref_key_performance_block_java_script"
-            android:layout="@layout/focus_preference"
-            android:title="Block JavaScript" />
+            app:key="@string/pref_key_performance_block_java_script"
+            app:layout="@layout/focus_preference"
+            app:title="Block JavaScript" />
 
     </PreferenceCategory>
 

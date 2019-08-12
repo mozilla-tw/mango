@@ -47,7 +47,7 @@ public class SettingsActivity extends BaseActivity {
                     .replace(R.id.container, new NewsSettingFragment())
                     .commit();
         } else {
-            getFragmentManager().beginTransaction()
+            getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, new SettingsFragment())
                     .commit();
         }

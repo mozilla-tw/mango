@@ -6,20 +6,20 @@
 package org.mozilla.focus.widget;
 
 import android.annotation.TargetApi;
-import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.preference.Preference;
+import android.util.AttributeSet;
+import android.widget.Switch;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import android.util.AttributeSet;
-import android.view.View;
-import android.widget.Switch;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceViewHolder;
 
 import org.mozilla.focus.R;
 import org.mozilla.focus.activity.InfoActivity;
@@ -40,23 +40,21 @@ public class DefaultBrowserPreference extends Preference {
     private DefaultBrowserAction action;
 
     @SuppressWarnings("unused") // Instantiated from XML
-    public DefaultBrowserPreference(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        setWidgetLayoutResource(R.layout.preference_default_browser);
+    public DefaultBrowserPreference(Context context, AttributeSet attrs) {
+        super(context, attrs);
         init();
     }
 
     @SuppressWarnings("unused") // Instantiated from XML
-    public DefaultBrowserPreference(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        setWidgetLayoutResource(R.layout.preference_default_browser);
+    public DefaultBrowserPreference(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
         init();
     }
 
     @Override
-    protected void onBindView(View view) {
-        super.onBindView(view);
-        switchView = (Switch) view.findViewById(R.id.switch_widget);
+    public void onBindViewHolder(PreferenceViewHolder holder) {
+        super.onBindViewHolder(holder);
+        switchView = holder.itemView.findViewById(R.id.switch_widget);
         update();
     }
 

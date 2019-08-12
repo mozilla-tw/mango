@@ -12,7 +12,7 @@ class GameTabsAdapter(
     fm: FragmentManager,
     activity: FragmentActivity,
     private val items: List<TabItem> = DEFAULT_TABS
-) : FragmentPagerAdapter(fm) {
+) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     private val resource = activity.resources
 

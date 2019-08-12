@@ -8,7 +8,7 @@ package org.mozilla.focus
 import android.app.Activity
 import android.os.Bundle
 import android.os.StrictMode
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 import org.mozilla.focus.download.DownloadInfoManager

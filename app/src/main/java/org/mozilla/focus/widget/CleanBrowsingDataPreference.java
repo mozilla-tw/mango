@@ -5,25 +5,31 @@
 
 package org.mozilla.focus.widget;
 
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.preference.MultiSelectListPreference;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.webkit.CookieManager;
 import android.webkit.WebViewDatabase;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.preference.MultiSelectListPreference;
+import androidx.preference.MultiSelectListPreferenceDialogFragmentCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.fileutils.FileUtils;
 import org.mozilla.focus.R;
 import org.mozilla.focus.history.BrowsingHistoryManager;
-import org.mozilla.rocket.home.topsites.data.SharedPreferencePinSiteDelegate;
 import org.mozilla.focus.telemetry.TelemetryWrapper;
 import org.mozilla.focus.utils.TopSitesUtils;
 import org.mozilla.rocket.component.PrivateSessionNotificationService;
+import org.mozilla.rocket.home.topsites.data.SharedPreferencePinSiteDelegate;
 import org.mozilla.rocket.privately.PrivateMode;
 
 import java.util.Set;
@@ -35,22 +41,20 @@ import java.util.Set;
 public class CleanBrowsingDataPreference extends MultiSelectListPreference {
 
     public CleanBrowsingDataPreference(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+        super(context, attrs);
     }
 
     public CleanBrowsingDataPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
-    @Override
-    protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
-        super.onPrepareDialogBuilder(builder);
-        builder.setTitle(null);
+    public void showDialog(FragmentManager fragmentManager, Fragment parentFragment) {
+        final DialogFragment f = DialogFragment.newInstance(getKey());
+        f.setTargetFragment(parentFragment, 0);
+        f.show(fragmentManager, null);
     }
 
-    @Override
-    protected void onDialogClosed(boolean positiveResult) {
-        super.onDialogClosed(positiveResult);
+    private void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {
             Resources resources = getContext().getResources();
             //  On click positive callback here get current value by getValues();
@@ -111,6 +115,31 @@ public class CleanBrowsingDataPreference extends MultiSelectListPreference {
         }
 
         return object;
+    }
+
+    public static class DialogFragment extends MultiSelectListPreferenceDialogFragmentCompat {
+
+        public static DialogFragment newInstance(String key) {
+            final DialogFragment fragment = new DialogFragment();
+            final Bundle b = new Bundle(1);
+            b.putString(ARG_KEY, key);
+            fragment.setArguments(b);
+            return fragment;
+        }
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            Dialog dialog = super.onCreateDialog(savedInstanceState);
+            dialog.setTitle(null);
+            return dialog;
+        }
+
+        @Override
+        public void onDialogClosed(boolean positiveResult) {
+            super.onDialogClosed(positiveResult);
+            ((CleanBrowsingDataPreference) getPreference()).onDialogClosed(positiveResult);
+        }
     }
 
 }
