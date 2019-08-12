@@ -24,7 +24,7 @@ object Versions {
     const val kotlin = "1.3.41"
     const val ktlint = "0.32.0"
     const val gms = "11.8.0"
-    const val navigation = "2.0.0"
+    const val navigation = "2.1.0-rc01"
     const val findbugs = "3.0.1"
     const val lottie = "2.8.0"
     const val leakcanary = "1.6.2"

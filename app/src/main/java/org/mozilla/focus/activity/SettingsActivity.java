@@ -4,18 +4,19 @@
 
 package org.mozilla.focus.activity;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.navigation.NavController;
+import androidx.navigation.NavGraph;
+import androidx.navigation.NavHost;
+import androidx.navigation.NavInflater;
+
 import org.mozilla.focus.R;
-import org.mozilla.focus.settings.SettingsFragment;
-import org.mozilla.rocket.content.news.NewsSettingFragment;
 import org.mozilla.rocket.content.portal.ContentFeature;
 
 public class SettingsActivity extends BaseActivity {
@@ -41,23 +42,27 @@ public class SettingsActivity extends BaseActivity {
                 finish();
             }
         });
-        final Intent intent = getIntent();
-        if (intent != null && intent.getStringExtra(ContentFeature.EXTRA_CONFIG_NEWS) != null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, new NewsSettingFragment())
-                    .commit();
-        } else {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, new SettingsFragment())
-                    .commit();
-        }
 
-
+        //  Init navigation host with customized startDestination
+        dispatchNavigation(getIntent());
 
         // Ensure all locale specific Strings are initialised on first run, we don't set the title
         // anywhere before now (the title can only be set via AndroidManifest, and ensuring
         // that that loads the correct locale string is tricky).
         applyLocale();
+    }
+
+    private void dispatchNavigation(Intent intent) {
+        final NavHost navHost = (NavHost) getSupportFragmentManager().findFragmentById(R.id.container);
+        final NavController navController = navHost.getNavController();
+        final NavInflater navInflater = navController.getNavInflater();
+        final NavGraph navGraph = navInflater.inflate(R.navigation.nav_settings);
+        if (intent != null && intent.getStringExtra(ContentFeature.EXTRA_CONFIG_NEWS) != null) {
+            navGraph.setStartDestination(R.id.settings_news);
+        } else {
+            navGraph.setStartDestination(R.id.settings_root);
+        }
+        navController.setGraph(navGraph);
     }
 
     @Override
