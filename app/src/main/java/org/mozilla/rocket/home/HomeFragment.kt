@@ -2,10 +2,12 @@ package org.mozilla.rocket.home
 
 import android.os.Bundle
 import android.view.GestureDetector
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_home.home_background
@@ -25,8 +27,10 @@ import org.mozilla.rocket.chrome.ChromeViewModelFactory
 import org.mozilla.rocket.content.activityViewModelProvider
 import org.mozilla.rocket.content.appComponent
 import org.mozilla.rocket.content.viewModelProvider
+import org.mozilla.rocket.home.topsites.Site
 import org.mozilla.rocket.home.topsites.SitePage
 import org.mozilla.rocket.home.topsites.SitePageAdapterDelegate
+import org.mozilla.rocket.home.topsites.SiteViewHolder.Companion.TOP_SITE_LONG_CLICK_TARGET
 import org.mozilla.rocket.theme.ThemeManager
 import javax.inject.Inject
 
@@ -115,12 +119,20 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
         main_list.apply {
             adapter = this@HomeFragment.topSitesAdapter
         }
-        homeViewModel.sitePages.observe(this, Observer {
-            topSitesAdapter.setData(it)
-        })
-        homeViewModel.topSiteClicked.observe(this, Observer {
-            ScreenNavigator.get(context).showBrowserScreen(it.url, true, false)
-        })
+        homeViewModel.run {
+            sitePages.observe(this@HomeFragment, Observer {
+                topSitesAdapter.setData(it)
+            })
+            topSiteClicked.observe(this@HomeFragment, Observer {
+                ScreenNavigator.get(context).showBrowserScreen(it.url, true, false)
+            })
+            topSiteLongClicked.observe(this@HomeFragment, Observer { site ->
+                val anchorView = main_list.findViewWithTag<View>(TOP_SITE_LONG_CLICK_TARGET).apply { tag = null }
+                val isPinned = true // TODO
+                val allowToPin = !isPinned && homeViewModel.pinEnabled.value == true
+                showTopSiteMenu(anchorView, allowToPin, site)
+            })
+        }
     }
 
     private fun setupFxaView(fragmentView: View?) {
@@ -145,5 +157,25 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
 
     override fun applyLocale() {
         // TODO
+    }
+
+    private fun showTopSiteMenu(anchorView: View, pinEnabled: Boolean, site: Site) {
+        PopupMenu(anchorView.context, anchorView, Gravity.CLIP_HORIZONTAL)
+                .apply {
+                    menu.findItem(R.id.pin)?.apply {
+                        isVisible = pinEnabled
+                    }
+                    setOnMenuItemClickListener { item ->
+                        when (item.itemId) {
+                            R.id.pin -> homeViewModel.onPinTopSiteClicked(site)
+                            R.id.remove -> homeViewModel.onRemoveTopSiteClicked(site)
+                            else -> throw IllegalStateException("Unhandled menu item")
+                        }
+
+                        true
+                    }
+                    menuInflater.inflate(R.menu.menu_top_site_item, menu)
+                }
+                .show()
     }
 }

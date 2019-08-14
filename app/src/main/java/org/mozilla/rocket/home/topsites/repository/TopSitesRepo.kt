@@ -53,6 +53,6 @@ open class TopSitesRepo(private val appContext: Context) {
                 title = title,
                 url = url,
                 iconUri = favIconUri,
-                isDefault = false
+                isDefault = isDefault
             )
 }

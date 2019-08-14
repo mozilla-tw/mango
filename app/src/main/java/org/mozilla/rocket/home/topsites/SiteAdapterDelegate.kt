@@ -46,6 +46,10 @@ class SiteViewHolder(
         ViewCompat.setBackgroundTintList(content_image, ColorStateList.valueOf(backgroundColor))
 
         itemView.setOnClickListener { homeViewModel.onTopSiteClicked(site, adapterPosition) }
+        itemView.setOnLongClickListener {
+            it.tag = TOP_SITE_LONG_CLICK_TARGET
+            homeViewModel.onTopSiteLongClicked(site)
+        }
     }
 
     private fun getFavicon(context: Context, site: Site): Bitmap {
@@ -88,29 +92,31 @@ class SiteViewHolder(
         }
         return result
     }
+
+    companion object {
+        const val TOP_SITE_LONG_CLICK_TARGET = "top_site_long_click_target"
+    }
 }
 
 sealed class Site(
     open val id: Long,
     open val title: String,
     open val url: String,
-    open val iconUri: String?,
-    open val isDefault: Boolean
+    open val iconUri: String?
 ) : DelegateAdapter.UiModel() {
 
     data class FixedSite(
         override val id: Long,
         override val title: String,
         override val url: String,
-        override val iconUri: String?,
-        override val isDefault: Boolean
-    ) : Site(id, title, url, iconUri, isDefault)
+        override val iconUri: String?
+    ) : Site(id, title, url, iconUri)
 
     data class RemovableSite(
         override val id: Long,
         override val title: String,
         override val url: String,
         override val iconUri: String?,
-        override val isDefault: Boolean
-    ) : Site(id, title, url, iconUri, isDefault)
+        val isDefault: Boolean
+    ) : Site(id, title, url, iconUri)
 }

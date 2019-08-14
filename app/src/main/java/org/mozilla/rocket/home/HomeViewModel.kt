@@ -1,6 +1,7 @@
 package org.mozilla.rocket.home
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.utils.Settings
@@ -16,10 +17,12 @@ class HomeViewModel(
 ) : ViewModel() {
 
     val sitePages: LiveData<List<SitePage>> = topSitesRepo.topSites.map { it.toSitePages() }
+    val pinEnabled = MutableLiveData<Boolean>()
 
     val toggleBackgroundColor = SingleLiveEvent<Unit>()
     val resetBackgroundColor = SingleLiveEvent<Unit>()
     val topSiteClicked = SingleLiveEvent<Site>()
+    val topSiteLongClicked = SingleLiveEvent<Site>()
 
     private fun List<Site>.toSitePages() = chunked(TOP_SITES_PER_PAGE)
             .filterIndexed { index, _ -> index < TOP_SITES_MAX_PAGE_SIZE }
@@ -46,9 +49,33 @@ class HomeViewModel(
 
     fun onTopSiteClicked(site: Site, position: Int) {
         topSiteClicked.value = site
-        site.isDefault.let { allowToLogTitle ->
-            val title = if (allowToLogTitle) site.title else ""
-            TelemetryWrapper.clickTopSiteOn(position, title)
+        val allowToLogTitle = when (site) {
+            is Site.FixedSite -> true
+            is Site.RemovableSite -> site.isDefault
+        }
+        val title = if (allowToLogTitle) site.title else ""
+        TelemetryWrapper.clickTopSiteOn(position, title)
+    }
+
+    fun onTopSiteLongClicked(site: Site): Boolean =
+            if (site is Site.RemovableSite) {
+                topSiteLongClicked.value = site
+                true
+            } else {
+                false
+            }
+
+    fun onPinTopSiteClicked(site: Site) {
+        when (site) {
+            is Site.FixedSite -> return // TODO:
+            is Site.RemovableSite -> return // TODO:
+        }
+    }
+
+    fun onRemoveTopSiteClicked(site: Site) {
+        when (site) {
+            is Site.FixedSite -> return // TODO:
+            is Site.RemovableSite -> return // TODO:
         }
     }
 
