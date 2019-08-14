@@ -8,9 +8,13 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.mozilla.focus.home.HomeFragment
 import org.mozilla.focus.utils.TopSitesUtils
+import org.mozilla.rocket.home.pinsite.PinSiteManager
 import org.mozilla.rocket.home.topsites.Site
 
-open class TopSitesRepo(private val appContext: Context) {
+open class TopSitesRepo(
+    private val appContext: Context,
+    private val pinSiteManager: PinSiteManager
+) {
 
     private val _topSites = MutableLiveData<List<Site>>()
     val topSites: LiveData<List<Site>>
@@ -36,7 +40,7 @@ open class TopSitesRepo(private val appContext: Context) {
             TopSitesUtils.getDefaultSitesJsonArrayFromAssets(appContext)
         }
 
-        return TopSitesUtils.paresJsonToList(appContext, jsonArray).toRemovableSite()
+        return TopSitesUtils.paresJsonToList(appContext, jsonArray).toRemovableSite(pinSiteManager)
     }
 
     // open for mocking during testing
@@ -45,14 +49,56 @@ open class TopSitesRepo(private val appContext: Context) {
                 .getString(HomeFragment.TOPSITES_PREF, null)
     }
 
-    private fun List<org.mozilla.focus.history.model.Site>.toRemovableSite(): List<Site> = map { it.toRemovableSite() }
+    fun isPinEnabled(): Boolean = pinSiteManager.isEnabled()
 
-    private fun org.mozilla.focus.history.model.Site.toRemovableSite(): Site =
-            Site.RemovableSite(
+    fun pin(site: Site) {
+        pinSiteManager.pin(site.toSiteModel())
+        // TODO: notify data changed
+    }
+
+    fun remove(site: Site) {
+        // TODO:
+//        if (site.getId() < 0) {
+//            presenter.removeSite(site)
+//            removeDefaultSites(site)
+//            TopSitesUtils.saveDefaultSites(getContext(), this@HomeFragment.orginalDefaultSites)
+//            refreshTopSites()
+//            TelemetryWrapper.removeTopSite(true)
+//        } else {
+//            site.setViewCount(1)
+//            BrowsingHistoryManager.getInstance().updateLastEntry(site, mTopSiteUpdateListener)
+//            TelemetryWrapper.removeTopSite(false)
+//        }
+        pinSiteManager.unpinned(site.toSiteModel())
+    }
+}
+
+private fun List<org.mozilla.focus.history.model.Site>.toRemovableSite(pinSiteManager: PinSiteManager): List<Site> =
+        map { it.toRemovableSite(pinSiteManager) }
+
+private fun org.mozilla.focus.history.model.Site.toRemovableSite(pinSiteManager: PinSiteManager): Site =
+        Site.RemovableSite(
                 id = id,
                 title = title,
                 url = url,
                 iconUri = favIconUri,
-                isDefault = isDefault
-            )
-}
+                viewCount = viewCount,
+                lastViewTimestamp = lastViewTimestamp,
+                isDefault = isDefault,
+                isPinned = pinSiteManager.isPinned(this)
+        )
+
+private fun Site.toSiteModel(): org.mozilla.focus.history.model.Site =
+        org.mozilla.focus.history.model.Site(
+                id,
+                title,
+                url,
+                viewCount,
+                lastViewTimestamp,
+                iconUri
+        ).apply {
+            isDefault = when (this@toSiteModel) {
+                is Site.FixedSite -> true
+                is Site.RemovableSite -> this@toSiteModel.isDefault
+            }
+        }

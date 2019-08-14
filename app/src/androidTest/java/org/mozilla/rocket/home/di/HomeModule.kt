@@ -7,6 +7,8 @@ import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.spy
 import org.mozilla.focus.utils.Settings
 import org.mozilla.rocket.home.HomeViewModelFactory
+import org.mozilla.rocket.home.pinsite.PinSiteManager
+import org.mozilla.rocket.home.pinsite.SharedPreferencePinSiteDelegate
 import org.mozilla.rocket.home.topsites.repository.TopSitesRepo
 import javax.inject.Singleton
 
@@ -26,9 +28,18 @@ object HomeModule {
     @JvmStatic
     @Singleton
     @Provides
-    fun provideTopSitesRepo(appContext: Context): TopSitesRepo =
-            spy(TopSitesRepo(appContext)).apply {
+    fun provideTopSitesRepo(
+        appContext: Context,
+        pinSiteManager: PinSiteManager
+    ): TopSitesRepo =
+            spy(TopSitesRepo(appContext, pinSiteManager)).apply {
                 // mock return value during testing
                 doReturn(TOP_SITES).`when`(this).getDefaultTopSitesJsonString()
             }
+
+    @JvmStatic
+    @Singleton
+    @Provides
+    fun providePinSiteManager(appContext: Context): PinSiteManager =
+            PinSiteManager(SharedPreferencePinSiteDelegate(appContext))
 }

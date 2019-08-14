@@ -102,21 +102,28 @@ sealed class Site(
     open val id: Long,
     open val title: String,
     open val url: String,
-    open val iconUri: String?
+    open val iconUri: String?,
+    open val viewCount: Long,
+    open val lastViewTimestamp: Long
 ) : DelegateAdapter.UiModel() {
 
     data class FixedSite(
         override val id: Long,
         override val title: String,
         override val url: String,
-        override val iconUri: String?
-    ) : Site(id, title, url, iconUri)
+        override val iconUri: String?,
+        override val viewCount: Long,
+        override val lastViewTimestamp: Long
+    ) : Site(id, title, url, iconUri, viewCount, lastViewTimestamp)
 
     data class RemovableSite(
         override val id: Long,
         override val title: String,
         override val url: String,
         override val iconUri: String?,
-        val isDefault: Boolean
-    ) : Site(id, title, url, iconUri)
+        override val viewCount: Long,
+        override val lastViewTimestamp: Long,
+        val isDefault: Boolean,
+        val isPinned: Boolean
+    ) : Site(id, title, url, iconUri, viewCount, lastViewTimestamp)
 }

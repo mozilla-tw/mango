@@ -127,9 +127,9 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
                 ScreenNavigator.get(context).showBrowserScreen(it.url, true, false)
             })
             topSiteLongClicked.observe(this@HomeFragment, Observer { site ->
+                site as Site.RemovableSite
                 val anchorView = main_list.findViewWithTag<View>(TOP_SITE_LONG_CLICK_TARGET).apply { tag = null }
-                val isPinned = true // TODO
-                val allowToPin = !isPinned && homeViewModel.pinEnabled.value == true
+                val allowToPin = !site.isPinned && homeViewModel.pinEnabled.value == true
                 showTopSiteMenu(anchorView, allowToPin, site)
             })
         }

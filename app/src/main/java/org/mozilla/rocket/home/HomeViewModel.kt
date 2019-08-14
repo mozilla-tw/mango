@@ -13,11 +13,11 @@ import org.mozilla.rocket.home.topsites.repository.TopSitesRepo
 
 class HomeViewModel(
     private val settings: Settings,
-    topSitesRepo: TopSitesRepo
+    private val topSitesRepo: TopSitesRepo
 ) : ViewModel() {
 
     val sitePages: LiveData<List<SitePage>> = topSitesRepo.topSites.map { it.toSitePages() }
-    val pinEnabled = MutableLiveData<Boolean>()
+    val pinEnabled = MutableLiveData<Boolean>().apply { topSitesRepo.isPinEnabled() }
 
     val toggleBackgroundColor = SingleLiveEvent<Unit>()
     val resetBackgroundColor = SingleLiveEvent<Unit>()
@@ -66,17 +66,11 @@ class HomeViewModel(
             }
 
     fun onPinTopSiteClicked(site: Site) {
-        when (site) {
-            is Site.FixedSite -> return // TODO:
-            is Site.RemovableSite -> return // TODO:
-        }
+        topSitesRepo.pin(site)
     }
 
     fun onRemoveTopSiteClicked(site: Site) {
-        when (site) {
-            is Site.FixedSite -> return // TODO:
-            is Site.RemovableSite -> return // TODO:
-        }
+        topSitesRepo.remove(site)
     }
 
     companion object {
