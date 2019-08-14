@@ -45,7 +45,7 @@ class SiteViewHolder(
         val backgroundColor = calculateBackgroundColor(favicon)
         ViewCompat.setBackgroundTintList(content_image, ColorStateList.valueOf(backgroundColor))
 
-        itemView.setOnClickListener { homeViewModel.onTopSiteClicked(site) }
+        itemView.setOnClickListener { homeViewModel.onTopSiteClicked(site, adapterPosition) }
     }
 
     private fun getFavicon(context: Context, site: Site): Bitmap {
@@ -94,20 +94,23 @@ sealed class Site(
     open val id: Long,
     open val title: String,
     open val url: String,
-    open val iconUri: String?
+    open val iconUri: String?,
+    open val isDefault: Boolean
 ) : DelegateAdapter.UiModel() {
 
     data class FixedSite(
         override val id: Long,
         override val title: String,
         override val url: String,
-        override val iconUri: String?
-    ) : Site(id, title, url, iconUri)
+        override val iconUri: String?,
+        override val isDefault: Boolean
+    ) : Site(id, title, url, iconUri, isDefault)
 
     data class RemovableSite(
         override val id: Long,
         override val title: String,
         override val url: String,
-        override val iconUri: String?
-    ) : Site(id, title, url, iconUri)
+        override val iconUri: String?,
+        override val isDefault: Boolean
+    ) : Site(id, title, url, iconUri, isDefault)
 }

@@ -52,6 +52,7 @@ open class TopSitesRepo(private val appContext: Context) {
                 id = id,
                 title = title,
                 url = url,
-                iconUri = favIconUri
+                iconUri = favIconUri,
+                isDefault = false
             )
 }

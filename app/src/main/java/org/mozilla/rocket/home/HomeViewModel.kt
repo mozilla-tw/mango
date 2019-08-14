@@ -2,6 +2,7 @@ package org.mozilla.rocket.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.utils.Settings
 import org.mozilla.rocket.download.SingleLiveEvent
 import org.mozilla.rocket.extension.map
@@ -43,8 +44,12 @@ class HomeViewModel(
         // TODO:
     }
 
-    fun onTopSiteClicked(site: Site) {
+    fun onTopSiteClicked(site: Site, position: Int) {
         topSiteClicked.value = site
+        site.isDefault.let { allowToLogTitle ->
+            val title = if (allowToLogTitle) site.title else ""
+            TelemetryWrapper.clickTopSiteOn(position, title)
+        }
     }
 
     companion object {

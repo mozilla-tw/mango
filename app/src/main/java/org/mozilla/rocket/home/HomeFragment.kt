@@ -118,6 +118,9 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
         homeViewModel.sitePages.observe(this, Observer {
             topSitesAdapter.setData(it)
         })
+        homeViewModel.topSiteClicked.observe(this, Observer {
+            ScreenNavigator.get(context).showBrowserScreen(it.url, true, false)
+        })
     }
 
     private fun setupFxaView(fragmentView: View?) {
