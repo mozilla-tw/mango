@@ -1,35 +1,37 @@
 package org.mozilla.rocket.home
 
-import androidx.lifecycle.LiveData
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.utils.Settings
 import org.mozilla.rocket.download.SingleLiveEvent
-import org.mozilla.rocket.extension.map
-import org.mozilla.rocket.home.topsites.data.TopSitesRepo
+import org.mozilla.rocket.home.topsites.domain.GetTopSitesUseCase
 import org.mozilla.rocket.home.topsites.ui.Site
 import org.mozilla.rocket.home.topsites.ui.SitePage
 
 class HomeViewModel(
     private val settings: Settings,
-    private val topSitesRepo: TopSitesRepo
+    private val getTopSitesUseCase: GetTopSitesUseCase
 ) : ViewModel() {
 
-    val sitePages: LiveData<List<SitePage>> = topSitesRepo.topSites.map { it.toSitePages() }
-    val pinEnabled = MutableLiveData<Boolean>().apply { topSitesRepo.isPinEnabled() }
+    val sitePages = MutableLiveData<List<SitePage>>()
+    val pinEnabled = MutableLiveData<Boolean>().apply {
+        // TODO: Fix this
+//        topSitesRepo.isPinEnabled()
+    }
 
     val toggleBackgroundColor = SingleLiveEvent<Unit>()
     val resetBackgroundColor = SingleLiveEvent<Unit>()
     val topSiteClicked = SingleLiveEvent<Site>()
     val topSiteLongClicked = SingleLiveEvent<Site>()
 
-    private fun List<Site>.toSitePages() = chunked(TOP_SITES_PER_PAGE)
+    private fun List<Site>.toSitePages(): List<SitePage> = chunked(TOP_SITES_PER_PAGE)
             .filterIndexed { index, _ -> index < TOP_SITES_MAX_PAGE_SIZE }
             .map { SitePage(it) }
 
     fun updateTopSitesData() {
-        topSitesRepo.updateTopSitesData()
+        getTopSitesUseCase { sitePages.value = it.toSitePages() }
     }
 
     fun onBackgroundViewDoubleTap(): Boolean {
@@ -70,11 +72,15 @@ class HomeViewModel(
             }
 
     fun onPinTopSiteClicked(site: Site) {
-        topSitesRepo.pin(site)
+        // TODO: fix this
+        Log.e("todo", site.toString())
+//        topSitesRepo.pin(site)
     }
 
     fun onRemoveTopSiteClicked(site: Site) {
-        topSitesRepo.remove(site)
+        // TODO: fix this
+        Log.e("todo", site.toString())
+//        topSitesRepo.remove(site)
     }
 
     companion object {
