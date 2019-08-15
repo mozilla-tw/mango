@@ -7,9 +7,9 @@ import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.utils.Settings
 import org.mozilla.rocket.download.SingleLiveEvent
 import org.mozilla.rocket.extension.map
-import org.mozilla.rocket.home.topsites.Site
-import org.mozilla.rocket.home.topsites.SitePage
-import org.mozilla.rocket.home.topsites.repository.TopSitesRepo
+import org.mozilla.rocket.home.topsites.data.TopSitesRepo
+import org.mozilla.rocket.home.topsites.ui.Site
+import org.mozilla.rocket.home.topsites.ui.SitePage
 
 class HomeViewModel(
     private val settings: Settings,

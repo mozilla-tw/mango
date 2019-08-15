@@ -7,7 +7,7 @@ import org.mozilla.focus.utils.Settings
 import org.mozilla.rocket.home.HomeViewModelFactory
 import org.mozilla.rocket.home.pinsite.PinSiteManager
 import org.mozilla.rocket.home.pinsite.SharedPreferencePinSiteDelegate
-import org.mozilla.rocket.home.topsites.repository.TopSitesRepo
+import org.mozilla.rocket.home.topsites.data.TopSitesRepo
 import javax.inject.Singleton
 
 @Module

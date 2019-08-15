@@ -27,10 +27,10 @@ import org.mozilla.rocket.chrome.ChromeViewModelFactory
 import org.mozilla.rocket.content.activityViewModelProvider
 import org.mozilla.rocket.content.appComponent
 import org.mozilla.rocket.content.viewModelProvider
-import org.mozilla.rocket.home.topsites.Site
-import org.mozilla.rocket.home.topsites.SitePage
-import org.mozilla.rocket.home.topsites.SitePageAdapterDelegate
-import org.mozilla.rocket.home.topsites.SiteViewHolder.Companion.TOP_SITE_LONG_CLICK_TARGET
+import org.mozilla.rocket.home.topsites.ui.Site
+import org.mozilla.rocket.home.topsites.ui.SitePage
+import org.mozilla.rocket.home.topsites.ui.SitePageAdapterDelegate
+import org.mozilla.rocket.home.topsites.ui.SiteViewHolder.Companion.TOP_SITE_LONG_CLICK_TARGET
 import org.mozilla.rocket.theme.ThemeManager
 import javax.inject.Inject
 

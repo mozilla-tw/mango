@@ -1,4 +1,4 @@
-package org.mozilla.rocket.home.topsites
+package org.mozilla.rocket.home.topsites.ui
 
 import android.view.View
 import kotlinx.android.synthetic.main.item_top_site_page.page_list

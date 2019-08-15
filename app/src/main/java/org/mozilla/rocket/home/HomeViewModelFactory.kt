@@ -3,7 +3,7 @@ package org.mozilla.rocket.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import org.mozilla.focus.utils.Settings
-import org.mozilla.rocket.home.topsites.repository.TopSitesRepo
+import org.mozilla.rocket.home.topsites.data.TopSitesRepo
 
 class HomeViewModelFactory(
     private val settings: Settings,

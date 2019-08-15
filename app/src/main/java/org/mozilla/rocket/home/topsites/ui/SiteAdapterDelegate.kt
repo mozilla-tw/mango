@@ -1,4 +1,4 @@
-package org.mozilla.rocket.home.topsites
+package org.mozilla.rocket.home.topsites.ui
 
 import android.content.Context
 import android.content.res.ColorStateList
