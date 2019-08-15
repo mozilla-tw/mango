@@ -28,6 +28,10 @@ class HomeViewModel(
             .filterIndexed { index, _ -> index < TOP_SITES_MAX_PAGE_SIZE }
             .map { SitePage(it) }
 
+    fun updateTopSitesData() {
+        topSitesRepo.updateTopSitesData()
+    }
+
     fun onBackgroundViewDoubleTap(): Boolean {
         // Not allowed double tap to switch theme when night mode is on
         if (settings.isNightModeEnable) return false

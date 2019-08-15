@@ -144,6 +144,11 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
         ScreenNavigator.get(context).addMissionDetail()
     }
 
+    override fun onResume() {
+        super.onResume()
+        homeViewModel.updateTopSitesData()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         themeManager.unsubscribeThemeChange(home_background)
