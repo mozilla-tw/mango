@@ -11,6 +11,7 @@ import org.mozilla.rocket.home.pinsite.PinSiteManager
 import org.mozilla.rocket.home.pinsite.SharedPreferencePinSiteDelegate
 import org.mozilla.rocket.home.topsites.data.TopSitesRepo
 import org.mozilla.rocket.home.topsites.domain.GetTopSitesUseCase
+import org.mozilla.rocket.home.topsites.domain.PinTopSiteUseCase
 import org.mozilla.rocket.home.topsites.domain.TopSitesConfigsUseCase
 import javax.inject.Singleton
 
@@ -25,8 +26,14 @@ object HomeModule {
     fun provideHomeViewModelFactory(
         settings: Settings,
         getTopSitesUseCase: GetTopSitesUseCase,
-        topSitesConfigsUseCase: TopSitesConfigsUseCase
-    ): HomeViewModelFactory = HomeViewModelFactory(settings, getTopSitesUseCase, topSitesConfigsUseCase)
+        topSitesConfigsUseCase: TopSitesConfigsUseCase,
+        pinTopSiteUseCase: PinTopSiteUseCase
+    ): HomeViewModelFactory = HomeViewModelFactory(
+        settings,
+        getTopSitesUseCase,
+        topSitesConfigsUseCase,
+        pinTopSiteUseCase
+    )
 
     @JvmStatic
     @Singleton
@@ -37,6 +44,11 @@ object HomeModule {
     @Singleton
     @Provides
     fun provideTopSitesConfigsUseCase(topSitesRepo: TopSitesRepo): TopSitesConfigsUseCase = TopSitesConfigsUseCase(topSitesRepo)
+
+    @JvmStatic
+    @Singleton
+    @Provides
+    fun providePinTopSiteUseCase(topSitesRepo: TopSitesRepo): PinTopSiteUseCase = PinTopSiteUseCase(topSitesRepo)
 
     @JvmStatic
     @Singleton

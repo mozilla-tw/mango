@@ -9,12 +9,14 @@ import android.os.StrictMode
 import android.view.View
 import androidx.core.view.ViewCompat
 import kotlinx.android.synthetic.main.item_top_site.content_image
+import kotlinx.android.synthetic.main.item_top_site.pin_indicator
 import kotlinx.android.synthetic.main.item_top_site.text
 import org.mozilla.focus.utils.DimenUtils
 import org.mozilla.icon.FavIconUtils
 import org.mozilla.rocket.adapter.AdapterDelegate
 import org.mozilla.rocket.adapter.DelegateAdapter
 import org.mozilla.rocket.home.HomeViewModel
+import org.mozilla.rocket.home.pinsite.PinViewWrapper
 import org.mozilla.strictmodeviolator.StrictModeViolation
 
 class SiteAdapterDelegate(private val homeViewModel: HomeViewModel) : AdapterDelegate {
@@ -44,6 +46,15 @@ class SiteViewHolder(
         // Background color
         val backgroundColor = calculateBackgroundColor(favicon)
         ViewCompat.setBackgroundTintList(content_image, ColorStateList.valueOf(backgroundColor))
+
+        // Pin
+        PinViewWrapper(pin_indicator).run {
+            visibility = when (site) {
+                is Site.FixedSite -> View.GONE
+                is Site.RemovableSite -> if (site.isPinned) View.VISIBLE else View.GONE
+            }
+            setPinColor(backgroundColor)
+        }
 
         itemView.setOnClickListener { homeViewModel.onTopSiteClicked(site, adapterPosition) }
         itemView.setOnLongClickListener {

@@ -98,7 +98,6 @@ open class TopSitesRepo(
 
     fun pin(site: Site) {
         pinSiteManager.pin(site)
-        // TODO: notify data changed
     }
 
     fun remove(site: Site) {
@@ -197,22 +196,6 @@ open class TopSitesRepo(
             handler.dispatchMessage(message)
         }
     }
-
-    // TODO: move
-    private fun org.mozilla.rocket.home.topsites.ui.Site.toSiteModel(): Site =
-            Site(
-                id,
-                title,
-                url,
-                viewCount,
-                lastViewTimestamp,
-                iconUri
-            ).apply {
-                isDefault = when (this@toSiteModel) {
-                    is org.mozilla.rocket.home.topsites.ui.Site.FixedSite -> true
-                    is org.mozilla.rocket.home.topsites.ui.Site.RemovableSite -> this@toSiteModel.isDefault
-                }
-            }
 
     companion object {
         private const val TOP_SITES_PREF = "topsites_pref"
