@@ -7,19 +7,18 @@ import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.utils.Settings
 import org.mozilla.rocket.download.SingleLiveEvent
 import org.mozilla.rocket.home.topsites.domain.GetTopSitesUseCase
+import org.mozilla.rocket.home.topsites.domain.TopSitesConfigsUseCase
 import org.mozilla.rocket.home.topsites.ui.Site
 import org.mozilla.rocket.home.topsites.ui.SitePage
 
 class HomeViewModel(
     private val settings: Settings,
-    private val getTopSitesUseCase: GetTopSitesUseCase
+    private val getTopSitesUseCase: GetTopSitesUseCase,
+    topSitesConfigsUseCase: TopSitesConfigsUseCase
 ) : ViewModel() {
 
     val sitePages = MutableLiveData<List<SitePage>>()
-    val pinEnabled = MutableLiveData<Boolean>().apply {
-        // TODO: Fix this
-//        topSitesRepo.isPinEnabled()
-    }
+    val pinEnabled = MutableLiveData<Boolean>().apply { value = topSitesConfigsUseCase().isPinEnabled }
 
     val toggleBackgroundColor = SingleLiveEvent<Unit>()
     val resetBackgroundColor = SingleLiveEvent<Unit>()
