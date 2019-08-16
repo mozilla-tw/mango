@@ -6,8 +6,9 @@ import java.util.Locale
 
 class GetTopSitesUseCase(private val topSitesRepo: TopSitesRepo) {
 
+    private val fixedSites: List<org.mozilla.focus.history.model.Site> by lazy { topSitesRepo.getFixedSites() }
+
     operator fun invoke(callback: (List<Site>) -> Unit) {
-        val fixedSites = topSitesRepo.getFixedSites()
         val pinnedSites = topSitesRepo.getPinnedSites()
         val defaultSites = topSitesRepo.getDefaultSites()
 

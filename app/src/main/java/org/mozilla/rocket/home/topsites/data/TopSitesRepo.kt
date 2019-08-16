@@ -34,8 +34,9 @@ open class TopSitesRepo(
     private var needToCheckDbVersion = true
 
     fun getFixedSites(): List<Site> {
-        // TODO:
-        return emptyList()
+        val jsonArray = TopSitesUtils.getFixedSitesJsonArrayFromAssets(appContext)
+
+        return TopSitesUtils.paresJsonToList(appContext, jsonArray)
     }
 
     fun getPinnedSites(): List<Site> = pinSiteManager.getPinSites()
