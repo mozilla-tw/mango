@@ -38,7 +38,6 @@ import org.mozilla.rocket.content.games.ui.GamesActivity
 import org.mozilla.rocket.content.news.NewsFragment
 import org.mozilla.rocket.content.news.NewsSettingFragment
 import org.mozilla.rocket.content.news.NewsTabFragment
-import org.mozilla.rocket.home.di.HomeModule
 import org.mozilla.rocket.menu.MenuDialog
 import org.mozilla.rocket.privately.PrivateModeActivity
 import org.mozilla.rocket.privately.home.PrivateHomeFragment
@@ -59,7 +58,6 @@ import javax.inject.Singleton
         ContentModule::class,
         ChromeModule::class,
         TabsModule::class,
-        HomeModule::class,
         TopSitesModule::class
     ]
 )

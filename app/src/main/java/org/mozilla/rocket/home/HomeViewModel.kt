@@ -3,8 +3,9 @@ package org.mozilla.rocket.home
 import androidx.lifecycle.ViewModel
 import org.mozilla.focus.utils.Settings
 import org.mozilla.rocket.download.SingleLiveEvent
+import javax.inject.Inject
 
-class HomeViewModel(
+class HomeViewModel @Inject constructor(
     private val settings: Settings
 ) : ViewModel() {
 

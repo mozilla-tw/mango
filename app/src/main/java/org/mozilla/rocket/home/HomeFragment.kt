@@ -29,8 +29,6 @@ import javax.inject.Inject
 class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
 
     @Inject
-    lateinit var homeViewModelFactory: HomeViewModelFactory
-    @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var homeViewModel: HomeViewModel
@@ -45,7 +43,7 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
     override fun onCreate(savedInstanceState: Bundle?) {
         appComponent().inject(this)
         super.onCreate(savedInstanceState)
-        homeViewModel = viewModelProvider(homeViewModelFactory)
+        homeViewModel = viewModelProvider(viewModelFactory)
         chromeViewModel = activityViewModelProvider(viewModelFactory)
     }
 
