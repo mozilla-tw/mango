@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_games.recycler_view
 import kotlinx.android.synthetic.main.fragment_games.spinner
@@ -23,7 +24,7 @@ import javax.inject.Inject
 class BrowserGamesFragment : Fragment() {
 
     @Inject
-    lateinit var gamesViewModelFactory: GamesViewModel.Factory
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var gamesViewModel: GamesViewModel
     private lateinit var adapter: DelegateAdapter
@@ -31,7 +32,7 @@ class BrowserGamesFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         appComponent().inject(this)
         super.onCreate(savedInstanceState)
-        gamesViewModel = activityViewModelProvider(gamesViewModelFactory)
+        gamesViewModel = activityViewModelProvider(viewModelFactory)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

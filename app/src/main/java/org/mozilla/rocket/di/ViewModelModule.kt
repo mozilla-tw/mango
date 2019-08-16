@@ -5,12 +5,19 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.Binds
 import dagger.MapKey
 import dagger.Module
+import dagger.multibindings.IntoMap
+import org.mozilla.rocket.content.games.ui.GamesViewModel
 import javax.inject.Inject
 import javax.inject.Provider
 import kotlin.reflect.KClass
 
 @Module
 abstract class ViewModelModule {
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(GamesViewModel::class)
+    internal abstract fun bindGamesViewModel(viewModel: GamesViewModel): ViewModel
 
     @Binds
     internal abstract fun bindViewModelFactory(factory: AppViewModelFactory): ViewModelProvider.Factory

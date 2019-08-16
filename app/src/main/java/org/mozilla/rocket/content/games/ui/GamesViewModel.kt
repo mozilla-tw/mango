@@ -2,7 +2,6 @@ package org.mozilla.rocket.content.games.ui
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -13,8 +12,9 @@ import org.mozilla.rocket.content.games.data.GamesRepo
 import org.mozilla.rocket.content.games.ui.adapter.GameItem
 import org.mozilla.rocket.download.SingleLiveEvent
 import org.mozilla.rocket.util.ToastMessage
+import javax.inject.Inject
 
-class GamesViewModel(
+class GamesViewModel @Inject constructor(
     private val gamesRepo: GamesRepo
 ) : ViewModel() {
 
@@ -59,18 +59,5 @@ class GamesViewModel(
         object Idle : State()
         object Loading : State()
         class Error(val t: Throwable) : State()
-    }
-
-    class Factory(
-        private val gamesRepo: GamesRepo
-    ) : ViewModelProvider.NewInstanceFactory() {
-
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(GamesViewModel::class.java)) {
-                return GamesViewModel(gamesRepo) as T
-            }
-            throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
-        }
     }
 }
