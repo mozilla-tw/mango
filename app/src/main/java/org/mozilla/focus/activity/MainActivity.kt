@@ -68,7 +68,6 @@ import org.mozilla.rocket.content.ContentPortalViewState
 import org.mozilla.rocket.content.appComponent
 import org.mozilla.rocket.content.viewModelProvider
 import org.mozilla.rocket.download.DownloadIndicatorViewModel
-import org.mozilla.rocket.download.DownloadViewModelFactory
 import org.mozilla.rocket.extension.nonNullObserve
 import org.mozilla.rocket.home.HomeFragment
 import org.mozilla.rocket.landing.DialogQueue
@@ -98,8 +97,6 @@ class MainActivity : BaseActivity(),
         PromotionViewContract,
         InAppUpdateController.ViewDelegate {
 
-    @Inject
-    lateinit var downloadViewModelFactory: DownloadViewModelFactory
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject
@@ -159,7 +156,7 @@ class MainActivity : BaseActivity(),
         appComponent().inject(this)
         super.onCreate(savedInstanceState)
         chromeViewModel = viewModelProvider(viewModelFactory)
-        downloadIndicatorViewModel = viewModelProvider(downloadViewModelFactory)
+        downloadIndicatorViewModel = viewModelProvider(viewModelFactory)
         themeManager = ThemeManager(this)
         screenNavigator = ScreenNavigator(this)
         appUpdateController = InAppUpdateController(

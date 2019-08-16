@@ -9,6 +9,7 @@ import dagger.multibindings.IntoMap
 import org.mozilla.rocket.chrome.ChromeViewModel
 import org.mozilla.rocket.content.games.ui.GamesViewModel
 import org.mozilla.rocket.content.news.NewsViewModel
+import org.mozilla.rocket.download.DownloadIndicatorViewModel
 import javax.inject.Inject
 import javax.inject.Provider
 import kotlin.reflect.KClass
@@ -20,6 +21,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(ChromeViewModel::class)
     internal abstract fun bindChromeViewModel(viewModel: ChromeViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(DownloadIndicatorViewModel::class)
+    internal abstract fun bindDownloadIndicatorViewModel(viewModel: DownloadIndicatorViewModel): ViewModel
 
     @Binds
     @IntoMap

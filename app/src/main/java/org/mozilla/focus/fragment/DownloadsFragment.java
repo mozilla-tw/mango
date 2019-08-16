@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,7 +37,6 @@ import org.mozilla.rocket.content.ExtentionKt;
 import org.mozilla.rocket.download.DownloadIndicatorViewModel;
 import org.mozilla.rocket.download.DownloadInfoPack;
 import org.mozilla.rocket.download.DownloadInfoViewModel;
-import org.mozilla.rocket.download.DownloadViewModelFactory;
 
 import javax.inject.Inject;
 
@@ -46,7 +46,7 @@ public class DownloadsFragment extends PanelFragment implements DownloadInfoView
     private static final int QUERY_PROGRESS_DELAY = 500;
 
     @Inject
-    DownloadViewModelFactory downloadViewModelFactory;
+    ViewModelProvider.Factory viewModelFactory;
 
     private RecyclerView recyclerView;
     private DownloadListAdapter downloadListAdapter;
@@ -86,7 +86,7 @@ public class DownloadsFragment extends PanelFragment implements DownloadInfoView
                              Bundle savedInstanceState) {
         recyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_downloads, container, false);
 
-        viewModel = ViewModelProviders.of(requireActivity(), downloadViewModelFactory).get(DownloadInfoViewModel.class);
+        viewModel = ViewModelProviders.of(requireActivity(), viewModelFactory).get(DownloadInfoViewModel.class);
         downloadListAdapter = new DownloadListAdapter(getContext(), viewModel);
         viewModel.getDownloadInfoObservable().observe(getViewLifecycleOwner(), downloadInfoPack -> {
             if (downloadInfoPack != null) {
@@ -171,7 +171,7 @@ public class DownloadsFragment extends PanelFragment implements DownloadInfoView
         viewModel.markAllItemsAreRead();
         // When download indicator is showing and download is failed, we won't get notified by DownloadManager. Then back to BrowserFragment/HomeFragment will not
         // go through fragment's onResume i.e. LiveData's onActive. So force trigger download indicator update here.
-        ViewModelProviders.of(requireActivity(), downloadViewModelFactory).get(DownloadIndicatorViewModel.class)
+        ViewModelProviders.of(requireActivity(), viewModelFactory).get(DownloadIndicatorViewModel.class)
                 .updateIndicator();
         cleanUp();
         super.onDestroy();

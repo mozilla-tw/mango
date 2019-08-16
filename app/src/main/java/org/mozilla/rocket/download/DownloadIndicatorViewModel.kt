@@ -4,8 +4,9 @@ import android.app.DownloadManager
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import org.mozilla.focus.download.DownloadInfo
+import javax.inject.Inject
 
-class DownloadIndicatorViewModel(private val repository: DownloadInfoRepository) : ViewModel() {
+class DownloadIndicatorViewModel @Inject constructor(private val repository: DownloadInfoRepository) : ViewModel() {
 
     enum class Status {
         DEFAULT, DOWNLOADING, UNREAD, WARNING

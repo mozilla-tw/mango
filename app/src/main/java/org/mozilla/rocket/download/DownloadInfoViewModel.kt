@@ -9,8 +9,9 @@ import org.mozilla.focus.download.DownloadInfo
 import org.mozilla.threadutils.ThreadUtils
 import java.io.File
 import java.net.URI
+import javax.inject.Inject
 
-class DownloadInfoViewModel(private val repository: DownloadInfoRepository) : ViewModel() {
+class DownloadInfoViewModel @Inject constructor(private val repository: DownloadInfoRepository) : ViewModel() {
 
     interface OnProgressUpdateListener {
         fun onStartUpdate()
