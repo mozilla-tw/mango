@@ -10,12 +10,14 @@ import android.preference.PreferenceManager
 import androidx.sqlite.db.SupportSQLiteQueryBuilder
 import org.json.JSONArray
 import org.json.JSONException
+import org.json.JSONObject
 import org.mozilla.fileutils.FileUtils
 import org.mozilla.focus.history.BrowsingHistoryManager
 import org.mozilla.focus.history.model.Site
 import org.mozilla.focus.provider.HistoryContract
 import org.mozilla.focus.provider.HistoryDatabaseHelper
 import org.mozilla.focus.provider.QueryHandler
+import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.utils.DimenUtils
 import org.mozilla.focus.utils.TopSitesUtils
 import org.mozilla.icon.FavIconUtils
@@ -70,20 +72,8 @@ open class TopSitesRepo(
     }
 
     fun getDefaultSites(): List<Site> {
-        // use different implementation to provide default top sites.
-        val jsonString = getDefaultTopSitesJsonString()
-
-        // if no default sites data in SharedPreferences, load data from assets.
-        val jsonArray = if (jsonString != null) {
-            try {
-                JSONArray(jsonString)
-            } catch (e: JSONException) {
-                e.printStackTrace()
-                null
-            }
-        } else {
-            TopSitesUtils.getDefaultSitesJsonArrayFromAssets(appContext)
-        }
+        val jsonArray = getDefaultTopSitesJsonArrayFromSharedPref()
+                ?: TopSitesUtils.getDefaultSitesJsonArrayFromAssets(appContext)
 
         return TopSitesUtils.paresJsonToList(appContext, jsonArray)
     }
@@ -94,26 +84,60 @@ open class TopSitesRepo(
                 .getString(TOP_SITES_PREF, null)
     }
 
+    private fun getDefaultTopSitesJsonArrayFromSharedPref(): JSONArray? {
+        val jsonString = getDefaultTopSitesJsonString()
+
+        return if (jsonString != null) {
+            try {
+                JSONArray(jsonString)
+            } catch (e: JSONException) {
+                e.printStackTrace()
+                null
+            }
+        } else {
+            null
+        }
+    }
+
     fun isPinEnabled(): Boolean = pinSiteManager.isEnabled()
 
     fun pin(site: Site) {
         pinSiteManager.pin(site)
     }
 
-    fun remove(site: Site) {
-        // TODO:
-//        if (site.getId() < 0) {
-//            presenter.removeSite(site)
-//            removeDefaultSites(site)
-//            TopSitesUtils.saveDefaultSites(getContext(), this@HomeFragment.orginalDefaultSites)
-//            refreshTopSites()
-//            TelemetryWrapper.removeTopSite(true)
-//        } else {
-//            site.setViewCount(1)
-//            BrowsingHistoryManager.getInstance().updateLastEntry(site, topSiteUpdateListener)
-//            TelemetryWrapper.removeTopSite(false)
-//        }
-        pinSiteManager.unpinned(site)
+    fun remove(site: Site, callback: () -> Unit) {
+        val isDefaultSite = site.id < 0
+        if (isDefaultSite) {
+            removeDefaultSite(site)
+            pinSiteManager.unpinned(site)
+            callback.invoke()
+            TelemetryWrapper.removeTopSite(true)
+        } else {
+            site.viewCount = 1
+            BrowsingHistoryManager.getInstance().updateLastEntry(site) { callback.invoke() }
+            pinSiteManager.unpinned(site)
+            TelemetryWrapper.removeTopSite(false)
+        }
+    }
+
+    private fun removeDefaultSite(site: Site) {
+        val defaultSitesJsonArray = getDefaultTopSitesJsonArrayFromSharedPref()
+        if (defaultSitesJsonArray != null) {
+            try {
+                defaultSitesJsonArray.apply {
+                    for (i in 0 until this.length()) {
+                        val jsonObject = this.get(i) as JSONObject
+                        if (site.id == jsonObject.getLong("id")) {
+                            this.remove(i)
+                            break
+                        }
+                    }
+                }
+                TopSitesUtils.saveDefaultSites(appContext, defaultSitesJsonArray)
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
+        }
     }
 
     fun isPinned(site: Site): Boolean = pinSiteManager.isPinned(site)

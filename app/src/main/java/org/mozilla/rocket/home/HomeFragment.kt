@@ -167,6 +167,7 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
     private fun showTopSiteMenu(anchorView: View, pinEnabled: Boolean, site: Site) {
         PopupMenu(anchorView.context, anchorView, Gravity.CLIP_HORIZONTAL)
                 .apply {
+                    menuInflater.inflate(R.menu.menu_top_site_item, menu)
                     menu.findItem(R.id.pin)?.apply {
                         isVisible = pinEnabled
                     }
@@ -179,7 +180,6 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
 
                         true
                     }
-                    menuInflater.inflate(R.menu.menu_top_site_item, menu)
                 }
                 .show()
     }

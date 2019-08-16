@@ -1,6 +1,5 @@
 package org.mozilla.rocket.home
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import org.mozilla.focus.telemetry.TelemetryWrapper
@@ -8,6 +7,7 @@ import org.mozilla.focus.utils.Settings
 import org.mozilla.rocket.download.SingleLiveEvent
 import org.mozilla.rocket.home.topsites.domain.GetTopSitesUseCase
 import org.mozilla.rocket.home.topsites.domain.PinTopSiteUseCase
+import org.mozilla.rocket.home.topsites.domain.RemoveTopSiteUseCase
 import org.mozilla.rocket.home.topsites.domain.TopSitesConfigsUseCase
 import org.mozilla.rocket.home.topsites.ui.Site
 import org.mozilla.rocket.home.topsites.ui.SitePage
@@ -16,7 +16,8 @@ class HomeViewModel(
     private val settings: Settings,
     private val getTopSitesUseCase: GetTopSitesUseCase,
     topSitesConfigsUseCase: TopSitesConfigsUseCase,
-    private val pinTopSiteUseCase: PinTopSiteUseCase
+    private val pinTopSiteUseCase: PinTopSiteUseCase,
+    private val removeTopSiteUseCase: RemoveTopSiteUseCase
 ) : ViewModel() {
 
     val sitePages = MutableLiveData<List<SitePage>>()
@@ -78,9 +79,9 @@ class HomeViewModel(
     }
 
     fun onRemoveTopSiteClicked(site: Site) {
-        // TODO: fix this
-        Log.e("todo", site.toString())
-//        topSitesRepo.remove(site)
+        removeTopSiteUseCase(site) {
+            updateTopSitesData()
+        }
     }
 
     companion object {
