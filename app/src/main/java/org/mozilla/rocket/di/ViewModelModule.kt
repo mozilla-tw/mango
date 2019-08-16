@@ -13,6 +13,7 @@ import org.mozilla.rocket.chrome.PrivateBottomBarViewModel
 import org.mozilla.rocket.content.games.ui.GamesViewModel
 import org.mozilla.rocket.content.news.NewsViewModel
 import org.mozilla.rocket.download.DownloadIndicatorViewModel
+import org.mozilla.rocket.urlinput.QuickSearchViewModel
 import javax.inject.Inject
 import javax.inject.Provider
 import kotlin.reflect.KClass
@@ -44,6 +45,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(MenuViewModel::class)
     internal abstract fun bindMenuViewModel(viewModel: MenuViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(QuickSearchViewModel::class)
+    internal abstract fun bindQuickSearchViewModel(viewModel: QuickSearchViewModel): ViewModel
 
     @Binds
     @IntoMap

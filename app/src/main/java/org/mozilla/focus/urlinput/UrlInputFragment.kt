@@ -37,7 +37,6 @@ import org.mozilla.rocket.content.appComponent
 import org.mozilla.rocket.urlinput.QuickSearch
 import org.mozilla.rocket.urlinput.QuickSearchAdapter
 import org.mozilla.rocket.urlinput.QuickSearchViewModel
-import org.mozilla.rocket.urlinput.QuickSearchViewModelFactory
 import java.util.Locale
 import javax.inject.Inject
 
@@ -47,8 +46,6 @@ import javax.inject.Inject
 class UrlInputFragment : Fragment(), UrlInputContract.View, View.OnClickListener,
         View.OnLongClickListener, ScreenNavigator.UrlInputScreen {
 
-    @Inject
-    lateinit var quickSearchViewModelFactory: QuickSearchViewModelFactory
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
@@ -129,7 +126,7 @@ class UrlInputFragment : Fragment(), UrlInputContract.View, View.OnClickListener
             TelemetryWrapper.clickQuickSearchEngine(quickSearch.name)
         })
         quickSearchRecyclerView.adapter = quickSearchAdapter
-        activityViewModelProvider<QuickSearchViewModel>(quickSearchViewModelFactory).run {
+        activityViewModelProvider<QuickSearchViewModel>(viewModelFactory).run {
             quickSearchObservable.observe(
                     viewLifecycleOwner,
                     Observer { quickSearchList ->

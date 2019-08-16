@@ -6,8 +6,9 @@ package org.mozilla.rocket.urlinput
 
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
+import javax.inject.Inject
 
-class QuickSearchViewModel(repository: QuickSearchRepository) : ViewModel() {
+class QuickSearchViewModel @Inject constructor(repository: QuickSearchRepository) : ViewModel() {
 
     val quickSearchObservable = MediatorLiveData<ArrayList<QuickSearch>>()
     private val liveGlobal = repository.fetchGlobal()

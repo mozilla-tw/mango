@@ -12,7 +12,6 @@ import org.mozilla.rocket.privately.PrivateMode
 import org.mozilla.rocket.urlinput.GlobalDataSource
 import org.mozilla.rocket.urlinput.LocaleDataSource
 import org.mozilla.rocket.urlinput.QuickSearchRepository
-import org.mozilla.rocket.urlinput.QuickSearchViewModelFactory
 import javax.inject.Singleton
 
 @Module
@@ -37,12 +36,6 @@ object ChromeModule {
         globalDataSource: GlobalDataSource,
         localeDataSource: LocaleDataSource
     ): QuickSearchRepository = QuickSearchRepository(globalDataSource, localeDataSource)
-
-    @JvmStatic
-    @Singleton
-    @Provides
-    fun provideQuickSearchViewModelFactory(quickSearchRepository: QuickSearchRepository): QuickSearchViewModelFactory =
-            QuickSearchViewModelFactory(quickSearchRepository)
 
     @JvmStatic
     @Singleton
