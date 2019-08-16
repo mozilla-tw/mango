@@ -15,6 +15,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import org.mozilla.focus.BuildConfig
@@ -36,7 +37,6 @@ import org.mozilla.focus.utils.ShortcutUtils
 import org.mozilla.focus.utils.SupportUtils
 import org.mozilla.rocket.chrome.ChromeViewModel
 import org.mozilla.rocket.chrome.ChromeViewModel.OpenUrlAction
-import org.mozilla.rocket.chrome.ChromeViewModelFactory
 import org.mozilla.rocket.component.LaunchIntentDispatcher
 import org.mozilla.rocket.component.PrivateSessionNotificationService
 import org.mozilla.rocket.content.appComponent
@@ -56,7 +56,7 @@ class PrivateModeActivity : BaseActivity(),
         TabsSessionProvider.SessionHost {
 
     @Inject
-    lateinit var chromeViewModelFactory: ChromeViewModelFactory
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private val LOG_TAG = "PrivateModeActivity"
     private var sessionManager: SessionManager? = null
@@ -73,7 +73,7 @@ class PrivateModeActivity : BaseActivity(),
         appComponent().inject(this)
         super.onCreate(null)
 
-        chromeViewModel = viewModelProvider(chromeViewModelFactory)
+        chromeViewModel = viewModelProvider(viewModelFactory)
         tabViewProvider = PrivateTabViewProvider(this)
         screenNavigator = ScreenNavigator(this)
 

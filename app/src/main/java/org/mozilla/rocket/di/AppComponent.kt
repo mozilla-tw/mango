@@ -18,6 +18,7 @@ package org.mozilla.rocket.di
 
 import android.content.Context
 import androidx.annotation.VisibleForTesting
+import androidx.lifecycle.ViewModelProvider
 import dagger.Component
 import org.mozilla.focus.activity.MainActivity
 import org.mozilla.focus.fragment.BrowserFragment
@@ -29,7 +30,6 @@ import org.mozilla.focus.home.repository.TopSitesRepo
 import org.mozilla.focus.persistence.TabsDatabase
 import org.mozilla.focus.persistence.di.TabsModule
 import org.mozilla.focus.urlinput.UrlInputFragment
-import org.mozilla.rocket.chrome.ChromeViewModelFactory
 import org.mozilla.rocket.chrome.di.ChromeModule
 import org.mozilla.rocket.content.di.ContentModule
 import org.mozilla.rocket.content.ecommerce.EcFragment
@@ -85,7 +85,7 @@ interface AppComponent {
     fun inject(browserGamesFragment: BrowserGamesFragment)
 
     @VisibleForTesting
-    fun chromeViewModelFactory(): ChromeViewModelFactory
+    fun viewModelFactory(): ViewModelProvider.Factory
     @VisibleForTesting
     fun tabsDatabase(): TabsDatabase
     @VisibleForTesting

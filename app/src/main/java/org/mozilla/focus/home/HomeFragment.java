@@ -39,6 +39,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -84,7 +85,6 @@ import org.mozilla.rocket.chrome.BottomBarViewModel;
 import org.mozilla.rocket.chrome.BottomBarViewModelFactory;
 import org.mozilla.rocket.chrome.ChromeViewModel;
 import org.mozilla.rocket.chrome.ChromeViewModel.OpenUrlAction;
-import org.mozilla.rocket.chrome.ChromeViewModelFactory;
 import org.mozilla.rocket.content.ExtentionKt;
 import org.mozilla.rocket.content.LifeFeedOnboarding;
 import org.mozilla.rocket.content.portal.ContentFeature;
@@ -134,7 +134,7 @@ public class HomeFragment extends LocaleAwareFragment implements TopSitesContrac
     @Inject
     BottomBarViewModelFactory bottomBarViewModelFactory;
     @Inject
-    ChromeViewModelFactory chromeViewModelFactory;
+    ViewModelProvider.Factory viewModelFactory;
     @Inject
     TopSitesRepo topSitesRepo;
 
@@ -186,7 +186,7 @@ public class HomeFragment extends LocaleAwareFragment implements TopSitesContrac
         this.presenter.setView(this);
         this.presenter.setModel(this);
         bannerHelper.setListener(this);
-        chromeViewModel = ViewModelProviders.of(requireActivity(), chromeViewModelFactory).get(ChromeViewModel.class);
+        chromeViewModel = ViewModelProviders.of(requireActivity(), viewModelFactory).get(ChromeViewModel.class);
         bottomBarViewModel = ViewModelProviders.of(requireActivity(), bottomBarViewModelFactory).get(BottomBarViewModel.class);
     }
 

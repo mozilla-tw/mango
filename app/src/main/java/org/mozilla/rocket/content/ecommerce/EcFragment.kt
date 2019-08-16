@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,7 +22,6 @@ import org.mozilla.focus.home.BannerHelper
 import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.utils.AppConfigWrapper
 import org.mozilla.rocket.chrome.ChromeViewModel
-import org.mozilla.rocket.chrome.ChromeViewModelFactory
 import org.mozilla.rocket.content.activityViewModelProvider
 import org.mozilla.rocket.content.appComponent
 import org.mozilla.rocket.content.ecommerce.data.ShoppingLink
@@ -46,14 +46,14 @@ class EcFragment : Fragment() {
     }
 
     @Inject
-    lateinit var chromeViewModelFactory: ChromeViewModelFactory
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var chromeViewModel: ChromeViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         appComponent().inject(this)
         super.onCreate(savedInstanceState)
-        chromeViewModel = activityViewModelProvider(chromeViewModelFactory)
+        chromeViewModel = activityViewModelProvider(viewModelFactory)
     }
 
     override fun onCreateView(

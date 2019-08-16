@@ -49,6 +49,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -82,7 +83,6 @@ import org.mozilla.rocket.chrome.BottomBarViewModel;
 import org.mozilla.rocket.chrome.BottomBarViewModelFactory;
 import org.mozilla.rocket.chrome.ChromeViewModel;
 import org.mozilla.rocket.chrome.ChromeViewModel.ScreenCaptureTelemetryData;
-import org.mozilla.rocket.chrome.ChromeViewModelFactory;
 import org.mozilla.rocket.content.ExtentionKt;
 import org.mozilla.rocket.content.view.BottomBar;
 import org.mozilla.rocket.download.DownloadIndicatorIntroViewHelper;
@@ -144,7 +144,7 @@ public class BrowserFragment extends LocaleAwareFragment implements ScreenNaviga
     @Inject
     BottomBarViewModelFactory bottomBarViewModelFactory;
     @Inject
-    ChromeViewModelFactory chromeViewModelFactory;
+    ViewModelProvider.Factory viewModelFactory;
 
     private int systemVisibility = ViewUtils.SYSTEM_UI_VISIBILITY_NONE;
 
@@ -223,7 +223,7 @@ public class BrowserFragment extends LocaleAwareFragment implements ScreenNaviga
         ExtentionKt.appComponent(this).inject(this);
         super.onCreate(savedInstanceState);
         bottomBarViewModel = ViewModelProviders.of(requireActivity(), bottomBarViewModelFactory).get(BottomBarViewModel.class);
-        chromeViewModel = ViewModelProviders.of(requireActivity(), chromeViewModelFactory).get(ChromeViewModel.class);
+        chromeViewModel = ViewModelProviders.of(requireActivity(), viewModelFactory).get(ChromeViewModel.class);
     }
 
     @Override

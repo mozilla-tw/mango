@@ -16,6 +16,7 @@ import android.webkit.URLUtil
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
@@ -31,7 +32,6 @@ import org.mozilla.focus.web.WebViewProvider
 import org.mozilla.focus.widget.FlowLayout
 import org.mozilla.rocket.chrome.ChromeViewModel
 import org.mozilla.rocket.chrome.ChromeViewModel.OpenUrlAction
-import org.mozilla.rocket.chrome.ChromeViewModelFactory
 import org.mozilla.rocket.content.activityViewModelProvider
 import org.mozilla.rocket.content.appComponent
 import org.mozilla.rocket.urlinput.QuickSearch
@@ -50,7 +50,7 @@ class UrlInputFragment : Fragment(), UrlInputContract.View, View.OnClickListener
     @Inject
     lateinit var quickSearchViewModelFactory: QuickSearchViewModelFactory
     @Inject
-    lateinit var chromeViewModelFactory: ChromeViewModelFactory
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private val autoCompleteProvider: ShippedDomainsProvider = ShippedDomainsProvider()
     private lateinit var presenter: UrlInputContract.Presenter
@@ -72,7 +72,7 @@ class UrlInputFragment : Fragment(), UrlInputContract.View, View.OnClickListener
         val userAgent = WebViewProvider.getUserAgentString(activity)
         this.presenter = UrlInputPresenter(SearchEngineManager.getInstance()
                 .getDefaultSearchEngine(activity), userAgent)
-        chromeViewModel = activityViewModelProvider(chromeViewModelFactory)
+        chromeViewModel = activityViewModelProvider(viewModelFactory)
 
         context?.let {
             autoCompleteProvider.initialize(it.applicationContext)

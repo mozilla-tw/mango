@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.view.View;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.test.InstrumentationRegistry;
 import androidx.test.espresso.ViewAction;
@@ -28,7 +29,6 @@ import org.mozilla.focus.activity.MainActivity;
 import org.mozilla.focus.autobot.BottomBarRobot;
 import org.mozilla.focus.helper.BeforeTestTask;
 import org.mozilla.rocket.chrome.ChromeViewModel;
-import org.mozilla.rocket.chrome.ChromeViewModelFactory;
 import org.mozilla.rocket.content.ExtentionKt;
 
 import java.io.IOException;
@@ -117,8 +117,8 @@ public final class AndroidTestUtils {
         if (activityTestRule != null) {
             final MainActivity mainActivity = activityTestRule.getActivity();
             mainActivity.runOnUiThread(() -> {
-                ChromeViewModelFactory chromeViewModelFactory = ExtentionKt.appComponent(mainActivity).chromeViewModelFactory();
-                ChromeViewModel chromeViewModel = ViewModelProviders.of(mainActivity, chromeViewModelFactory).get(ChromeViewModel.class);
+                ViewModelProvider.Factory viewModelFactory = ExtentionKt.appComponent(mainActivity).viewModelFactory();
+                ChromeViewModel chromeViewModel = ViewModelProviders.of(mainActivity, viewModelFactory).get(ChromeViewModel.class);
                 chromeViewModel.getShowMenu().call();
             });
         }

@@ -22,9 +22,10 @@ import org.mozilla.rocket.privately.PrivateMode
 import org.mozilla.rocket.util.ToastMessage
 import org.mozilla.rocket.util.ToastMessage.Companion.LENGTH_LONG
 import org.mozilla.urlutils.UrlUtils
+import javax.inject.Inject
 import kotlin.concurrent.thread
 
-class ChromeViewModel(
+class ChromeViewModel @Inject constructor(
     private val settings: Settings,
     private val bookmarkRepo: BookmarkRepository,
     private val privateMode: PrivateMode,

@@ -28,6 +28,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
@@ -61,7 +62,6 @@ import org.mozilla.rocket.appupdate.InAppUpdateController
 import org.mozilla.rocket.appupdate.InAppUpdateIntro
 import org.mozilla.rocket.chrome.ChromeViewModel
 import org.mozilla.rocket.chrome.ChromeViewModel.OpenUrlAction
-import org.mozilla.rocket.chrome.ChromeViewModelFactory
 import org.mozilla.rocket.component.LaunchIntentDispatcher
 import org.mozilla.rocket.component.PrivateSessionNotificationService
 import org.mozilla.rocket.content.ContentPortalViewState
@@ -101,7 +101,7 @@ class MainActivity : BaseActivity(),
     @Inject
     lateinit var downloadViewModelFactory: DownloadViewModelFactory
     @Inject
-    lateinit var chromeViewModelFactory: ChromeViewModelFactory
+    lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject
     lateinit var tabModelStore: TabModelStore
 
@@ -158,7 +158,7 @@ class MainActivity : BaseActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         appComponent().inject(this)
         super.onCreate(savedInstanceState)
-        chromeViewModel = viewModelProvider(chromeViewModelFactory)
+        chromeViewModel = viewModelProvider(viewModelFactory)
         downloadIndicatorViewModel = viewModelProvider(downloadViewModelFactory)
         themeManager = ThemeManager(this)
         screenNavigator = ScreenNavigator(this)

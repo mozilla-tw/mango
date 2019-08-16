@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,7 +25,6 @@ import org.mozilla.focus.fragment.PanelFragment;
 import org.mozilla.focus.telemetry.TelemetryWrapper;
 import org.mozilla.focus.utils.TopSitesUtils;
 import org.mozilla.rocket.chrome.ChromeViewModel;
-import org.mozilla.rocket.chrome.ChromeViewModelFactory;
 import org.mozilla.rocket.content.ExtentionKt;
 
 import javax.inject.Inject;
@@ -33,7 +33,7 @@ import javax.inject.Inject;
 public class BrowsingHistoryFragment extends PanelFragment implements View.OnClickListener, ItemClosingPanelFragmentStatusListener {
 
     @Inject
-    ChromeViewModelFactory chromeViewModelFactory;
+    ViewModelProvider.Factory viewModelFactory;
 
     private RecyclerView mRecyclerView;
     private ViewGroup mContainerEmptyView, mContainerRecyclerView;
@@ -86,7 +86,7 @@ public class BrowsingHistoryFragment extends PanelFragment implements View.OnCli
                         }
                         mAdapter.clear();
                         TopSitesUtils.getDefaultSitesJsonArrayFromAssets(ctx);
-                        ChromeViewModel chromeViewModel = ViewModelProviders.of(requireActivity(), chromeViewModelFactory).get(ChromeViewModel.class);
+                        ChromeViewModel chromeViewModel = ViewModelProviders.of(requireActivity(), viewModelFactory).get(ChromeViewModel.class);
                         chromeViewModel.getClearBrowsingHistory().call();
                         TelemetryWrapper.clearHistory();
                     }

@@ -9,6 +9,7 @@ import androidx.annotation.StyleRes
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import org.mozilla.fileutils.FileUtils
 import org.mozilla.focus.R
@@ -18,7 +19,6 @@ import org.mozilla.focus.utils.FormatUtils
 import org.mozilla.focus.utils.Settings
 import org.mozilla.rocket.chrome.BottomBarItemAdapter
 import org.mozilla.rocket.chrome.ChromeViewModel
-import org.mozilla.rocket.chrome.ChromeViewModelFactory
 import org.mozilla.rocket.chrome.MenuItemAdapter
 import org.mozilla.rocket.chrome.MenuViewModel
 import org.mozilla.rocket.chrome.MenuViewModelFactory
@@ -38,7 +38,7 @@ import javax.inject.Inject
 class MenuDialog : BottomSheetDialog {
 
     @Inject
-    lateinit var chromeViewModelFactory: ChromeViewModelFactory
+    lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject
     lateinit var menuViewModelFactory: MenuViewModelFactory
 
@@ -57,7 +57,7 @@ class MenuDialog : BottomSheetDialog {
         appComponent().inject(this)
         super.onCreate(savedInstanceState)
         val activity = context.toFragmentActivity()
-        chromeViewModel = activityViewModelProvider(chromeViewModelFactory)
+        chromeViewModel = activityViewModelProvider(viewModelFactory)
         menuViewModel = activityViewModelProvider(menuViewModelFactory)
         settings = Settings.getInstance(context)
 

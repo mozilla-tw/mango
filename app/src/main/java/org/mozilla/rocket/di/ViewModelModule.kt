@@ -6,6 +6,7 @@ import dagger.Binds
 import dagger.MapKey
 import dagger.Module
 import dagger.multibindings.IntoMap
+import org.mozilla.rocket.chrome.ChromeViewModel
 import org.mozilla.rocket.content.games.ui.GamesViewModel
 import org.mozilla.rocket.content.news.NewsViewModel
 import javax.inject.Inject
@@ -14,6 +15,11 @@ import kotlin.reflect.KClass
 
 @Module
 abstract class ViewModelModule {
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ChromeViewModel::class)
+    internal abstract fun bindChromeViewModel(viewModel: ChromeViewModel): ViewModel
 
     @Binds
     @IntoMap

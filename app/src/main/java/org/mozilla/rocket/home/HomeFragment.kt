@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.fragment_home.home_background
 import kotlinx.android.synthetic.main.fragment_home.home_fragment_fake_input
 import kotlinx.android.synthetic.main.fragment_home.home_fragment_menu_button
@@ -19,7 +20,6 @@ import org.mozilla.focus.locale.LocaleAwareFragment
 import org.mozilla.focus.navigation.ScreenNavigator
 import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.rocket.chrome.ChromeViewModel
-import org.mozilla.rocket.chrome.ChromeViewModelFactory
 import org.mozilla.rocket.content.activityViewModelProvider
 import org.mozilla.rocket.content.appComponent
 import org.mozilla.rocket.content.viewModelProvider
@@ -31,7 +31,7 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
     @Inject
     lateinit var homeViewModelFactory: HomeViewModelFactory
     @Inject
-    lateinit var chromeViewModelFactory: ChromeViewModelFactory
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var chromeViewModel: ChromeViewModel
@@ -46,7 +46,7 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
         appComponent().inject(this)
         super.onCreate(savedInstanceState)
         homeViewModel = viewModelProvider(homeViewModelFactory)
-        chromeViewModel = activityViewModelProvider(chromeViewModelFactory)
+        chromeViewModel = activityViewModelProvider(viewModelFactory)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
