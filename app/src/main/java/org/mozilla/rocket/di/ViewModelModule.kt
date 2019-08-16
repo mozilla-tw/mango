@@ -17,6 +17,7 @@ import org.mozilla.rocket.home.HomeViewModel
 import org.mozilla.rocket.urlinput.QuickSearchViewModel
 import javax.inject.Inject
 import javax.inject.Provider
+import javax.inject.Singleton
 import kotlin.reflect.KClass
 
 @Module
@@ -25,66 +26,72 @@ abstract class ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(ChromeViewModel::class)
-    internal abstract fun bindChromeViewModel(viewModel: ChromeViewModel): ViewModel
+    abstract fun bindChromeViewModel(viewModel: ChromeViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(DownloadIndicatorViewModel::class)
-    internal abstract fun bindDownloadIndicatorViewModel(viewModel: DownloadIndicatorViewModel): ViewModel
+    abstract fun bindDownloadIndicatorViewModel(viewModel: DownloadIndicatorViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(BottomBarViewModel::class)
-    internal abstract fun bindBottomBarViewModel(viewModel: BottomBarViewModel): ViewModel
+    abstract fun bindBottomBarViewModel(viewModel: BottomBarViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(PrivateBottomBarViewModel::class)
-    internal abstract fun bindPrivateBottomBarViewModel(viewModel: PrivateBottomBarViewModel): ViewModel
+    abstract fun bindPrivateBottomBarViewModel(viewModel: PrivateBottomBarViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(MenuViewModel::class)
-    internal abstract fun bindMenuViewModel(viewModel: MenuViewModel): ViewModel
+    abstract fun bindMenuViewModel(viewModel: MenuViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(QuickSearchViewModel::class)
-    internal abstract fun bindQuickSearchViewModel(viewModel: QuickSearchViewModel): ViewModel
+    abstract fun bindQuickSearchViewModel(viewModel: QuickSearchViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(HomeViewModel::class)
-    internal abstract fun bindHomeViewModel(viewModel: HomeViewModel): ViewModel
+    abstract fun bindHomeViewModel(viewModel: HomeViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(NewsViewModel::class)
-    internal abstract fun bindNewsViewModel(viewModel: NewsViewModel): ViewModel
+    abstract fun bindNewsViewModel(viewModel: NewsViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(GamesViewModel::class)
-    internal abstract fun bindGamesViewModel(viewModel: GamesViewModel): ViewModel
+    abstract fun bindGamesViewModel(viewModel: GamesViewModel): ViewModel
 
     @Binds
-    internal abstract fun bindViewModelFactory(factory: AppViewModelFactory): ViewModelProvider.Factory
+    abstract fun bindViewModelFactory(factory: AppViewModelFactory): ViewModelProvider.Factory
 }
 
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Target(
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY_GETTER,
+    AnnotationTarget.PROPERTY_SETTER
+)
+@Retention(AnnotationRetention.RUNTIME)
 @MapKey
-internal annotation class ViewModelKey(val value: KClass<out ViewModel>)
+annotation class ViewModelKey(val value: KClass<out ViewModel>)
 
-class AppViewModelFactory @Inject constructor(private val creators: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>) : ViewModelProvider.Factory {
-
-    @Suppress("UNCHECKED_CAST")
+@Singleton
+class AppViewModelFactory @Inject constructor(
+    private val creators: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val creator = creators[modelClass]
-            ?: creators.asIterable().firstOrNull { modelClass.isAssignableFrom(it.key) }?.value
+            ?: creators.entries.firstOrNull { modelClass.isAssignableFrom(it.key) }?.value
             ?: throw IllegalArgumentException("unknown model class $modelClass")
-
-        return try {
-            creator.get() as T
+        try {
+            @Suppress("UNCHECKED_CAST")
+            return creator.get() as T
         } catch (e: Exception) {
             throw RuntimeException(e)
         }
