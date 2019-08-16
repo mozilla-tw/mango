@@ -4,8 +4,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import org.mozilla.focus.utils.AppConfigWrapper
 import java.util.Arrays
+import javax.inject.Inject
 
-class MenuViewModel : ViewModel() {
+class MenuViewModel @Inject constructor() : ViewModel() {
     val menuItems = MutableLiveData<List<MenuItemAdapter.ItemData>>()
     val bottomItems = MutableLiveData<List<BottomBarItemAdapter.ItemData>>()
     val isBottomBarEnabled = MutableLiveData<Boolean>()
