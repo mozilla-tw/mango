@@ -7,7 +7,7 @@ import org.mozilla.rocket.chrome.BottomBarItemAdapter.ItemData
 import java.util.Arrays
 import javax.inject.Inject
 
-class BottomBarViewModel @Inject constructor(): ViewModel() {
+class BottomBarViewModel @Inject constructor() : ViewModel() {
     val items = MutableLiveData<List<ItemData>>()
 
     init {

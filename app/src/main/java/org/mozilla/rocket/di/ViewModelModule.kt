@@ -8,6 +8,7 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import org.mozilla.rocket.chrome.BottomBarViewModel
 import org.mozilla.rocket.chrome.ChromeViewModel
+import org.mozilla.rocket.chrome.PrivateBottomBarViewModel
 import org.mozilla.rocket.content.games.ui.GamesViewModel
 import org.mozilla.rocket.content.news.NewsViewModel
 import org.mozilla.rocket.download.DownloadIndicatorViewModel
@@ -32,6 +33,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(BottomBarViewModel::class)
     internal abstract fun bindBottomBarViewModel(viewModel: BottomBarViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(PrivateBottomBarViewModel::class)
+    internal abstract fun bindPrivateBottomBarViewModel(viewModel: PrivateBottomBarViewModel): ViewModel
 
     @Binds
     @IntoMap

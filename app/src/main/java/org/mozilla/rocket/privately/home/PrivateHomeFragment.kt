@@ -25,7 +25,6 @@ import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.rocket.chrome.BottomBarItemAdapter
 import org.mozilla.rocket.chrome.ChromeViewModel
 import org.mozilla.rocket.chrome.PrivateBottomBarViewModel
-import org.mozilla.rocket.chrome.PrivateBottomBarViewModelFactory
 import org.mozilla.rocket.content.activityViewModelProvider
 import org.mozilla.rocket.content.appComponent
 import org.mozilla.rocket.content.view.BottomBar
@@ -39,8 +38,6 @@ import javax.inject.Inject
 class PrivateHomeFragment : LocaleAwareFragment(),
         ScreenNavigator.HomeScreen {
 
-    @Inject
-    lateinit var privateBottomBarViewModelFactory: PrivateBottomBarViewModelFactory
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
@@ -95,7 +92,7 @@ class PrivateHomeFragment : LocaleAwareFragment(),
             }
         })
         bottomBarItemAdapter = BottomBarItemAdapter(bottomBar, BottomBarItemAdapter.Theme.PrivateMode)
-        val bottomBarViewModel = activityViewModelProvider<PrivateBottomBarViewModel>(privateBottomBarViewModelFactory)
+        val bottomBarViewModel = activityViewModelProvider<PrivateBottomBarViewModel>(viewModelFactory)
         bottomBarViewModel.items.nonNullObserve(this, bottomBarItemAdapter::setItems)
     }
 
