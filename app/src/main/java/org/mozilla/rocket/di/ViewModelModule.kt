@@ -7,12 +7,18 @@ import dagger.MapKey
 import dagger.Module
 import dagger.multibindings.IntoMap
 import org.mozilla.rocket.content.games.ui.GamesViewModel
+import org.mozilla.rocket.content.news.NewsViewModel
 import javax.inject.Inject
 import javax.inject.Provider
 import kotlin.reflect.KClass
 
 @Module
 abstract class ViewModelModule {
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(NewsViewModel::class)
+    internal abstract fun bindNewsViewModel(viewModel: NewsViewModel): ViewModel
 
     @Binds
     @IntoMap

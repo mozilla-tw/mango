@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.MODE_SCROLLABLE
@@ -34,9 +35,10 @@ import javax.inject.Inject
  */
 class NewsTabFragment : Fragment() {
 
-    @Inject lateinit var viewModelFactory: NewsViewModelFactory
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    lateinit var newsViewModel: NewsViewModel
+    private lateinit var newsViewModel: NewsViewModel
 
     private var bottomSheetBehavior: org.mozilla.rocket.widget.BottomSheetBehavior<View>? = null
 

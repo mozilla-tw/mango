@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.CoroutineScope
@@ -34,7 +35,7 @@ import javax.inject.Inject
 
 class NewsFragment : Fragment(), ContentPortalListener, NewsViewContract {
 
-    @Inject lateinit var viewModelFactory: NewsViewModelFactory
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
     override fun getCategory(): String {
         return arguments?.getString(ContentFeature.TYPE_KEY) ?: "top-news"
