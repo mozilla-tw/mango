@@ -6,7 +6,6 @@ import dagger.Provides
 import org.mozilla.focus.persistence.BookmarksDatabase
 import org.mozilla.focus.repository.BookmarkRepository
 import org.mozilla.focus.utils.Browsers
-import org.mozilla.rocket.chrome.BottomBarViewModelFactory
 import org.mozilla.rocket.chrome.MenuViewModelFactory
 import org.mozilla.rocket.chrome.PrivateBottomBarViewModelFactory
 import org.mozilla.rocket.download.DownloadInfoRepository
@@ -56,11 +55,6 @@ object ChromeModule {
     @Singleton
     @Provides
     fun provideMenuViewModelFactory(): MenuViewModelFactory = MenuViewModelFactory()
-
-    @JvmStatic
-    @Singleton
-    @Provides
-    fun provideBottomBarViewModelFactory(): BottomBarViewModelFactory = BottomBarViewModelFactory()
 
     @JvmStatic
     @Singleton

@@ -80,7 +80,6 @@ import org.mozilla.permissionhandler.PermissionHandle;
 import org.mozilla.permissionhandler.PermissionHandler;
 import org.mozilla.rocket.chrome.BottomBarItemAdapter;
 import org.mozilla.rocket.chrome.BottomBarViewModel;
-import org.mozilla.rocket.chrome.BottomBarViewModelFactory;
 import org.mozilla.rocket.chrome.ChromeViewModel;
 import org.mozilla.rocket.chrome.ChromeViewModel.ScreenCaptureTelemetryData;
 import org.mozilla.rocket.content.ExtentionKt;
@@ -138,8 +137,6 @@ public class BrowserFragment extends LocaleAwareFragment implements ScreenNaviga
     private static final int SITE_GLOBE = 0;
     private static final int SITE_LOCK = 1;
 
-    @Inject
-    BottomBarViewModelFactory bottomBarViewModelFactory;
     @Inject
     ViewModelProvider.Factory viewModelFactory;
 
@@ -219,7 +216,7 @@ public class BrowserFragment extends LocaleAwareFragment implements ScreenNaviga
     public void onCreate(@Nullable Bundle savedInstanceState) {
         ExtentionKt.appComponent(this).inject(this);
         super.onCreate(savedInstanceState);
-        bottomBarViewModel = ViewModelProviders.of(requireActivity(), bottomBarViewModelFactory).get(BottomBarViewModel.class);
+        bottomBarViewModel = ViewModelProviders.of(requireActivity(), viewModelFactory).get(BottomBarViewModel.class);
         chromeViewModel = ViewModelProviders.of(requireActivity(), viewModelFactory).get(ChromeViewModel.class);
     }
 

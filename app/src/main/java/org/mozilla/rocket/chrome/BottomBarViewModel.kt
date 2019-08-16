@@ -5,8 +5,9 @@ import androidx.lifecycle.ViewModel
 import org.mozilla.focus.utils.AppConfigWrapper
 import org.mozilla.rocket.chrome.BottomBarItemAdapter.ItemData
 import java.util.Arrays
+import javax.inject.Inject
 
-class BottomBarViewModel : ViewModel() {
+class BottomBarViewModel @Inject constructor(): ViewModel() {
     val items = MutableLiveData<List<ItemData>>()
 
     init {
