@@ -55,6 +55,7 @@ import javax.inject.Singleton
 @Component(
     modules = [
         AppModule::class,
+        ViewModelModule::class,
         ContentModule::class,
         ChromeModule::class,
         TabsModule::class,
