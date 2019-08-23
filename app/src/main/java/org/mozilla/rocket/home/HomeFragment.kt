@@ -208,6 +208,11 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
         })
     }
 
+    override fun onStart() {
+        super.onStart()
+        TelemetryWrapper.showHome()
+    }
+
     override fun onResume() {
         super.onResume()
         homeViewModel.updateTopSitesData()
