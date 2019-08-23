@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <org.mozilla.focus.home.HomeScreenBackground
+    <org.mozilla.rocket.home.ui.HomeScreenBackground
         android:id="@+id/home_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
