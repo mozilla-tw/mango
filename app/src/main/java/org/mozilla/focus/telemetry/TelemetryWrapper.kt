@@ -137,8 +137,6 @@ object TelemetryWrapper {
         const val DEFAULT_BROWSER = "default_browser"
         const val PROMOTE_SHARE = "promote_share"
         const val THEMETOY = "themetoy"
-        const val DOORHANGER = "doorhanger"
-        const val VPN_DOORHANGER = "vpn_doorhanger"
         const val QUICK_SEARCH = "quicksearch"
 
         const val LANDSCAPE_MODE = "landscape_mode"
@@ -194,30 +192,17 @@ object TelemetryWrapper {
         const val POSITIVE = "positive"
         const val NEGATIVE = "negative"
         const val SHARE = "share"
-        const val SUGGESTION = "sugestion"
 
         internal const val LAUNCHER = "launcher"
         internal const val EXTERNAL_APP = "external_app"
         internal const val SHORTCUT = "shortcut"
         internal const val PRIVATE_MODE = "private_mode"
 
-        internal const val BACKGROUND = "background"
-        internal const val ITEM = "item"
-        internal const val PAGE = "page"
-        internal const val WIFI_FINDER = "wifi_finder"
-        internal const val VPN = "vpn"
-        internal const val VPN_RECOMMEND = "vpn_recommend"
-
         internal const val PREVIOUS = "previous"
         internal const val NEXT = "next"
 
         internal const val NIGHT_MODE = "night_mode"
         internal const val NIGHT_MODE_BRIGHTNESS = "night_mode_brightness"
-
-        internal const val NEW = "new"
-        internal const val UPDATE = "update"
-        internal const val RETURN = "return"
-        internal const val SWIPE = "swipe"
 
         internal const val SETTINGS_PRIVATE_SHORTCUT = "pref_private_shortcut"
 
@@ -238,7 +223,6 @@ object TelemetryWrapper {
         const val CATEGORY = "category"
         // Remove the last character cause Telemetry library will do that for you.( > 15chars)
         const val CATEGORY_VERSION = "category_versio"
-        const val VPN_INSTALLED = "vpn_installed"
         const val ENGINE = "engine"
         const val DELAY = "delay"
         const val MESSAGE = "message"
@@ -2119,104 +2103,6 @@ object TelemetryWrapper {
     @JvmStatic
     fun showHome() {
         EventBuilder(Category.ACTION, Method.SHOW, Object.HOME)
-                .queue()
-    }
-
-    @TelemetryDoc(
-            name = "Click Wifi Finder Survey",
-            category = Category.ACTION,
-            method = Method.CLICK,
-            `object` = Object.HOME,
-            value = Value.WIFI_FINDER,
-            extras = [])
-    @JvmStatic
-    fun clickWifiFinderSurvey() {
-        EventBuilder(Category.ACTION, Method.CLICK, Object.HOME, Value.WIFI_FINDER)
-                .queue()
-    }
-
-    @TelemetryDoc(
-            name = "Click VPN Survey",
-            category = Category.ACTION,
-            method = Method.CLICK,
-            `object` = Object.HOME,
-            value = Value.VPN,
-            extras = [])
-    @JvmStatic
-    fun clickVpnSurvey() {
-        EventBuilder(Category.ACTION, Method.CLICK, Object.HOME, Value.VPN)
-                .queue()
-    }
-
-    @TelemetryDoc(
-            name = "Survey Result",
-            category = Category.ACTION,
-            method = Method.CLICK,
-            `object` = Object.DOORHANGER,
-            value = "negative,positive,dismiss",
-            extras = [TelemetryExtra(name = Extra.SOURCE, value = "vpn,wifi_finder")])
-    @JvmStatic
-    fun surveyResult(result: String, source: String) {
-        EventBuilder(Category.ACTION, Method.CLICK, Object.DOORHANGER, result)
-                .extra(Extra.SOURCE, source)
-                .queue()
-    }
-
-    @TelemetryDoc(
-            name = "Show VPN Recommend",
-            category = Category.ACTION,
-            method = Method.SHOW,
-            `object` = Object.HOME,
-            value = Value.VPN_RECOMMEND,
-            extras = [])
-    @JvmStatic
-    fun showVpnRecommender(installed: Boolean) {
-        EventBuilder(Category.ACTION, Method.SHOW, Object.HOME, Value.VPN_RECOMMEND)
-                .extra(Extra.VPN_INSTALLED, java.lang.Boolean.toString(installed))
-                .queue()
-    }
-
-    @TelemetryDoc(
-            name = "Click VPN Recommend",
-            category = Category.ACTION,
-            method = Method.CLICK,
-            `object` = Object.HOME,
-            value = Value.VPN_RECOMMEND,
-            extras = [])
-    @JvmStatic
-    fun clickVpnRecommender(installed: Boolean) {
-        EventBuilder(Category.ACTION, Method.CLICK, Object.HOME, Value.VPN_RECOMMEND)
-                .extra(Extra.VPN_INSTALLED, java.lang.Boolean.toString(installed))
-                .queue()
-    }
-
-    @TelemetryDoc(
-            name = "Click VPN Recommend",
-            category = Category.ACTION,
-            method = Method.CLICK,
-            `object` = Object.VPN_DOORHANGER,
-            value = "negative,positive",
-            extras = [])
-    @JvmStatic
-    fun clickVpnRecommend(positive: Boolean) {
-        EventBuilder(Category.ACTION, Method.CLICK, Object.VPN_DOORHANGER, if (positive) Value.POSITIVE else Value.NEGATIVE)
-                .queue()
-
-        if (positive) {
-            AdjustHelper.trackEvent(EVENT_GET_VPN)
-        }
-    }
-
-    @TelemetryDoc(
-            name = "Dismiss VPN Recommend",
-            category = Category.ACTION,
-            method = Method.CLICK,
-            `object` = Object.VPN_DOORHANGER,
-            value = Value.DISMISS,
-            extras = [])
-    @JvmStatic
-    fun dismissVpnRecommend() {
-        EventBuilder(Category.ACTION, Method.CLICK, Object.VPN_DOORHANGER, Value.DISMISS)
                 .queue()
     }
 

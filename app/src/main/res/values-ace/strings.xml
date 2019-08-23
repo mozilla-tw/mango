@@ -293,12 +293,6 @@
   <string name="preference_add_private_browsing_shortcut">Tamah pintasan mode privat u seuramoe</string>
   <string name="my_shot_on_boarding_message">Kalön deuneurop layeuë droëneuh di sinoë!</string>
   <string name="my_shot_on_boarding_category_message">Keu tapeujroh peungalaman produk droen, kamoe meupeusapat maklumat bhaih katagori deuneurop layeue droeneuh.</string>
-  <string name="btn_vpn">Layanan VPN pré keu 7 uroe ka na keu droeneuh. Neupasang jinoe keu neupeuhah wèb leubèh privat ngön aman.</string>
-  <string name="exp_survey_wifi">Kamoe meureuncana keumeung peugabông “Mita Wifi Pré” keu meubantu Droeneuh keu neumita seunambat internèt pré nyang göt di silingka.\n \n Na meuheutneuh?</string>
-  <string name="exp_survey_vpn">Kamoe keuneuk peusahô “layanan VPN\" beu leubeh bibeueh ngön na privasi lom watèe neubrowsing.\n \n Kiban?</string>
-  <string name="exp_survey_thanks">Teurimöng gaséh ka neubrithèe bak kamoe %1$s</string>
-  <string name="exp_survey_yes">JEUT</string>
-  <string name="exp_survey_no">H\'AN</string>
   <string name="http_auth_dialog_title">Peureulè otentikasi</string>
   <string name="http_auth_dialog_user_name">Nan ureung ngui</string>
   <string name="http_auth_dialog_password">Lageum tamöng</string>

@@ -293,12 +293,6 @@
   <string name="preference_add_private_browsing_shortcut">Добавить ярлык приватного просмотра на домашний экран</string>
   <string name="my_shot_on_boarding_message">Ваши скриншоты здесь!</string>
   <string name="my_shot_on_boarding_category_message">Чтобы улучшить качество работы, мы собираем информацию о категориях ваших скриншотов.</string>
-  <string name="btn_vpn">7-дневный бесплатный VPN готов для Вас. Установите сейчас, чтобы сёрфить более конфиденциально и надежно.</string>
-  <string name="exp_survey_wifi">Мы планируем добавить “Бесплатный поиск WiFi”, чтобы помочь вам найти поблизости качественное бесплатное подключение к Интернету.\n\n Заинтересовались?</string>
-  <string name="exp_survey_vpn">Мы планируем добавить “VPN сервис”, чтобы дать вам больше свободы и конфиденциальности при сёрфинге.\n\n Заинтересовались?</string>
-  <string name="exp_survey_thanks">Благодарим Вас за предоставленный отзыв %1$s</string>
-  <string name="exp_survey_yes">ДА, ПОЖАЛУЙСТА</string>
-  <string name="exp_survey_no">НЕТ</string>
   <string name="http_auth_dialog_title">Требуется аутентификация</string>
   <string name="http_auth_dialog_user_name">Имя пользователя</string>
   <string name="http_auth_dialog_password">Пароль</string>
