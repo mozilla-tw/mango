@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.mozilla.rocket.shopping.search.ui.ShoppingSearchPreferencesActivity"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:layout_marginTop="?android:attr/actionBarSize"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:singleLine="true"
+            android:padding="16dp"
+            android:ellipsize="end"
+            android:gravity="center|left"
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:text="Top online shopping websites"
+            android:textSize="16sp"
+            android:textColor="@color/paletteBlack87"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="@color/shoppingSearchPreferencesToolbarBackground"
+            app:title="Preferences"
+            app:titleTextColor="@android:color/white"
+            app:navigationIcon="@drawable/ic_back_preferences"/>
+
+    </com.google.android.material.appbar.AppBarLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
