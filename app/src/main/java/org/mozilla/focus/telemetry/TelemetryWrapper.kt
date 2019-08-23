@@ -137,7 +137,6 @@ object TelemetryWrapper {
         const val DEFAULT_BROWSER = "default_browser"
         const val PROMOTE_SHARE = "promote_share"
         const val THEMETOY = "themetoy"
-        const val BANNER = "banner"
         const val DOORHANGER = "doorhanger"
         const val VPN_DOORHANGER = "vpn_doorhanger"
         const val QUICK_SEARCH = "quicksearch"
@@ -2120,108 +2119,6 @@ object TelemetryWrapper {
     @JvmStatic
     fun showHome() {
         EventBuilder(Category.ACTION, Method.SHOW, Object.HOME)
-                .queue()
-    }
-
-    @TelemetryDoc(
-            name = "Banner Impression: new",
-            category = Category.ACTION,
-            method = Method.SHOW,
-            `object` = Object.BANNER,
-            value = Value.NEW,
-            extras = [TelemetryExtra(name = Extra.TO, value = "banner page id")])
-    @JvmStatic
-    fun showBannerNew(id: String) {
-        EventBuilder(Category.ACTION, Method.SHOW, Object.BANNER, Value.NEW)
-                .extra(Extra.TO, id)
-                .queue()
-    }
-
-    @TelemetryDoc(
-            name = "Banner Impression: update",
-            category = Category.ACTION,
-            method = Method.SHOW,
-            `object` = Object.BANNER,
-            value = Value.UPDATE,
-            extras = [TelemetryExtra(name = Extra.TO, value = "banner page id")])
-    @JvmStatic
-    fun showBannerUpdate(id: String) {
-        EventBuilder(Category.ACTION, Method.SHOW, Object.BANNER, Value.UPDATE)
-                .extra(Extra.TO, id)
-                .queue()
-    }
-
-    @TelemetryDoc(
-            name = "Banner Impression: return",
-            category = Category.ACTION,
-            method = Method.SHOW,
-            `object` = Object.BANNER,
-            value = Value.RETURN,
-            extras = [TelemetryExtra(name = Extra.TO, value = "banner page id")])
-    @JvmStatic
-    fun showBannerReturn(id: String) {
-        EventBuilder(Category.ACTION, Method.SHOW, Object.BANNER, Value.RETURN)
-                .extra(Extra.TO, id)
-                .queue()
-    }
-
-    @TelemetryDoc(
-            name = "Banner Impression: swipe",
-            category = Category.ACTION,
-            method = Method.SHOW,
-            `object` = Object.BANNER,
-            value = Value.SWIPE,
-            extras = [TelemetryExtra(name = Extra.TO, value = "banner page id")])
-    @JvmStatic
-    fun showBannerSwipe(id: String) {
-        EventBuilder(Category.ACTION, Method.SHOW, Object.BANNER, Value.SWIPE)
-                .extra(Extra.TO, id)
-                .queue()
-    }
-
-    @TelemetryDoc(
-            name = "Click Banner Background",
-            category = Category.ACTION,
-            method = Method.CLICK,
-            `object` = Object.BANNER,
-            value = Value.BACKGROUND,
-            extras = [TelemetryExtra(name = Extra.SOURCE, value = "page Id")])
-    @JvmStatic
-    fun clickBannerBackground(pageId: String) {
-        EventBuilder(Category.ACTION, Method.CLICK, Object.BANNER, Value.BACKGROUND)
-                .extra(Extra.SOURCE, pageId)
-                .queue()
-    }
-
-    @TelemetryDoc(
-            name = "Click Banner Item",
-            category = Category.ACTION,
-            method = Method.CLICK,
-            `object` = Object.BANNER,
-            value = Value.ITEM,
-            extras = [TelemetryExtra(name = Extra.SOURCE, value = "pageId"),
-                TelemetryExtra(name = Extra.ON, value = "position")])
-    @JvmStatic
-    fun clickBannerItem(pageId: String, itemPosition: Int) {
-        EventBuilder(Category.ACTION, Method.CLICK, Object.BANNER, Value.ITEM)
-                .extra(Extra.SOURCE, pageId)
-                .extra(Extra.ON, Integer.toString(itemPosition))
-                .queue()
-    }
-
-    @TelemetryDoc(
-            name = "Swipe Banner Item",
-            category = Category.ACTION,
-            method = Method.SWIPE,
-            `object` = Object.BANNER,
-            value = Value.PAGE,
-            extras = [TelemetryExtra(name = Extra.DIRECTION, value = "direction"),
-                TelemetryExtra(name = Extra.TO, value = "position")])
-    @JvmStatic
-    fun swipeBannerItem(directionX: Int, toItemPosition: Int) {
-        EventBuilder(Category.ACTION, Method.SWIPE, Object.BANNER, Value.PAGE)
-                .extra(Extra.DIRECTION, Integer.toString(directionX))
-                .extra(Extra.TO, Integer.toString(toItemPosition))
                 .queue()
     }
 
