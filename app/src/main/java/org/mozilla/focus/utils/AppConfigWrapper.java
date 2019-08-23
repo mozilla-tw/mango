@@ -102,10 +102,6 @@ public class AppConfigWrapper {
         return FirebaseHelper.getFirebase().getRcString(FirebaseHelper.RATE_APP_DIALOG_TEXT_NEGATIVE);
     }
 
-    public static String getBannerRootConfig() {
-        return FirebaseHelper.getFirebase().getRcString(FirebaseHelper.BANNER_MANIFEST);
-    }
-
     public static long getFeatureSurvey() {
         return FirebaseHelper.getFirebase().getRcLong(FirebaseHelper.FEATURE_SURVEY);
     }

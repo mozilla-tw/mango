@@ -55,7 +55,6 @@ final public class FirebaseHelper {
     static final String RATE_APP_NOTIFICATION_THRESHOLD = "rate_app_notification_threshold";
     static final String SHARE_APP_DIALOG_THRESHOLD = "share_app_dialog_threshold";
     static final String ENABLE_MY_SHOT_UNREAD = "enable_my_shot_unread";
-    static final String BANNER_MANIFEST = "banner_manifest";
     static final String SCREENSHOT_CATEGORY_MANIFEST = "screenshot_category_manifest";
     static final String FEATURE_SURVEY = "feature_survey";
     static final String VPN_RECOMMENDER_URL = "vpn_recommender_url";
