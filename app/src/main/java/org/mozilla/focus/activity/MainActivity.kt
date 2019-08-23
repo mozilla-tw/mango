@@ -523,11 +523,6 @@ class MainActivity : BaseActivity(),
 
     private fun onNightModeEnabled(brightness: Float, enabled: Boolean) {
         applyNightModeBrightness(enabled, brightness, window)
-        when (val fragment = screenNavigator.topFragment) {
-            is BrowserFragment -> fragment.setNightModeEnabled(enabled)
-            // TODO: Evan
-//            is HomeFragment -> fragment.setNightModeEnabled(enabled)
-        }
     }
 
     private fun showBookmarkAddedSnackbar(bookmarkItemId: String) {
