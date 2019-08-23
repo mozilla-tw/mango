@@ -228,7 +228,11 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
     override fun getFragment(): Fragment = this
 
     override fun onUrlInputScreenVisible(visible: Boolean) {
-        // TODO
+        if (visible) {
+            chromeViewModel.onShowHomePageUrlInput()
+        } else {
+            chromeViewModel.onDismissHomePageUrlInput()
+        }
     }
 
     override fun applyLocale() {
