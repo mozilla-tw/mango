@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.fragment_home.content_hub_title
 import dagger.Lazy
 import kotlinx.android.synthetic.main.fragment_home.home_background
 import kotlinx.android.synthetic.main.fragment_home.home_fragment_fake_input
+import kotlinx.android.synthetic.main.fragment_home.home_fragment_fake_input_text
 import kotlinx.android.synthetic.main.fragment_home.home_fragment_menu_button
 import kotlinx.android.synthetic.main.fragment_home.home_fragment_tab_counter
 import kotlinx.android.synthetic.main.fragment_home.main_list
@@ -209,6 +210,7 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
             arc_view.setNightMode(isNightMode)
             arc_panel.setNightMode(isNightMode)
             search_panel.setNightMode(isNightMode)
+            home_fragment_fake_input_text.setNightMode(isNightMode)
         })
     }
 
@@ -230,7 +232,7 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
     }
 
     override fun applyLocale() {
-        // TODO
+        home_fragment_fake_input_text.text = "" // TODO: use resource id after defined
     }
 
     private fun showTopSiteMenu(anchorView: View, pinEnabled: Boolean, site: Site) {
