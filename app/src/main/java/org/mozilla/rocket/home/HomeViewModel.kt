@@ -92,8 +92,10 @@ class HomeViewModel(
     }
 
     fun onRemoveTopSiteClicked(site: Site) = viewModelScope.launch {
+        site as Site.RemovableSite
         removeTopSiteUseCase(site)
         updateTopSitesData()
+        TelemetryWrapper.removeTopSite(site.isDefault)
     }
 
     fun onContentHubItemClicked(item: ContentHub.Item) {

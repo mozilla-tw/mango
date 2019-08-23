@@ -19,7 +19,6 @@ import org.mozilla.focus.history.model.Site
 import org.mozilla.focus.provider.HistoryContract
 import org.mozilla.focus.provider.HistoryDatabaseHelper
 import org.mozilla.focus.provider.QueryHandler
-import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.utils.DimenUtils
 import org.mozilla.focus.utils.FirebaseHelper
 import org.mozilla.focus.utils.TopSitesUtils
@@ -111,9 +110,7 @@ open class TopSitesRepo(
 
     suspend fun remove(site: Site) {
         pinSiteManager.unpinned(site)
-        val isDefaultSite = site.isDefault
-        TelemetryWrapper.removeTopSite(isDefaultSite)
-        if (isDefaultSite) {
+        if (site.isDefault) {
             removeDefaultSite(site)
         }
         withContext(Dispatchers.IO) {
