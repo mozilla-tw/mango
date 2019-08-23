@@ -229,10 +229,10 @@ open class TopSitesRepo(
     }
 
     companion object {
-        private const val TOP_SITES_PREF = "topsites_pref"
+        const val TOP_SITES_PREF = "topsites_pref"
+        const val TOP_SITES_QUERY_LIMIT = 12
+        const val TOP_SITES_QUERY_MIN_VIEW_COUNT = 2
         private const val TOP_SITES_V2_PREF = "top_sites_v2_complete"
-        private const val TOP_SITES_QUERY_LIMIT = 12
-        private const val TOP_SITES_QUERY_MIN_VIEW_COUNT = 2
         private const val MSG_ID_REFRESH = 8269
     }
 }
