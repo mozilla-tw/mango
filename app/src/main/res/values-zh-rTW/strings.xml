@@ -78,7 +78,6 @@
   <string name="first_run_page4_text">拍攝整個頁面的長條擷圖，儲存後即可離線閱讀，之後不用再耗費流量或點擊重新開啟。</string>
   <string name="first_run_page5_title">更進一步的隱私保護</string>
   <string name="first_run_page5_text">瀏覽不留痕跡，還會預設封鎖一系列常見的網頁追蹤器，可確保您的機密資料安全。</string>
-  <string name="first_run_page6_title">探索新事物</string>
   <string name="first_run_page6_text">只要翻一下，就可以透過「%1$s」獲得最新消息 - 各種線上熱門主題與折扣資訊。%2$s</string>
   <string name="first_run_page7_title">防止被追蹤</string>
   <string name="first_run_page7_text">現在起，您可以於隱私模式中看到封鎖了多少追蹤器。</string>
