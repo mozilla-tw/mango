@@ -5,8 +5,10 @@ import dagger.Provides
 import org.mozilla.rocket.shopping.search.data.KeywordSuggestionRepository
 import org.mozilla.rocket.shopping.search.data.ShoppingSearchSiteRepository
 import org.mozilla.rocket.shopping.search.domain.FetchKeywordSuggestionUseCase
+import org.mozilla.rocket.shopping.search.domain.PreferencesShoppingSiteUseCase
 import org.mozilla.rocket.shopping.search.domain.SearchShoppingSiteUseCase
 import org.mozilla.rocket.shopping.search.ui.ShoppingSearchKeywordInputViewModel
+import org.mozilla.rocket.shopping.search.ui.ShoppingSearchPreferencesViewModel
 import org.mozilla.rocket.shopping.search.ui.ShoppingSearchResultViewModel
 import javax.inject.Singleton
 
@@ -45,4 +47,15 @@ object ShoppingSearchModule {
     @Provides
     fun provideShoppingSearchResultViewModel(usecase: SearchShoppingSiteUseCase): ShoppingSearchResultViewModel =
             ShoppingSearchResultViewModel(usecase)
+
+    @JvmStatic
+    @Singleton
+    @Provides
+    fun providePreferencesShoppingSiteUseCase(repo: ShoppingSearchSiteRepository) = PreferencesShoppingSiteUseCase(repo)
+
+    @JvmStatic
+    @Singleton
+    @Provides
+    fun provideShoppingSearchPreferencesViewModel(usecase: PreferencesShoppingSiteUseCase): ShoppingSearchPreferencesViewModel =
+            ShoppingSearchPreferencesViewModel(usecase)
 }

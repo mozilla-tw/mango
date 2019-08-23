@@ -3,4 +3,7 @@
     <string name="label_menu_e_commerce_deal" translatable="false">Deals</string>
     <string name="label_menu_e_commerce_coupon" translatable="false">Coupons</string>
     <string name="label_menu_e_commerce_voucher" translatable="false">E-vouchers</string>
+    <!-- shopping_search -->
+    <string name="shopping_search_preferences_title" translatable="false">Top online shopping websites</string>
+    <string name="shopping_search_preferences_name" translatable="false">Preferences</string>
 </resources>
