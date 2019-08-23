@@ -100,20 +100,4 @@ public class TopSitesUtils {
         final String faviconUri = TOP_SITE_ASSET_PREFIX + jsonObject.getString(KEY_FAVICON);
         return new Site(id, title, url, viewCount, lastViewed, faviconUri);
     }
-
-    public static List<Site> paresJsonToList(JSONArray jsonArray) {
-        List<Site> defaultSites = new ArrayList<>();
-        try {
-            if (jsonArray != null) {
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject json_site = (JSONObject) jsonArray.get(i);
-                    defaultSites.add(paresSite(json_site));
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return defaultSites;
-    }
 }

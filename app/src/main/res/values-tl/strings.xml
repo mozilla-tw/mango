@@ -277,12 +277,6 @@
   <string name="private_browsing_shortcut_name">%1$s - Private browsing</string>
   <string name="my_shot_on_boarding_message">Tingnan ang mga screenshot dito!</string>
   <string name="my_shot_on_boarding_category_message">Para mapabuti ang produktong ito, kami ay maaaring mangolekta ng impormasyon tungkol sa iyong screen.</string>
-  <string name="btn_vpn">Ang 7-araw na libreng serbisyo ng VPN ay handa na para sa iyo. I-install ngayon upang mag-browse nang mas pribado at ligtas.</string>
-  <string name="exp_survey_wifi">Balak naming magsama ng “Free Wifi-Finder” para makatulong sa paghahanap ng libreng internet connection na malapit sa iyo.\n\n Interessado?</string>
-  <string name="exp_survey_vpn">Balak naming magsama ng “VPN service” para sa mas mainam ng pribasiya habang ikaw ay nagba-browse.\n\n Interesado?</string>
-  <string name="exp_survey_thanks">Maraming salamat sa pagbibigay ng feedback %1$s</string>
-  <string name="exp_survey_yes">OO</string>
-  <string name="exp_survey_no">HINDI</string>
   <string name="http_auth_dialog_user_name">Username</string>
   <string name="http_auth_dialog_password">Password</string>
 </resources>

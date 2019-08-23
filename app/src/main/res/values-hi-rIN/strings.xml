@@ -293,12 +293,6 @@
   <string name="preference_add_private_browsing_shortcut">निजी मोड शॉर्टकट को होम स्क्रीन पर जोड़ें</string>
   <string name="my_shot_on_boarding_message">अपने स्क्रीनशॉटों को यहाँ देखें!</string>
   <string name="my_shot_on_boarding_category_message">आपके प्रोडक्ट अनुभव को सुधारने के लिए, हम आपके स्क्रीनशॉट श्रेणियों के बारे में जानकारियाँ जमा करते हैं।</string>
-  <string name="btn_vpn">7-दिनों की निःशुल्क VPN सेवा आपके लिए तैयार है। और भी अधिक निजी एवं सुरक्षित रूप से ब्राउज करने हेतु अभी इनस्टॉल करें।</string>
-  <string name="exp_survey_wifi">हम “मुफ्त वाईफाई-खोजक” जोड़ने पर विचार कर रहे हैं ताकि आपको आसपास अच्छी मुफ्त इंटरनेट कनेक्शन खोजने में मदद कर सकें।\n \n इच्छुक हैं?</string>
-  <string name="exp_survey_vpn">हम “VPN सेवा” जोड़ने पर विचार कर रहे हैं ताकि आपको ब्राउज़िंग करते समय अधिक आजादी एवं अधिक गोपनीयता मिल सके।\n \n इच्छुक हैं?</string>
-  <string name="exp_survey_thanks">हमें प्रतिक्रिया भेजने के लिए धन्यवाद %1$s</string>
-  <string name="exp_survey_yes">YES, PLEASE</string>
-  <string name="exp_survey_no">NOPE</string>
   <string name="http_auth_dialog_title">सत्यापन आवश्यक</string>
   <string name="http_auth_dialog_user_name">उपयोगकर्ता नाम</string>
   <string name="http_auth_dialog_password">पासवर्ड</string>
