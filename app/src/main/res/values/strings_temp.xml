@@ -3,4 +3,6 @@
     <string name="label_menu_e_commerce_deal" translatable="false">Deals</string>
     <string name="label_menu_e_commerce_coupon" translatable="false">Coupons</string>
     <string name="label_menu_e_commerce_voucher" translatable="false">E-vouchers</string>
+    <string name="games" translatable="false">Games</string>
+
 </resources>

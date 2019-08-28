@@ -39,7 +39,7 @@ class GamesViewModel(
 
     fun onBannerItemClicked(bannerItem: CarouselBannerAdapter.BannerItem) {
         // TODO: testing code, needs to be removed
-        showToast.value = ToastMessage(R.string.screenshot_image_viewer_dialog_info_title1, ToastMessage.LENGTH_SHORT, bannerItem.linkUrl)
+        showToast.value = ToastMessage(R.string.screenshot_image_viewer_dialog_info_title1, ToastMessage.LENGTH_SHORT, bannerItem.id, bannerItem.linkUrl)
     }
 
     private fun launchDataLoad(block: suspend () -> Unit): Job {
@@ -52,6 +52,12 @@ class GamesViewModel(
                 browserGamesState.value = State.Error(t)
             }
         }
+    }
+
+    fun onFreshGameListButtonClicked() {
+        // TODO: testing code, needs to be removed
+        browserGamesItems.value = emptyList()
+        loadData()
     }
 
     sealed class State {

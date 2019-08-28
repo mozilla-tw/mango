@@ -2,7 +2,10 @@ package org.mozilla.rocket.content.games.ui
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.view.MotionEvent
+import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -10,6 +13,7 @@ import androidx.lifecycle.Observer
 import dagger.Lazy
 import kotlinx.android.synthetic.main.activity_games.games_tabs
 import kotlinx.android.synthetic.main.activity_games.view_pager
+import kotlinx.android.synthetic.main.toolbar_game.refresh_button
 import org.mozilla.focus.R
 import org.mozilla.rocket.content.appComponent
 import org.mozilla.rocket.content.games.ui.adapter.GameTabsAdapter
@@ -31,7 +35,23 @@ class GamesActivity : FragmentActivity() {
         setContentView(R.layout.activity_games)
         initViewPager()
         initTabLayout()
+        initToolBar()
         observeGameAction()
+    }
+
+    private fun initToolBar() {
+        refresh_button.setOnClickListener {
+            gamesViewModel.onFreshGameListButtonClicked()
+        }
+        refresh_button.setOnTouchListener { v: View, event: MotionEvent ->
+            val TRANSPARENT_GREY = Color.argb(0, 185, 185, 185)
+            val FILTERED_GREY = Color.argb(155, 185, 185, 185)
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> refresh_button.setColorFilter(FILTERED_GREY)
+                MotionEvent.ACTION_UP -> refresh_button.setColorFilter(TRANSPARENT_GREY)
+            }
+            v.onTouchEvent(event)
+        }
     }
 
     private fun initViewPager() {
