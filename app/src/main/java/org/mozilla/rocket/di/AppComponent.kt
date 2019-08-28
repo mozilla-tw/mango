@@ -45,6 +45,7 @@ import org.mozilla.rocket.content.news.NewsTabFragment
 import org.mozilla.rocket.home.HomeFragment
 import org.mozilla.rocket.home.di.HomeModule
 import org.mozilla.rocket.home.topsites.data.TopSitesRepo
+import org.mozilla.rocket.home.topsites.domain.GetTopSitesUseCase
 import org.mozilla.rocket.menu.MenuDialog
 import org.mozilla.rocket.privately.PrivateModeActivity
 import org.mozilla.rocket.privately.home.PrivateHomeFragment
@@ -106,4 +107,6 @@ interface AppComponent {
     fun tabsDatabase(): TabsDatabase
     @VisibleForTesting
     fun topSitesRepo(): TopSitesRepo
+    @VisibleForTesting
+    fun getTopSitesUseCase(): GetTopSitesUseCase
 }
