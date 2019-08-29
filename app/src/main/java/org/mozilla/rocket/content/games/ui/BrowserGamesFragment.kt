@@ -1,5 +1,6 @@
 package org.mozilla.rocket.content.games.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,6 +29,14 @@ class BrowserGamesFragment : Fragment() {
 
     private lateinit var gamesViewModel: GamesViewModel
     private lateinit var adapter: DelegateAdapter
+    private lateinit var gameType: GameType
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        arguments?.getString("game_type")?.let {
+            gameType = GameType.valueOf(it)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         appComponent().inject(this)
@@ -60,9 +69,14 @@ class BrowserGamesFragment : Fragment() {
     }
 
     private fun bindListData() {
-        gamesViewModel.browserGamesItems.observe(this@BrowserGamesFragment, Observer {
-            adapter.setData(it)
-        })
+        when (gameType) {
+            GameType.TYPE_BROWSER -> gamesViewModel.browserGamesItems.observe(this@BrowserGamesFragment, Observer {
+                adapter.setData(it)
+            })
+            GameType.TYPE_PREMIUM -> gamesViewModel.browserGamesItems.observe(this@BrowserGamesFragment, Observer {
+                adapter.setData(it)
+            })
+        }
     }
 
     private fun bindPageState() {
@@ -85,5 +99,18 @@ class BrowserGamesFragment : Fragment() {
 
     private fun showErrorView() {
         TODO("not implemented")
+    }
+
+    companion object {
+        enum class GameType {
+            TYPE_BROWSER,
+            TYPE_PREMIUM
+        }
+        @JvmStatic
+        fun newInstance(gameType: GameType) = BrowserGamesFragment().apply {
+            arguments = Bundle().apply {
+                this.putString("game_type", gameType.name)
+            }
+        }
     }
 }

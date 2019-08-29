@@ -48,6 +48,8 @@ class GamesActivity : FragmentActivity() {
     private fun observeGameAction() {
         gamesViewModel.showToast.observe(this, Observer { message ->
             Toast.makeText(applicationContext, getString(message.stringResId, *message.args), message.duration).show()
+            // todo: test code need to removed.
+            startActivity(GameModeActivity.create(this, message.args[1]))
         })
     }
 
