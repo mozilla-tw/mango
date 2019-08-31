@@ -8,9 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import dagger.Lazy
-import kotlinx.android.synthetic.main.activity_games.games_tabs
-import kotlinx.android.synthetic.main.activity_games.view_pager
 import kotlinx.android.synthetic.main.toolbar_game.refresh_button
+import kotlinx.android.synthetic.main.activity_games.*
 import org.mozilla.focus.R
 import org.mozilla.rocket.content.appComponent
 import org.mozilla.rocket.content.games.ui.adapter.GameTabsAdapter
