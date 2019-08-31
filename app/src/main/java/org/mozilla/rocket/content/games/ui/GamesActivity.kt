@@ -2,10 +2,7 @@ package org.mozilla.rocket.content.games.ui
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-import android.view.MotionEvent
-import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -41,16 +38,7 @@ class GamesActivity : FragmentActivity() {
 
     private fun initToolBar() {
         refresh_button.setOnClickListener {
-            gamesViewModel.onFreshGameListButtonClicked()
-        }
-        refresh_button.setOnTouchListener { v: View, event: MotionEvent ->
-            val TRANSPARENT_GREY = Color.argb(0, 185, 185, 185)
-            val FILTERED_GREY = Color.argb(155, 185, 185, 185)
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> refresh_button.setColorFilter(FILTERED_GREY)
-                MotionEvent.ACTION_UP -> refresh_button.setColorFilter(TRANSPARENT_GREY)
-            }
-            v.onTouchEvent(event)
+            gamesViewModel.onRefreshGameListButtonClicked()
         }
     }
 

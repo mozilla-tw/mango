@@ -42,6 +42,12 @@ class GamesViewModel(
         showToast.value = ToastMessage(R.string.screenshot_image_viewer_dialog_info_title1, ToastMessage.LENGTH_SHORT, bannerItem.id, bannerItem.linkUrl)
     }
 
+    fun onRefreshGameListButtonClicked() {
+        // TODO: testing code, needs to be removed
+        browserGamesItems.value = emptyList()
+        loadData()
+    }
+
     private fun launchDataLoad(block: suspend () -> Unit): Job {
         return viewModelScope.launch {
             try {
@@ -52,12 +58,6 @@ class GamesViewModel(
                 browserGamesState.value = State.Error(t)
             }
         }
-    }
-
-    fun onFreshGameListButtonClicked() {
-        // TODO: testing code, needs to be removed
-        browserGamesItems.value = emptyList()
-        loadData()
     }
 
     sealed class State {
