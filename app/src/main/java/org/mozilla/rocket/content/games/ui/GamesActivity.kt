@@ -3,7 +3,6 @@ package org.mozilla.rocket.content.games.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
@@ -46,10 +45,13 @@ class GamesActivity : FragmentActivity() {
     }
 
     private fun observeGameAction() {
-        gamesViewModel.showToast.observe(this, Observer { message ->
-            Toast.makeText(applicationContext, getString(message.stringResId, *message.args), message.duration).show()
-            // todo: test code need to removed.
-            startActivity(GameModeActivity.create(this, message.args[1]))
+        gamesViewModel.event.observe(this, Observer { event ->
+            when (event) {
+                is GamesViewModel.GameAction.Play -> {
+                    val playAction: GamesViewModel.GameAction.Play = event
+                    startActivity(GameModeActivity.create(this, playAction.url))
+                }
+            }
         })
     }
 
