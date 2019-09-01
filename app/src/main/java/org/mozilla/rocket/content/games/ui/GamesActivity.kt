@@ -7,8 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import dagger.Lazy
-import kotlinx.android.synthetic.main.activity_games.games_tabs
-import kotlinx.android.synthetic.main.activity_games.view_pager
+import kotlinx.android.synthetic.main.activity_games.*
 import org.mozilla.focus.R
 import org.mozilla.rocket.content.appComponent
 import org.mozilla.rocket.content.games.ui.adapter.GameTabsAdapter
@@ -49,7 +48,7 @@ class GamesActivity : FragmentActivity() {
             when (event) {
                 is GamesViewModel.GameAction.Play -> {
                     val playAction: GamesViewModel.GameAction.Play = event
-                    startActivity(GameModeActivity.create(this, playAction.url))
+                    startActivity(GameModeActivity.getStartIntent(this, playAction.url))
                 }
             }
         })
