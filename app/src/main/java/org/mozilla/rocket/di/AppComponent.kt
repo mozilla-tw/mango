@@ -25,8 +25,6 @@ import org.mozilla.focus.fragment.BookmarksFragment
 import org.mozilla.focus.fragment.BrowserFragment
 import org.mozilla.focus.fragment.DownloadsFragment
 import org.mozilla.focus.history.BrowsingHistoryFragment
-import org.mozilla.focus.home.HomeFragment
-import org.mozilla.rocket.home.topsites.data.TopSitesRepo
 import org.mozilla.focus.persistence.TabsDatabase
 import org.mozilla.focus.persistence.di.TabsModule
 import org.mozilla.focus.urlinput.UrlInputFragment
@@ -40,11 +38,14 @@ import org.mozilla.rocket.content.ecommerce.ui.DealFragment
 import org.mozilla.rocket.content.ecommerce.ui.ShoppingActivity
 import org.mozilla.rocket.content.ecommerce.ui.VoucherFragment
 import org.mozilla.rocket.content.games.ui.BrowserGamesFragment
+import org.mozilla.rocket.content.games.ui.GameModeActivity
 import org.mozilla.rocket.content.games.ui.GamesActivity
 import org.mozilla.rocket.content.news.NewsFragment
 import org.mozilla.rocket.content.news.NewsSettingFragment
 import org.mozilla.rocket.content.news.NewsTabFragment
+import org.mozilla.rocket.home.HomeFragment
 import org.mozilla.rocket.home.di.HomeModule
+import org.mozilla.rocket.home.topsites.domain.GetTopSitesUseCase
 import org.mozilla.rocket.menu.MenuDialog
 import org.mozilla.rocket.privately.PrivateModeActivity
 import org.mozilla.rocket.privately.home.PrivateHomeFragment
@@ -84,13 +85,13 @@ interface AppComponent {
     fun inject(browserFragment: org.mozilla.rocket.privately.browse.BrowserFragment)
     fun inject(downloadsFragment: DownloadsFragment)
     fun inject(homeFragment: HomeFragment)
-    fun inject(homeFragment: org.mozilla.rocket.home.HomeFragment)
     fun inject(privateHomeFragment: PrivateHomeFragment)
     fun inject(urlInputFragment: UrlInputFragment)
     fun inject(menuDialog: MenuDialog)
     fun inject(browsingHistoryFragment: BrowsingHistoryFragment)
     fun inject(privateModeActivity: PrivateModeActivity)
     fun inject(gamesActivity: GamesActivity)
+    fun inject(gameModeActivity: GameModeActivity)
     fun inject(browserGamesFragment: BrowserGamesFragment)
     fun inject(contentTabActivity: ContentTabActivity)
     fun inject(contentTabFragment: ContentTabFragment)
@@ -103,8 +104,10 @@ interface AppComponent {
 
     @VisibleForTesting
     fun chromeViewModel(): ChromeViewModel
+
     @VisibleForTesting
     fun tabsDatabase(): TabsDatabase
+
     @VisibleForTesting
-    fun topSitesRepo(): TopSitesRepo
+    fun getTopSitesUseCase(): GetTopSitesUseCase
 }

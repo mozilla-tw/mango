@@ -15,7 +15,6 @@ import org.json.JSONObject
 import org.mozilla.focus.BuildConfig
 import org.mozilla.focus.R
 import org.mozilla.focus.history.model.Site
-import org.mozilla.focus.home.HomeFragment
 import org.mozilla.focus.utils.TopSitesUtils
 
 /**
@@ -50,7 +49,7 @@ class SharedPreferencePinSiteDelegate(private val context: Context) : PinSiteDel
         private const val KEY_BOOLEAN_FIRST_INIT = "first_init"
 
         // The number of pinned sites the new user will see
-        private const val DEFAULT_NEW_USER_PIN_COUNT = 2
+        private const val DEFAULT_NEW_USER_PIN_COUNT = 0
 
         private const val PINNED_SITE_VIEW_COUNT_INTERVAL = 100L
 
@@ -252,7 +251,7 @@ class SharedPreferencePinSiteDelegate(private val context: Context) : PinSiteDel
 
     private fun hasTopSiteRecord(): Boolean {
         val defaultPref = PreferenceManager.getDefaultSharedPreferences(context)
-        return defaultPref.getString(HomeFragment.TOPSITES_PREF, "")?.isNotEmpty() ?: false
+        return defaultPref.getString(TopSitesRepo.TOP_SITES_PREF, "")?.isNotEmpty() ?: false
     }
 
     private fun isEnabled(rootNode: JSONObject): Boolean {

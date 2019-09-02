@@ -4,75 +4,93 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
-import androidx.lifecycle.LiveData
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import dagger.Lazy
-import org.mozilla.focus.BuildConfig
+import kotlinx.android.synthetic.main.activity_content_tab.*
+import kotlinx.android.synthetic.main.toolbar.*
 import org.mozilla.focus.R
 import org.mozilla.focus.activity.BaseActivity
 import org.mozilla.focus.download.DownloadInfoManager
-import org.mozilla.focus.navigation.ScreenNavigator
-import org.mozilla.focus.urlinput.UrlInputFragment
 import org.mozilla.focus.utils.Constants
-import org.mozilla.focus.utils.SafeIntent
+import org.mozilla.focus.utils.IntentUtils
+import org.mozilla.focus.widget.BackKeyHandleable
+import org.mozilla.permissionhandler.PermissionHandler
+import org.mozilla.rocket.chrome.BottomBarItemAdapter
 import org.mozilla.rocket.chrome.ChromeViewModel
 import org.mozilla.rocket.content.appComponent
 import org.mozilla.rocket.content.getViewModel
-import org.mozilla.rocket.landing.NavigationModel
-import org.mozilla.rocket.landing.OrientationState
-import org.mozilla.rocket.landing.PortraitStateModel
+import org.mozilla.rocket.content.view.BottomBar
+import org.mozilla.rocket.extension.nonNullObserve
+import org.mozilla.rocket.extension.switchFrom
 import org.mozilla.rocket.privately.PrivateTabViewProvider
-import org.mozilla.rocket.privately.home.PrivateHomeFragment
 import org.mozilla.rocket.tabs.SessionManager
+import org.mozilla.rocket.tabs.TabViewProvider
 import org.mozilla.rocket.tabs.TabsSessionProvider
 import javax.inject.Inject
 
-class ContentTabActivity : BaseActivity(),
-    ScreenNavigator.Provider,
-    ScreenNavigator.HostActivity,
-    TabsSessionProvider.SessionHost {
+class ContentTabActivity : BaseActivity(), TabsSessionProvider.SessionHost, ContentTabViewContract {
 
     @Inject
     lateinit var chromeViewModelCreator: Lazy<ChromeViewModel>
 
-    private var sessionManager: SessionManager? = null
-    private val portraitStateModel = PortraitStateModel()
+    @Inject
+    lateinit var bottomBarViewModelCreator: Lazy<ContentTabBottomBarViewModel>
+
+    private lateinit var permissionHandler: PermissionHandler
     private lateinit var chromeViewModel: ChromeViewModel
-    private lateinit var tabViewProvider: PrivateTabViewProvider
-    private lateinit var screenNavigator: ScreenNavigator
+    private lateinit var tabViewProvider: TabViewProvider
+    private lateinit var sessionManager: SessionManager
+    private lateinit var contentTabHelper: ContentTabHelper
+    private lateinit var contentTabObserver: ContentTabHelper.Observer
     private lateinit var uiMessageReceiver: BroadcastReceiver
-    private lateinit var snackBarContainer: View
+    private lateinit var bottomBarItemAdapter: BottomBarItemAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         appComponent().inject(this)
         super.onCreate(savedInstanceState)
 
+        setContentView(R.layout.activity_content_tab)
+
         chromeViewModel = getViewModel(chromeViewModelCreator)
         tabViewProvider = PrivateTabViewProvider(this)
-        screenNavigator = ScreenNavigator(this)
+        sessionManager = SessionManager(tabViewProvider)
 
-        handleIntent(intent)
+        appbar.setOnApplyWindowInsetsListener { v, insets ->
+            (v.layoutParams as ConstraintLayout.LayoutParams).topMargin = insets.systemWindowInsetTop
+            insets
+        }
 
-        setContentView(R.layout.activity_content_tab)
-        snackBarContainer = findViewById(R.id.container)
         makeStatusBarTransparent()
 
+        setupBottomBar(bottom_bar)
+
         initBroadcastReceivers()
+
+        contentTabHelper = ContentTabHelper(this)
+        contentTabHelper.initPermissionHandler()
+
+        contentTabObserver = contentTabHelper.getObserver()
+        sessionManager.register(contentTabObserver)
 
         observeChromeAction()
         chromeViewModel.showUrlInput.value = chromeViewModel.currentUrl.value
 
-        monitorOrientationState()
-    }
-
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-
-        handleIntent(intent)
-        setIntent(intent)
+        if (savedInstanceState == null) {
+            val url = intent?.extras?.getString(EXTRA_URL) ?: ""
+            val enableTurboMode = intent?.extras?.getBoolean(EXTRA_ENABLE_TURBO_MODE) ?: true
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.browser_container, ContentTabFragment.newInstance(url, enableTurboMode))
+                .commit()
+        }
     }
 
     override fun onResume() {
@@ -90,84 +108,98 @@ class ContentTabActivity : BaseActivity(),
 
     override fun onDestroy() {
         super.onDestroy()
-        sessionManager?.destroy()
+        sessionManager.unregister(contentTabObserver)
+        sessionManager.destroy()
     }
 
-    override fun applyLocale() {}
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            toolbar_root.visibility = View.GONE
+            bottom_bar.visibility = View.GONE
+        } else {
+            toolbar_root.visibility = View.VISIBLE
+            bottom_bar.visibility = View.VISIBLE
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        permissionHandler.onRequestPermissionsResult(this, requestCode, permissions, grantResults)
+    }
 
     override fun onBackPressed() {
         if (supportFragmentManager.isStateSaved) {
             return
         }
 
-        val handled = screenNavigator.visibleBrowserScreen?.onBackPressed() ?: false
-        if (handled) {
-            return
+        val fragment = supportFragmentManager.findFragmentById(R.id.browser_container)
+        if (fragment != null && fragment is BackKeyHandleable) {
+            val handled = fragment.onBackPressed()
+            if (handled) {
+                return
+            }
         }
 
         super.onBackPressed()
     }
 
-    override fun getSessionManager(): SessionManager {
-        if (sessionManager == null) {
-            sessionManager = SessionManager(tabViewProvider)
-        }
+    override fun applyLocale() = Unit
 
-        // we just created it, it definitely not null
-        return sessionManager!!
-    }
+    override fun getSessionManager() = sessionManager
 
-    override fun getScreenNavigator(): ScreenNavigator = screenNavigator
+    override fun getHostActivity() = this
 
-    override fun getBrowserScreen(): ScreenNavigator.BrowserScreen {
-        return supportFragmentManager.findFragmentById(R.id.browser) as ContentTabFragment
-    }
+    override fun getCurrentSession() = sessionManager.focusSession
 
-    override fun createFirstRunScreen(): ScreenNavigator.Screen {
-        if (BuildConfig.DEBUG) {
-            throw RuntimeException("ContentTabActivity should never show first-run")
-        }
-        TODO("ContentTabActivity should never show first-run")
-    }
+    override fun getChromeViewModel() = chromeViewModel
 
-    override fun createHomeScreen(): ScreenNavigator.HomeScreen {
-        return PrivateHomeFragment.create()
-    }
+    override fun getSiteIdentity(): ImageView? = site_identity
 
-    override fun createUrlInputScreen(url: String?, parentFragmentTag: String?): ScreenNavigator.UrlInputScreen {
-        return UrlInputFragment.create(url, null, false)
-    }
+    override fun getDisplayUrlView(): TextView? = display_url
 
-    override fun createMissionDetailScreen(): ScreenNavigator.MissionDetailScreen {
-        if (BuildConfig.DEBUG) {
-            throw RuntimeException("ContentTabActivity should never show Mission Detail")
-        }
-        TODO("ContentTabActivity should never show Mission Detail")
-    }
+    override fun getProgressBar(): ProgressBar? = progress
 
-    override fun createFxLoginScreen(): ScreenNavigator.FxLoginScreen {
-        if (BuildConfig.DEBUG) {
-            throw RuntimeException("ContentTabActivity should never show FxLogin")
-        }
-        TODO("ContentTabActivity should never show FxLogin")
-    }
+    override fun getFullScreenGoneViews() = listOf(toolbar_root, bottom_bar)
 
-    override fun createRedeemScreen(): ScreenNavigator.RedeemSceen {
-        if (BuildConfig.DEBUG) {
-            throw RuntimeException("ContentTabActivity should never show Redeem")
-        }
-        TODO("ContentTabActivity should never show Redeem")
-    }
+    override fun getFullScreenInvisibleViews() = listOf(browser_container)
 
-    private fun handleIntent(intent: Intent?) {
-        val safeIntent = intent?.let { SafeIntent(it) } ?: return
+    override fun getFullScreenContainerView(): ViewGroup = video_container
 
-        val fromHistory = (safeIntent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0
-        if (!fromHistory) {
-            safeIntent.getStringExtra(EXTRA_URL)?.let { url ->
-                chromeViewModel.openUrl.value = ChromeViewModel.OpenUrlAction(url, withNewTab = false, isFromExternal = true)
+    private fun setupBottomBar(bottomBar: BottomBar) {
+        bottomBar.setOnItemClickListener(object : BottomBar.OnItemClickListener {
+            override fun onItemClick(type: Int, position: Int) {
+                when (type) {
+                    BottomBarItemAdapter.TYPE_BACK -> onBackPressed()
+                    BottomBarItemAdapter.TYPE_REFRESH -> chromeViewModel.refreshOrStop.call()
+                    BottomBarItemAdapter.TYPE_SHARE -> chromeViewModel.share.call()
+                    BottomBarItemAdapter.TYPE_OPEN_IN_NEW_TAB -> {
+                        startActivity(
+                            IntentUtils.createInternalOpenUrlIntent(
+                                this@ContentTabActivity,
+                                chromeViewModel.currentUrl.value,
+                                true
+                            )
+                        )
+                    }
+                    else -> throw IllegalArgumentException("Unhandled bottom bar item, type: $type")
+                }
             }
+        })
+        bottomBarItemAdapter = BottomBarItemAdapter(bottomBar, BottomBarItemAdapter.Theme.PrivateMode)
+        val bottomBarViewModel = getViewModel(bottomBarViewModelCreator)
+        bottomBarViewModel.items.nonNullObserve(this) {
+            bottomBarItemAdapter.setItems(it)
         }
+
+        chromeViewModel.isRefreshing.switchFrom(bottomBarViewModel.items)
+            .observe(this, Observer { bottomBarItemAdapter.setRefreshing(it == true) })
+        chromeViewModel.canGoForward.switchFrom(bottomBarViewModel.items)
+            .observe(this, Observer { bottomBarItemAdapter.setCanGoForward(it == true) })
     }
 
     private fun makeStatusBarTransparent() {
@@ -181,23 +213,13 @@ class ContentTabActivity : BaseActivity(),
         uiMessageReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 if (intent.action == Constants.ACTION_NOTIFY_RELOCATE_FINISH) {
-                    DownloadInfoManager.getInstance().showOpenDownloadSnackBar(intent.getLongExtra(Constants.EXTRA_ROW_ID, -1), snackBarContainer, LOG_TAG)
+                    DownloadInfoManager.getInstance().showOpenDownloadSnackBar(intent.getLongExtra(Constants.EXTRA_ROW_ID, -1), snack_bar_container, LOG_TAG)
                 }
             }
         }
     }
 
     private fun observeChromeAction() {
-        chromeViewModel.openUrl.observe(this, Observer { action ->
-            action?.run {
-                screenNavigator.showBrowserScreen(url, false, isFromExternal)
-            }
-        })
-        chromeViewModel.showUrlInput.observe(this, Observer { url ->
-            if (!supportFragmentManager.isStateSaved) {
-                screenNavigator.addUrlScreen(url)
-            }
-        })
         chromeViewModel.share.observe(this, Observer {
             chromeViewModel.currentUrl.value?.let { url ->
                 onShareClicked(url)
@@ -212,23 +234,15 @@ class ContentTabActivity : BaseActivity(),
         startActivity(Intent.createChooser(shareIntent, getString(R.string.share_dialog_title)))
     }
 
-    private fun monitorOrientationState() {
-        val orientationState = OrientationState(object : NavigationModel {
-            override val navigationState: LiveData<ScreenNavigator.NavigationState>
-                get() = ScreenNavigator.get(this@ContentTabActivity).navigationState
-        }, portraitStateModel)
-
-        orientationState.observe(this, Observer { orientation ->
-            orientation?.let {
-                requestedOrientation = it
-            }
-        })
-    }
-
     companion object {
         private const val LOG_TAG = "ContentTabActivity"
         private const val EXTRA_URL = "url"
+        private const val EXTRA_ENABLE_TURBO_MODE = "enable_turbo_mode"
 
-        fun getStartIntent(context: Context, url: String) = Intent(context, ContentTabActivity::class.java).also { it.putExtra(EXTRA_URL, url) }
+        fun getStartIntent(context: Context, url: String, enableTurboMode: Boolean = true) =
+            Intent(context, ContentTabActivity::class.java).also {
+                it.putExtra(EXTRA_URL, url)
+                it.putExtra(EXTRA_ENABLE_TURBO_MODE, enableTurboMode)
+            }
     }
 }
