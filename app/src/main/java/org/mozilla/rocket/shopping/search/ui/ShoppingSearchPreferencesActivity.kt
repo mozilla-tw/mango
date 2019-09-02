@@ -62,8 +62,9 @@ class ShoppingSearchPreferencesActivity : AppCompatActivity() {
                 adapter.notifyItemMoved(fromPosition, toPosition)
             }
         })
-        viewModel.sitesLiveData.observe(this, Observer {
-            adapter.setData(it)
+        viewModel.preferenceSitesLiveData.observe(this, Observer { list ->
+            viewModel.setList(list)
+            adapter.setData(list)
         })
     }
 

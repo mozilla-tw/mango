@@ -1,14 +1,16 @@
 package org.mozilla.rocket.shopping.search.di
 
+import android.content.Context
 import dagger.Module
 import dagger.Provides
 import org.mozilla.rocket.shopping.search.data.KeywordSuggestionRepository
 import org.mozilla.rocket.shopping.search.data.ShoppingSearchSiteRepository
 import org.mozilla.rocket.shopping.search.domain.FetchKeywordSuggestionUseCase
 import org.mozilla.rocket.shopping.search.domain.PreferencesShoppingSiteUseCase
+import org.mozilla.rocket.shopping.search.domain.SaveListToPreferenceUseCase
 import org.mozilla.rocket.shopping.search.domain.SearchShoppingSiteUseCase
-import org.mozilla.rocket.shopping.search.ui.ShoppingSearchBottomBarViewModel
 import org.mozilla.rocket.shopping.search.domain.UpdatePreferenceShoppingSiteUseCase
+import org.mozilla.rocket.shopping.search.ui.ShoppingSearchBottomBarViewModel
 import org.mozilla.rocket.shopping.search.ui.ShoppingSearchKeywordInputViewModel
 import org.mozilla.rocket.shopping.search.ui.ShoppingSearchPreferencesViewModel
 import org.mozilla.rocket.shopping.search.ui.ShoppingSearchResultViewModel
@@ -37,7 +39,7 @@ object ShoppingSearchModule {
     @JvmStatic
     @Singleton
     @Provides
-    fun provideShoppingSearchSiteRepository(): ShoppingSearchSiteRepository = ShoppingSearchSiteRepository()
+    fun provideShoppingSearchSiteRepository(appContext: Context): ShoppingSearchSiteRepository = ShoppingSearchSiteRepository(appContext)
 
     @JvmStatic
     @Singleton
@@ -69,6 +71,11 @@ object ShoppingSearchModule {
     @JvmStatic
     @Singleton
     @Provides
-    fun provideShoppingSearchPreferencesViewModel(usecase: PreferencesShoppingSiteUseCase, updateUsecase: UpdatePreferenceShoppingSiteUseCase): ShoppingSearchPreferencesViewModel =
-            ShoppingSearchPreferencesViewModel(usecase, updateUsecase)
+    fun provideSaveListToPreferenceUseCase(repo: ShoppingSearchSiteRepository) = SaveListToPreferenceUseCase(repo)
+
+    @JvmStatic
+    @Singleton
+    @Provides
+    fun provideShoppingSearchPreferencesViewModel(usecase: PreferencesShoppingSiteUseCase, updateUsecase: UpdatePreferenceShoppingSiteUseCase, saveUseCase: SaveListToPreferenceUseCase): ShoppingSearchPreferencesViewModel =
+            ShoppingSearchPreferencesViewModel(usecase, updateUsecase, saveUseCase)
 }

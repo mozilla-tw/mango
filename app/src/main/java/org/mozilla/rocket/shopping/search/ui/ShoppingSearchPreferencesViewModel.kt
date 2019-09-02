@@ -1,74 +1,75 @@
 package org.mozilla.rocket.shopping.search.ui
 
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.mozilla.rocket.content.Result
 import org.mozilla.rocket.shopping.search.domain.PreferencesShoppingSiteUseCase
+import org.mozilla.rocket.shopping.search.domain.SaveListToPreferenceUseCase
 import org.mozilla.rocket.shopping.search.domain.UpdatePreferenceShoppingSiteUseCase
-import org.mozilla.rocket.shopping.search.ui.adapter.SiteViewHolder
+import org.mozilla.rocket.shopping.search.ui.adapter.SiteViewHolder.PreferencesUiModel
 
 class ShoppingSearchPreferencesViewModel(
     private val preferenceShoppingSiteUseCase: PreferencesShoppingSiteUseCase,
-    private val updatePreferencesShoppingSiteUseCase: UpdatePreferenceShoppingSiteUseCase
+    private val updatePreferencesShoppingSiteUseCase: UpdatePreferenceShoppingSiteUseCase,
+    private val saveListToPreferenceUseCase: SaveListToPreferenceUseCase
 ) : ViewModel() {
 
     private lateinit var callback: ViewModelCallBack
-    val sitesLiveData = MutableLiveData<MutableList<SiteViewHolder.PreferencesUiModel>>()
+    private val preferenceSiteList = mutableListOf<PreferencesUiModel>()
+    var preferenceSitesLiveData = MediatorLiveData<MutableList<PreferencesUiModel>>()
 
     init {
-        loadListData()
+        getLiveData()
     }
 
-    private fun loadListData() = viewModelScope.launch(Dispatchers.IO) {
-        val preferencesSiteResult = preferenceShoppingSiteUseCase.invoke()
-        if (preferencesSiteResult is Result.Success) {
-            withContext(Dispatchers.Main) {
-                val list = preferencesSiteResult.data.sortedBy {
-                    it.order
-                }
-                val uiModelList = mutableListOf<SiteViewHolder.PreferencesUiModel>()
-                list.forEach {
-                    uiModelList.add(SiteViewHolder.PreferencesUiModel(it))
-                }
-                handleAllSwitch(uiModelList)
-                sitesLiveData.value = uiModelList
+    private fun getLiveData() {
+        viewModelScope.launch(Dispatchers.Main) {
+            preferenceSitesLiveData.addSource(preferenceShoppingSiteUseCase.invoke()) {
+                preferenceSitesLiveData.postValue(it)
             }
         }
     }
 
-    private fun handleAllSwitch(preferencesList: MutableList<SiteViewHolder.PreferencesUiModel>) {
+    fun setList(list: MutableList<PreferencesUiModel>) {
+        preferenceSiteList.clear()
+        preferenceSiteList.addAll(list)
+        preferenceSiteList.sortBy {
+            it.data.order
+        }
+        handleAllSwitch(preferenceSiteList)
+    }
+
+    private fun handleAllSwitch(list: MutableList<PreferencesUiModel>) {
         var toggleOnCounter = 0
-        preferencesList.forEach {
-            if (it.data.toggleOn) {
+        list.forEach {
+            if (it.data.isChecked) {
                 toggleOnCounter++
             }
         }
 
         if (toggleOnCounter <= 2) {
             if (toggleOnCounter < 2) {
-                preferencesList[0].data.toggleOn = true
-                preferencesList[1].data.toggleOn = true
+                list[0].data.isChecked = true
+                list[1].data.isChecked = true
             }
 
-            preferencesList.forEach {
-                it.data.toggleEnable = true
-                if (it.data.toggleOn) {
-                    it.data.toggleEnable = false
+            list.forEach {
+                it.isEnabled = true
+                if (it.data.isChecked) {
+                    it.isEnabled = false
                 }
             }
         } else {
-            preferencesList.forEach {
-                it.data.toggleEnable = true
+            list.forEach {
+                it.isEnabled = true
             }
         }
     }
 
     fun notifyItemMoved(fromPosition: Int, toPosition: Int) {
-        sitesLiveData.value?.let {
+        preferenceSiteList.let {
             updatePreferencesShoppingSiteUseCase.update(it, fromPosition, toPosition)
         }
 
@@ -77,16 +78,19 @@ class ShoppingSearchPreferencesViewModel(
     }
 
     fun onItemSwitchChange(index: Int, isChecked: Boolean) {
-        val preferencesList = sitesLiveData.value
-        preferencesList?.let {
-            it[index].data.toggleOn = isChecked
+        preferenceSiteList.let {
+            it[index].data.isChecked = isChecked
             handleAllSwitch(it)
         }
-        sitesLiveData.value = preferencesList
+        saveListToPreferenceUseCase.invoke(preferenceSiteList)
     }
 
     fun setCallBack(callBack: ViewModelCallBack) {
         this.callback = callBack
+    }
+
+    fun notifyItemDropped() {
+        saveListToPreferenceUseCase.invoke(preferenceSiteList)
     }
 
     interface ViewModelCallBack {

@@ -15,6 +15,7 @@ class PreferencesAdapterDelegate(private val viewModel: ShoppingSearchPreference
 
     override fun onRowClear(viewHolder: SiteViewHolder) {
         viewHolder.itemView.setBackgroundColor(Color.WHITE)
+        viewModel.notifyItemDropped()
     }
 
     override fun onRowSelected(viewHolder: SiteViewHolder) {
@@ -51,13 +52,15 @@ class SiteViewHolder(
         preference_site_switch.apply {
             tag = adapterPosition
             setOnCheckedChangeListener(null)
-            isChecked = uiModel.data.toggleOn
-            isEnabled = uiModel.data.toggleEnable
+            isChecked = uiModel.data.isChecked
+            isEnabled = uiModel.isEnabled
             setOnCheckedChangeListener(switchOnCheckChangeListener)
         }
     }
 
-    data class PreferencesUiModel(val data: ShoppingSearchSiteRepository.PreferenceSite) : DelegateAdapter.UiModel()
+    data class PreferencesUiModel(val data: ShoppingSearchSiteRepository.PreferenceSite) : DelegateAdapter.UiModel() {
+        var isEnabled = false
+    }
 }
 
 class ItemMoveCallback(private val delegate: PreferencesAdapterDelegate) : ItemTouchHelper.Callback() {
