@@ -1,6 +1,7 @@
 package org.mozilla.rocket.content.games.ui
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -60,7 +61,16 @@ class BrowserGamesFragment : Fragment() {
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         when (item.getItemId()) {
-            R.id.share -> Toast.makeText(activity, "Share", Toast.LENGTH_LONG).show()
+            R.id.share -> {
+                val sendIntent: Intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_SUBJECT, gamesViewModel.selectedGame.name)
+                    putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.share_game_dialog_text, gamesViewModel.selectedGame.linkUrl))
+                    type = "text/plain"
+                }
+                startActivity(Intent.createChooser(sendIntent,null))
+                Toast.makeText(activity, "Share", Toast.LENGTH_LONG).show()
+            }
             R.id.remove -> Toast.makeText(activity, "Remove", Toast.LENGTH_LONG).show()
             R.id.shortcut -> Toast.makeText(activity, "Shortcut", Toast.LENGTH_LONG).show()
             R.id.delete -> Toast.makeText(activity, "Uninstall", Toast.LENGTH_LONG).show()
