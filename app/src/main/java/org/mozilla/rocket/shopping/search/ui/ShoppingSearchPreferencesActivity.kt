@@ -5,18 +5,19 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.activity_shopping_search_preferences.*
-import org.mozilla.focus.R
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.Lazy
+import kotlinx.android.synthetic.main.activity_shopping_search_preferences.recyclerView
+import kotlinx.android.synthetic.main.activity_shopping_search_preferences.toolbar
+import org.mozilla.focus.R
 import org.mozilla.rocket.adapter.AdapterDelegatesManager
 import org.mozilla.rocket.adapter.DelegateAdapter
 import org.mozilla.rocket.content.appComponent
 import org.mozilla.rocket.content.getViewModel
 import org.mozilla.rocket.shopping.search.ui.adapter.ItemMoveCallback
 import org.mozilla.rocket.shopping.search.ui.adapter.PreferencesAdapterDelegate
-import org.mozilla.rocket.shopping.search.ui.adapter.SiteViewHolder
+import org.mozilla.rocket.shopping.search.ui.adapter.ShoppingSiteItem
 import javax.inject.Inject
 
 class ShoppingSearchPreferencesActivity : AppCompatActivity() {
@@ -45,26 +46,27 @@ class ShoppingSearchPreferencesActivity : AppCompatActivity() {
 
     private fun initPreferenceList() {
         val adapterDelegate = PreferencesAdapterDelegate(viewModel)
-        adapter = DelegateAdapter(AdapterDelegatesManager().apply {
-            add(SiteViewHolder.PreferencesUiModel::class, R.layout.item_shopping_search_preference, adapterDelegate)
-        })
-
-        val callback = ItemMoveCallback(adapterDelegate)
-        val touchHelper = ItemTouchHelper(callback)
-        touchHelper.attachToRecyclerView(recyclerView)
-
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = adapter
-
-        viewModel.setCallBack(object : ShoppingSearchPreferencesViewModel.ViewModelCallBack {
-
-            override fun notifyItemMoved(fromPosition: Int, toPosition: Int) {
-                adapter.notifyItemMoved(fromPosition, toPosition)
+        val adapterDelegatesManager = AdapterDelegatesManager().apply {
+            add(ShoppingSiteItem::class, R.layout.item_shopping_search_preference, adapterDelegate)
+        }
+        adapter = object : DelegateAdapter(adapterDelegatesManager) {
+            override fun getItemId(position: Int): Long {
+                val uiModel = data[position]
+                uiModel as ShoppingSiteItem
+                return uiModel.title.hashCode().toLong()
             }
-        })
-        viewModel.preferenceSitesLiveData.observe(this, Observer { list ->
-            viewModel.setList(list)
-            adapter.setData(list)
+        }.apply {
+            setHasStableIds(true)
+        }
+        recyclerView.apply {
+            val itemMoveCallback = ItemMoveCallback(adapterDelegate)
+            val touchHelper = ItemTouchHelper(itemMoveCallback)
+            touchHelper.attachToRecyclerView(this)
+            layoutManager = LinearLayoutManager(this@ShoppingSearchPreferencesActivity)
+            adapter = this@ShoppingSearchPreferencesActivity.adapter
+        }
+        viewModel.shoppingSites.observe(this, Observer {
+            adapter.setData(it)
         })
     }
 

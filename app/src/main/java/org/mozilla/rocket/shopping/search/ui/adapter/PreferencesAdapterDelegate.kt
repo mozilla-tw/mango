@@ -2,23 +2,22 @@ package org.mozilla.rocket.shopping.search.ui.adapter
 
 import android.graphics.Color
 import android.view.View
-import android.widget.CompoundButton
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_shopping_search_preference.*
 import org.mozilla.rocket.adapter.AdapterDelegate
 import org.mozilla.rocket.adapter.DelegateAdapter
-import org.mozilla.rocket.shopping.search.data.ShoppingSearchSiteRepository
 import org.mozilla.rocket.shopping.search.ui.ShoppingSearchPreferencesViewModel
 
 class PreferencesAdapterDelegate(private val viewModel: ShoppingSearchPreferencesViewModel) : AdapterDelegate, ItemMoveCallback.ItemTouchHelperContract {
 
     override fun onRowClear(viewHolder: SiteViewHolder) {
+        viewModel.onEditModeEnd()
         viewHolder.itemView.setBackgroundColor(Color.WHITE)
-        viewModel.notifyItemDropped()
     }
 
     override fun onRowSelected(viewHolder: SiteViewHolder) {
+        viewModel.onEditModeStart()
         viewHolder.itemView.setBackgroundColor(Color.GRAY)
     }
 
@@ -28,7 +27,7 @@ class PreferencesAdapterDelegate(private val viewModel: ShoppingSearchPreference
         viewHolder.preference_site_switch.tag = toPosition
         target.preference_site_switch?.tag = fromPosition
 
-        viewModel.notifyItemMoved(fromPosition, toPosition)
+        viewModel.onItemMoved(fromPosition, toPosition)
     }
 
     override fun onCreateViewHolder(view: View): DelegateAdapter.ViewHolder =
@@ -37,30 +36,30 @@ class PreferencesAdapterDelegate(private val viewModel: ShoppingSearchPreference
 
 class SiteViewHolder(
     override val containerView: View,
-    viewModel: ShoppingSearchPreferencesViewModel
+    private val viewModel: ShoppingSearchPreferencesViewModel
 ) : DelegateAdapter.ViewHolder(containerView) {
 
-    private val switchOnCheckChangeListener = CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
-        val index = buttonView.tag as Int
-        viewModel.onItemSwitchChange(index, isChecked)
-    }
-
     override fun bind(uiModel: DelegateAdapter.UiModel) {
-        uiModel as PreferencesUiModel
-        preference_site_name.text = uiModel.data.title
-        preference_site_url.text = uiModel.data.displayUrl
+        uiModel as ShoppingSiteItem
+        preference_site_name.text = uiModel.title
+        preference_site_url.text = uiModel.displayUrl
         preference_site_switch.apply {
-            tag = adapterPosition
-            setOnCheckedChangeListener(null)
-            isChecked = uiModel.data.isChecked
+            isChecked = uiModel.isChecked
             isEnabled = uiModel.isEnabled
-            setOnCheckedChangeListener(switchOnCheckChangeListener)
+            setOnCheckedChangeListener { _, isChecked ->
+                viewModel.onItemToggled(adapterPosition, isChecked)
+            }
         }
     }
+}
 
-    data class PreferencesUiModel(val data: ShoppingSearchSiteRepository.PreferenceSite) : DelegateAdapter.UiModel() {
-        var isEnabled = false
-    }
+data class ShoppingSiteItem(
+    val title: String,
+    val searchUrl: String,
+    val displayUrl: String,
+    var isChecked: Boolean
+) : DelegateAdapter.UiModel() {
+    var isEnabled: Boolean = true
 }
 
 class ItemMoveCallback(private val delegate: PreferencesAdapterDelegate) : ItemTouchHelper.Callback() {

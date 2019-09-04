@@ -6,10 +6,9 @@ import dagger.Provides
 import org.mozilla.rocket.shopping.search.data.KeywordSuggestionRepository
 import org.mozilla.rocket.shopping.search.data.ShoppingSearchSiteRepository
 import org.mozilla.rocket.shopping.search.domain.FetchKeywordSuggestionUseCase
-import org.mozilla.rocket.shopping.search.domain.PreferencesShoppingSiteUseCase
-import org.mozilla.rocket.shopping.search.domain.SaveListToPreferenceUseCase
-import org.mozilla.rocket.shopping.search.domain.SearchShoppingSiteUseCase
-import org.mozilla.rocket.shopping.search.domain.UpdatePreferenceShoppingSiteUseCase
+import org.mozilla.rocket.shopping.search.domain.GetShoppingSearchSitesUseCase
+import org.mozilla.rocket.shopping.search.domain.GetShoppingSitesUseCase
+import org.mozilla.rocket.shopping.search.domain.UpdateShoppingSitesUseCase
 import org.mozilla.rocket.shopping.search.ui.ShoppingSearchBottomBarViewModel
 import org.mozilla.rocket.shopping.search.ui.ShoppingSearchKeywordInputViewModel
 import org.mozilla.rocket.shopping.search.ui.ShoppingSearchPreferencesViewModel
@@ -44,12 +43,12 @@ object ShoppingSearchModule {
     @JvmStatic
     @Singleton
     @Provides
-    fun provideSearchShoppingSiteUseCase(repo: ShoppingSearchSiteRepository) = SearchShoppingSiteUseCase(repo)
+    fun provideSearchShoppingSiteUseCase(repo: ShoppingSearchSiteRepository) = GetShoppingSearchSitesUseCase(repo)
 
     @JvmStatic
     @Singleton
     @Provides
-    fun provideShoppingSearchResultViewModel(usecase: SearchShoppingSiteUseCase): ShoppingSearchResultViewModel =
+    fun provideShoppingSearchResultViewModel(usecase: GetShoppingSearchSitesUseCase): ShoppingSearchResultViewModel =
         ShoppingSearchResultViewModel(usecase)
 
     @JvmStatic
@@ -61,21 +60,16 @@ object ShoppingSearchModule {
     @JvmStatic
     @Singleton
     @Provides
-    fun providePreferencesShoppingSiteUseCase(repo: ShoppingSearchSiteRepository) = PreferencesShoppingSiteUseCase(repo)
+    fun providePreferencesShoppingSiteUseCase(repo: ShoppingSearchSiteRepository) = GetShoppingSitesUseCase(repo)
 
     @JvmStatic
     @Singleton
     @Provides
-    fun provideUpdatePreferencesShoppingSiteUseCase(repo: ShoppingSearchSiteRepository) = UpdatePreferenceShoppingSiteUseCase(repo)
+    fun provideSaveListToPreferenceUseCase(repo: ShoppingSearchSiteRepository) = UpdateShoppingSitesUseCase(repo)
 
     @JvmStatic
     @Singleton
     @Provides
-    fun provideSaveListToPreferenceUseCase(repo: ShoppingSearchSiteRepository) = SaveListToPreferenceUseCase(repo)
-
-    @JvmStatic
-    @Singleton
-    @Provides
-    fun provideShoppingSearchPreferencesViewModel(usecase: PreferencesShoppingSiteUseCase, updateUsecase: UpdatePreferenceShoppingSiteUseCase, saveUseCase: SaveListToPreferenceUseCase): ShoppingSearchPreferencesViewModel =
-            ShoppingSearchPreferencesViewModel(usecase, updateUsecase, saveUseCase)
+    fun provideShoppingSearchPreferencesViewModel(usecase: GetShoppingSitesUseCase, saveUseCase: UpdateShoppingSitesUseCase): ShoppingSearchPreferencesViewModel =
+            ShoppingSearchPreferencesViewModel(usecase, saveUseCase)
 }
