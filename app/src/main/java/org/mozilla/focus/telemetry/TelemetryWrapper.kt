@@ -29,6 +29,7 @@ import org.mozilla.focus.utils.AppConstants
 import org.mozilla.focus.utils.Browsers
 import org.mozilla.focus.utils.FirebaseHelper
 import org.mozilla.focus.utils.Settings
+import org.mozilla.rocket.home.contenthub.ui.ContentHub
 import org.mozilla.rocket.theme.ThemeManager
 import org.mozilla.strictmodeviolator.StrictModeViolation
 import org.mozilla.telemetry.Telemetry
@@ -2593,7 +2594,13 @@ object TelemetryWrapper {
             extras = [
                 TelemetryExtra(name = Extra.VERTICAL, value = "${Extra_Value.SHOPPING},${Extra_Value.GAME},${Extra_Value.TRAVEL},${Extra_Value.LIFESTYLE}")
             ])
-    fun clickContentHub(vertical: String) {
+    fun clickContentHub(item: ContentHub.Item) {
+        val vertical = when (item) {
+            is ContentHub.Item.Shopping -> Extra_Value.SHOPPING
+            is ContentHub.Item.Games -> Extra_Value.GAME
+            is ContentHub.Item.Travel -> Extra_Value.TRAVEL
+            is ContentHub.Item.News -> Extra_Value.LIFESTYLE
+        }
         EventBuilder(Category.ACTION, Method.CLICK, Object.CONTENT_HUB)
                 .extra(Extra.VERTICAL, vertical)
                 .queue()
