@@ -135,6 +135,15 @@ public class Settings {
         return booleanLiveData(R.string.pref_key_turbo_mode, TURBO_MODE_DEFAULT);
     }
 
+    public SharedPreferenceLiveData<String> fxaJwtLiveData() {
+        return stringLiveData(R.string.pref_key_str_fxa_jwt, null);
+    }
+
+    public void setFxaJwt(String jwt) {
+        final String key = getPreferenceKey(R.string.pref_key_str_fxa_jwt);
+        preferences.edit().putString(key, jwt).apply();
+    }
+
     public boolean shouldUseTurboMode() {
         return preferences.getBoolean(
                 resources.getString(R.string.pref_key_turbo_mode),

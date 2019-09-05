@@ -27,12 +27,16 @@ import kotlinx.android.synthetic.main.fragment_home.home_fragment_tab_counter
 import kotlinx.android.synthetic.main.fragment_home.main_list
 import kotlinx.android.synthetic.main.fragment_home.mission_button
 import kotlinx.android.synthetic.main.fragment_home.page_indicator
+import kotlinx.android.synthetic.main.fragment_home.profile_button
 import kotlinx.android.synthetic.main.fragment_home.search_panel
 import kotlinx.android.synthetic.main.fragment_home.shopping_button
+import org.mozilla.focus.BuildConfig.FXA_API_URL
+import org.mozilla.focus.BuildConfig.FXA_SETTING_URL
 import org.mozilla.focus.R
 import org.mozilla.focus.locale.LocaleAwareFragment
 import org.mozilla.focus.navigation.ScreenNavigator
 import org.mozilla.focus.telemetry.TelemetryWrapper
+import org.mozilla.focus.utils.Settings
 import org.mozilla.focus.utils.ViewUtils
 import org.mozilla.rocket.adapter.AdapterDelegatesManager
 import org.mozilla.rocket.adapter.DelegateAdapter
@@ -203,6 +207,24 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
             mission_button.isActivated = it
         })
         mission_button.setOnClickListener { showMissionFragment() }
+
+        Settings.getInstance(context).fxaJwtLiveData().observe(this, Observer {
+            if (it == null) {
+                // TODO: set drawable state
+                profile_button.setOnClickListener { openFxaCreatePage() }
+            } else {
+                // TODO: set drawable state
+                profile_button.setOnClickListener { openFxaSettingPage() }
+            }
+        })
+    }
+
+    private fun openFxaCreatePage() {
+        ScreenNavigator.get(context).showBrowserScreen(FXA_API_URL, true, false)
+    }
+
+    private fun openFxaSettingPage() {
+        ScreenNavigator.get(context).showBrowserScreen(FXA_SETTING_URL, true, false)
     }
 
     private fun showMissionFragment() {

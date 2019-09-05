@@ -55,6 +55,7 @@ import org.mozilla.focus.utils.FirebaseHelper
 import org.mozilla.focus.utils.IntentUtils
 import org.mozilla.focus.utils.NewFeatureNotice
 import org.mozilla.focus.utils.SafeIntent
+import org.mozilla.focus.utils.Settings
 import org.mozilla.focus.utils.ShortcutUtils
 import org.mozilla.focus.utils.SupportUtils
 import org.mozilla.focus.web.GeoPermissionCache
@@ -765,6 +766,7 @@ class MainActivity : BaseActivity(),
         }, {
             Toast.makeText(baseContext, it, Toast.LENGTH_SHORT).show()
         })
+        Settings.getInstance(this).setFxaJwt(jwt)
 
         supportFragmentManager.popBackStack()
 
