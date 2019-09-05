@@ -101,6 +101,8 @@ object TelemetryWrapper {
         const val START = "start"
         const val END = "end"
         const val IMPRESSION = "impression"
+        const val PIN = "pin"
+        const val PREDICTED = "predicted"
 
         const val FOREGROUND = "foreground"
         const val BACKGROUND = "background"
@@ -156,6 +158,8 @@ object TelemetryWrapper {
         const val NOTIFICATION = "notification"
         const val MESSAGE = "message"
         const val CATEGORY = "category"
+        const val PROCESS = "process"
+        const val AUDIENCE = "audience"
     }
 
     object Value {
@@ -224,6 +228,10 @@ object TelemetryWrapper {
         internal const val FIRSTRUN = "firstrun"
         internal const val WHATSNEW = "whatsnew"
         internal const val IN_APP_MESSAGE = "in_app_message"
+        internal const val VERTICAL = "vertical"
+        internal const val OPEN_IN_BROWSER = "OPEN_IN_BROWSER"
+        internal const val BACK = "back"
+        internal const val AUDIENCE_NAME = "audience_name"
     }
 
     internal object Extra {
@@ -263,6 +271,8 @@ object TelemetryWrapper {
         const val APP_LINK = "app_link"
         const val SHOW_KEYBOARD = "show_keyboard"
         const val IMPRESSION = "impression"
+        const val LOADTIME = "loadtime"
+        const val AUDIENCE_NAME = "audience_name"
     }
 
     object Extra_Value {
@@ -291,6 +301,7 @@ object TelemetryWrapper {
         const val LIFESTYLE = "lifestyle"
         const val REWARDS = "rewards"
         const val WEATHER = "weather"
+        const val ALL = "all"
         const val URL = "url"
         const val DEEPLINK = "deeplink"
         const val OPEN = "open"
@@ -2707,6 +2718,109 @@ object TelemetryWrapper {
                 .extra(Extra.VERSION, version)
                 .extra(Extra.CATEGORY, category)
                 .extra(Extra.IMPRESSION, impression)
+                .queue()
+    }
+
+    @TelemetryDoc(
+            name = "Start Vertical Process",
+            category = Category.ACTION,
+            method = Method.START,
+            `object` = Object.PROCESS,
+            value = Value.VERTICAL,
+            extras = [
+                TelemetryExtra(name = Extra.VERTICAL, value = "${Extra_Value.SHOPPING},${Extra_Value.GAME},${Extra_Value.TRAVEL},${Extra_Value.LIFESTYLE},${Extra_Value.ALL}")
+            ])
+    fun startVerticalProcess(vertical: String) {
+        EventBuilder(Category.ACTION, Method.START, Object.PROCESS, Value.VERTICAL)
+                .extra(Extra.VERTICAL, vertical)
+                .queue()
+    }
+
+    @TelemetryDoc(
+            name = "End Vertical Process",
+            category = Category.ACTION,
+            method = Method.END,
+            `object` = Object.PROCESS,
+            value = Value.VERTICAL,
+            extras = [
+                TelemetryExtra(name = Extra.VERTICAL, value = "${Extra_Value.SHOPPING},${Extra_Value.GAME},${Extra_Value.TRAVEL},${Extra_Value.LIFESTYLE},${Extra_Value.ALL}"),
+                TelemetryExtra(name = Extra.LOADTIME, value = "[0-9]+")
+            ])
+    fun endVerticalProcess(vertical: String, loadTime: Long) {
+        EventBuilder(Category.ACTION, Method.END, Object.PROCESS, Value.VERTICAL)
+                .extra(Extra.VERTICAL, vertical)
+                .extra(Extra.LOADTIME, loadTime.toString())
+                .queue()
+    }
+
+    @TelemetryDoc(
+            name = "Click Toolbar",
+            category = Category.ACTION,
+            method = Method.CLICK,
+            `object` = Object.TOOLBAR,
+            value = "${Value.SHARE}|${Value.OPEN_IN_BROWSER}|${Value.RELOAD}|${Value.BACK}",
+            extras = [
+                TelemetryExtra(name = Extra.MODE, value = "webview"),
+                TelemetryExtra(name = Extra.POSITION, value = "[0-9]"),
+                TelemetryExtra(name = Extra.FEED, value = "feed"),
+                TelemetryExtra(name = Extra.SOURCE, value = "source"),
+                TelemetryExtra(name = Extra.CATEGORY, value = "category"),
+                TelemetryExtra(name = Extra.SUB_CATEGORY, value = "subcategory"),
+                TelemetryExtra(name = Extra.ID, value = "component id"),
+                TelemetryExtra(name = Extra.VERSION, value = "version")
+            ])
+    fun clickContentTabToolbar(
+        value: String,
+        mode: String,
+        position: Int,
+        feed: String,
+        source: String,
+        category: String,
+        subCategory: String,
+        componentId: String,
+        version: String
+    ) {
+        EventBuilder(Category.ACTION, Method.CLICK, Object.TOOLBAR, value)
+                .extra(Extra.MODE, mode)
+                .extra(Extra.POSITION, position.toString())
+                .extra(Extra.FEED, feed)
+                .extra(Extra.SOURCE, source)
+                .extra(Extra.CATEGORY, category)
+                .extra(Extra.SUB_CATEGORY, subCategory)
+                .extra(Extra.ID, componentId)
+                .extra(Extra.VERSION, version)
+                .queue()
+    }
+
+    @TelemetryDoc(
+            name = "Pin Topsite",
+            category = Category.ACTION,
+            method = Method.PIN,
+            `object` = Object.HOME,
+            value = Value.LINK,
+            extras = [
+                TelemetryExtra(name = Extra.SOURCE, value = "buka|toko...|null"),
+                TelemetryExtra(name = Extra.POSITION, value = "[0-9]")
+            ])
+    fun pinTopsite(source: String?, position: Int) {
+        EventBuilder(Category.ACTION, Method.PIN, Object.HOME, Value.LINK)
+                .extra(Extra.SOURCE, source ?: "null")
+                .extra(Extra.POSITION, position.toString())
+                .queue()
+    }
+
+    @TelemetryDoc(
+            name = "Predict audience",
+            category = Category.ACTION,
+            method = Method.PREDICTED,
+            `object` = Object.AUDIENCE,
+            value = Value.AUDIENCE_NAME,
+            extras = [
+                TelemetryExtra(name = Extra.AUDIENCE_NAME, value = "provided from the firebase config string")
+            ])
+    fun predictAudience(audienceName: String) {
+        EventBuilder(Category.ACTION, Method.PREDICTED, Object.AUDIENCE, Value.AUDIENCE_NAME)
+                .extra(Extra.AUDIENCE_NAME, audienceName)
                 .queue()
     }
 
