@@ -30,7 +30,6 @@ class GameTabsAdapter(
         private fun getDefaultTabs(): List<TabItem> = listOf(
             TabItem(BrowserGamesFragment.newInstance(BrowserGamesFragment.Companion.GameType.TYPE_BROWSER), "Browser Games"),
             TabItem(BrowserGamesFragment.newInstance(BrowserGamesFragment.Companion.GameType.TYPE_PREMIUM), "Premium Games")
-            // TabItem(GamesActivity.PremiumGamesFragment(), "Premium Games")
         )
     }
 }

@@ -27,15 +27,15 @@ class GamesViewModel(
     }
 
     fun canCreateShortCut(): Boolean {
-        return if (selectedGame.type == "Browser") true else false
+        return selectedGame.type == "Browser"
     }
 
     fun canRemoveFromList(): Boolean {
-        return if (selectedGame.recentplay == true) true else false
+        return selectedGame.recentplay == true
     }
 
     fun canUninstall(): Boolean {
-        return if (selectedGame.type == "Premium") true else false
+        return selectedGame.type == "Premium"
     }
 
     init {
@@ -82,7 +82,6 @@ class GamesViewModel(
     sealed class GameAction {
         data class Play(val url: String) : GameAction()
         data class Install(val url: String) : GameAction()
-        data class Uninstall(val url: String) : GameAction()
-        data class Remove(val id: String) : GameAction()
+        data class RemoveFromRecent(val id: String) : GameAction()
     }
 }

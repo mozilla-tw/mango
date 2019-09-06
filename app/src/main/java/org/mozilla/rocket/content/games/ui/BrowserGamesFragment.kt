@@ -1,6 +1,5 @@
 package org.mozilla.rocket.content.games.ui
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -34,13 +33,6 @@ class BrowserGamesFragment : Fragment() {
     private lateinit var adapter: DelegateAdapter
     private lateinit var gameType: GameType
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        arguments?.getString("game_type")?.let {
-            gameType = GameType.valueOf(it)
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         appComponent().inject(this)
         super.onCreate(savedInstanceState)
@@ -68,7 +60,7 @@ class BrowserGamesFragment : Fragment() {
                     putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.share_game_dialog_text, gamesViewModel.selectedGame.linkUrl))
                     type = "text/plain"
                 }
-                startActivity(Intent.createChooser(sendIntent,null))
+                startActivity(Intent.createChooser(sendIntent, null))
                 Toast.makeText(activity, "Share", Toast.LENGTH_LONG).show()
             }
             R.id.remove -> Toast.makeText(activity, "Remove", Toast.LENGTH_LONG).show()
@@ -92,6 +84,10 @@ class BrowserGamesFragment : Fragment() {
     }
 
     private fun bindListData() {
+        arguments?.getString(GAME_TYPE)?.let {
+            gameType = GameType.valueOf(it)
+        }
+
         when (gameType) {
             GameType.TYPE_BROWSER -> gamesViewModel.browserGamesItems.observe(this@BrowserGamesFragment, Observer {
                 adapter.setData(it)
@@ -125,6 +121,9 @@ class BrowserGamesFragment : Fragment() {
     }
 
     companion object {
+
+        private val GAME_TYPE = "game_type"
+
         enum class GameType {
             TYPE_BROWSER,
             TYPE_PREMIUM
@@ -132,7 +131,7 @@ class BrowserGamesFragment : Fragment() {
         @JvmStatic
         fun newInstance(gameType: GameType) = BrowserGamesFragment().apply {
             arguments = Bundle().apply {
-                this.putString("game_type", gameType.name)
+                this.putString(GAME_TYPE, gameType.name)
             }
         }
     }

@@ -37,13 +37,11 @@ class GameViewHolder(
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
         menu?.setHeaderTitle(name.text)
         if (gamesViewModel.canShare())
-            menu?.add(0, R.id.share, 0, "Share this game")
+            menu?.add(0, R.id.share, 0, R.string.game_contextmenu_share)
         if (gamesViewModel.canCreateShortCut())
-            menu?.add(0, R.id.shortcut, 0, "Create short cut on home screen")
+            menu?.add(0, R.id.shortcut, 0, R.string.game_contextmenu_create_shortcut)
         if (gamesViewModel.canRemoveFromList())
-            menu?.add(0, R.id.remove, 0, "Remove from the list")
-        if (gamesViewModel.canUninstall())
-            menu?.add(0, R.id.delete, 0, "Uninstall this game")
+            menu?.add(0, R.id.remove, 0, R.string.game_contextmenu_remove_from_gamelist)
     }
 }
 
