@@ -29,12 +29,13 @@ class HomeViewModel(
     val topSitesPageIndex = MutableLiveData<Int>()
     val pinEnabled = MutableLiveData<Boolean>().apply { value = topSitesConfigsUseCase().isPinEnabled }
     val contentHubItems = MutableLiveData<List<ContentHub.Item>>().apply { value = getContentHubItemsUseCase() }
+    val hasPendingMissions = MutableLiveData<Boolean>()
 
     val toggleBackgroundColor = SingleLiveEvent<Unit>()
     val resetBackgroundColor = SingleLiveEvent<Unit>()
     val launchShoppingSearch = SingleLiveEvent<Unit>()
-    val topSiteClicked = SingleLiveEvent<Site>()
-    val topSiteLongClicked = SingleLiveEvent<Site>()
+    val openBrowser = SingleLiveEvent<Site>()
+    val showTopSiteMenu = SingleLiveEvent<Site>()
     val navigateToContentPage = SingleLiveEvent<ContentHub.Item>()
 
     fun updateTopSitesData() = viewModelScope.launch {
@@ -69,7 +70,7 @@ class HomeViewModel(
     }
 
     fun onTopSiteClicked(site: Site, position: Int) {
-        topSiteClicked.value = site
+        openBrowser.value = site
         val allowToLogTitle = when (site) {
             is Site.FixedSite -> true
             is Site.RemovableSite -> site.isDefault
@@ -80,7 +81,7 @@ class HomeViewModel(
 
     fun onTopSiteLongClicked(site: Site): Boolean =
             if (site is Site.RemovableSite) {
-                topSiteLongClicked.value = site
+                showTopSiteMenu.value = site
                 true
             } else {
                 false
@@ -92,8 +93,10 @@ class HomeViewModel(
     }
 
     fun onRemoveTopSiteClicked(site: Site) = viewModelScope.launch {
+        site as Site.RemovableSite
         removeTopSiteUseCase(site)
         updateTopSitesData()
+        TelemetryWrapper.removeTopSite(site.isDefault)
     }
 
     fun onContentHubItemClicked(item: ContentHub.Item) {
