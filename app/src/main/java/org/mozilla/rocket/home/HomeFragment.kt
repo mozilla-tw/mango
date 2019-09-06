@@ -30,19 +30,21 @@ import kotlinx.android.synthetic.main.fragment_home.home_fragment_fake_input
 import kotlinx.android.synthetic.main.fragment_home.home_fragment_fake_input_text
 import kotlinx.android.synthetic.main.fragment_home.home_fragment_menu_button
 import kotlinx.android.synthetic.main.fragment_home.home_fragment_tab_counter
+import kotlinx.android.synthetic.main.fragment_home.logoman
 import kotlinx.android.synthetic.main.fragment_home.main_list
 import kotlinx.android.synthetic.main.fragment_home.mission_button
+import kotlinx.android.synthetic.main.fragment_home.notification_board
 import kotlinx.android.synthetic.main.fragment_home.page_indicator
 import kotlinx.android.synthetic.main.fragment_home.search_panel
 import kotlinx.android.synthetic.main.fragment_home.shopping_button
-import kotlinx.android.synthetic.main.fragment_home.logoman
-import kotlinx.android.synthetic.main.fragment_home.notification_board
-import kotlinx.android.synthetic.main.home_notification_board.view.*
+import kotlinx.android.synthetic.main.home_notification_board.notification_subtitle
+import kotlinx.android.synthetic.main.home_notification_board.notification_title
 import org.mozilla.focus.R
 import org.mozilla.focus.locale.LocaleAwareFragment
 import org.mozilla.focus.navigation.ScreenNavigator
 import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.utils.ViewUtils
+import org.mozilla.rocket.adapter.AdapterDelegate
 import org.mozilla.rocket.adapter.AdapterDelegatesManager
 import org.mozilla.rocket.adapter.DelegateAdapter
 import org.mozilla.rocket.chrome.ChromeViewModel
@@ -73,6 +75,7 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
     private lateinit var chromeViewModel: ChromeViewModel
     private lateinit var themeManager: ThemeManager
     private lateinit var topSitesAdapter: DelegateAdapter
+    private lateinit var logomanAdapter: DelegateAdapter
 
     private val topSitesPageChangeCallback = object : OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
@@ -103,7 +106,13 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
         observeNightMode()
 
         // test
-        startLogomanSwipeIn()
+        showLogomanNotification(
+            Notification(
+                icon = "",
+                title = "Win your free coupon",
+                subtitle = "7-day challenge for Rs 15,000 shopping coupon7-day challenge for Rs 15,000 "
+            )
+        )
     }
 
     private fun initSearchToolBar() {
@@ -294,8 +303,21 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
         startActivity(ShoppingSearchActivity.getStartIntent(context))
     }
 
+    private fun showLogomanNotification(notification: Notification) {
+        logomanAdapter.setData(listOf(notification))
+        startLogomanSwipeIn()
+    }
+
     private fun initLogoman() {
-        notification_board.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        logomanAdapter = DelegateAdapter(
+            AdapterDelegatesManager().apply {
+                add(Notification::class, R.layout.home_notification_board, LogomanNotificationAdapterDelegate())
+            }
+        )
+        notification_board.apply {
+            adapter = logomanAdapter
+            layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        }
 
         val swipeFlag = ItemTouchHelper.START or ItemTouchHelper.END
         ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, swipeFlag) {
@@ -312,13 +334,13 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
             }
 
             override fun onChildDraw(
-                    c: Canvas,
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                    dX: Float,
-                    dY: Float,
-                    actionState: Int,
-                    isCurrentlyActive: Boolean
+                c: Canvas,
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean
             ) {
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
                     val alpha = 1f - abs(dX) / (recyclerView.width / 2f)
@@ -327,31 +349,26 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
             }
         }).attachToRecyclerView(notification_board)
-
-        notification_board.adapter = NotificationBoardAdapter(requireContext())
     }
 
-    class NotificationBoardAdapter(val context: Context) : RecyclerView.Adapter<NotificationBoardViewHolder>() {
+    class LogomanNotificationAdapterDelegate : AdapterDelegate {
+        override fun onCreateViewHolder(view: View): DelegateAdapter.ViewHolder =
+                LogomanNotificationViewHolder(view)
+    }
 
-        override fun getItemCount(): Int {
-            return 1
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotificationBoardViewHolder {
-            return NotificationBoardViewHolder(LayoutInflater.from(context).inflate(R.layout.home_notification_board, parent, false))
-        }
-
-        override fun onBindViewHolder(holder: NotificationBoardViewHolder, position: Int) {
-            holder.title.text = "Win your free coupon"
-            holder.subtitle.text = "7-day challenge for Rs 15,000 shopping coupon7-day challenge for Rs 15,000 "
+    class LogomanNotificationViewHolder(override val containerView: View) : DelegateAdapter.ViewHolder(containerView) {
+        override fun bind(uiModel: DelegateAdapter.UiModel) {
+            uiModel as Notification
+            notification_title.text = uiModel.title
+            notification_subtitle.text = uiModel.subtitle
         }
     }
 
-    class NotificationBoardViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val title = view.notification_title
-        val subtitle = view.notification_subtitle
-        val icon = view.notification_icon
-    }
+    data class Notification(
+        val icon: String,
+        val title: String,
+        val subtitle: String
+    ) : DelegateAdapter.UiModel()
 
     private fun startLogomanSwipeIn() {
         val logomanListener = ValueAnimator.AnimatorUpdateListener {
