@@ -24,6 +24,7 @@ import kotlin.math.abs
 class LogoManNotification : FrameLayout {
 
     private lateinit var adapter: DelegateAdapter
+    private var actionListener: NotificationActionListener? = null
 
     constructor(context: Context) : super(context)
 
@@ -38,11 +39,15 @@ class LogoManNotification : FrameLayout {
     private fun initViews() {
         inflate(context, R.layout.logo_man_notification, this)
         minimumHeight = dpToPx(MIN_HEIGHT_IN_DP)
+        initNotificationBoard()
+        notification_board.setOnClickListener { actionListener?.onNotificationClick() }
+    }
 
+    private fun initNotificationBoard() {
         adapter = DelegateAdapter(
-                AdapterDelegatesManager().apply {
-                    add(Notification::class, R.layout.home_notification_board, NotificationAdapterDelegate())
-                }
+            AdapterDelegatesManager().apply {
+                add(Notification::class, R.layout.home_notification_board, NotificationAdapterDelegate())
+            }
         )
         notification_board.apply {
             adapter = this@LogoManNotification.adapter
@@ -61,6 +66,7 @@ class LogoManNotification : FrameLayout {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 startSwipeOut()
+                actionListener?.onNotificationDismiss()
             }
 
             override fun onChildDraw(
@@ -167,6 +173,10 @@ class LogoManNotification : FrameLayout {
         }.start()
     }
 
+    fun setNotificationActionListener(listener: NotificationActionListener) {
+        actionListener = listener
+    }
+
     private class NotificationAdapterDelegate : AdapterDelegate {
         override fun onCreateViewHolder(view: View): DelegateAdapter.ViewHolder =
                 NotificationViewHolder(view)
@@ -185,6 +195,11 @@ class LogoManNotification : FrameLayout {
         val title: String,
         val subtitle: String
     ) : DelegateAdapter.UiModel()
+
+    interface NotificationActionListener {
+        fun onNotificationClick()
+        fun onNotificationDismiss()
+    }
 
     companion object {
         private const val MIN_HEIGHT_IN_DP = 136f

@@ -90,6 +90,7 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
         initTopSites()
         initContentHub()
         initFxaView()
+        initLogoManNotification()
         observeNightMode()
 
         // test
@@ -292,5 +293,17 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
 
     private fun showLogoManNotification(notification: LogoManNotification.Notification) {
         logo_man_notification.showNotification(notification)
+    }
+
+    private fun initLogoManNotification() {
+        logo_man_notification.setNotificationActionListener(object : LogoManNotification.NotificationActionListener {
+            override fun onNotificationClick() {
+                // TODO:
+            }
+
+            override fun onNotificationDismiss() {
+                // TODO:
+            }
+        })
     }
 }
