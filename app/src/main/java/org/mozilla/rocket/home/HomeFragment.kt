@@ -453,24 +453,24 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
 
     companion object {
         private const val LOGO_MAN_SWIPE_IN_1_DURATION_IN_MS = 270L
-        private const val LOGO_MAN_SWIPE_IN_1_START_Y_IN_DP = 108f
-        private const val LOGO_MAN_SWIPE_IN_1_END_Y_IN_DP = 5f
+        private const val LOGO_MAN_SWIPE_IN_1_START_Y_IN_DP = 144f
+        private const val LOGO_MAN_SWIPE_IN_1_END_Y_IN_DP = 41f
 
         private const val LOGO_MAN_SWIPE_IN_2_DURATION_IN_MS = 100L
-        private const val LOGO_MAN_SWIPE_IN_2_START_Y_IN_DP = 5f
-        private const val LOGO_MAN_SWIPE_IN_2_END_Y_IN_DP = -5f
+        private const val LOGO_MAN_SWIPE_IN_2_START_Y_IN_DP = 41f
+        private const val LOGO_MAN_SWIPE_IN_2_END_Y_IN_DP = 31f
 
         private const val LOGO_MAN_SWIPE_IN_3_DURATION_IN_MS = 130L
-        private const val LOGO_MAN_SWIPE_IN_3_START_Y_IN_DP = -5f
-        private const val LOGO_MAN_SWIPE_IN_3_END_Y_IN_DP = 0f
+        private const val LOGO_MAN_SWIPE_IN_3_START_Y_IN_DP = 31f
+        private const val LOGO_MAN_SWIPE_IN_3_END_Y_IN_DP = 36f
 
         private const val LOGO_MAN_SWIPE_OUT_1_DURATION_IN_MS = 160L
-        private const val LOGO_MAN_SWIPE_OUT_1_START_Y_IN_DP = 0f
-        private const val LOGO_MAN_SWIPE_OUT_1_END_Y_IN_DP = -26f
+        private const val LOGO_MAN_SWIPE_OUT_1_START_Y_IN_DP = 36f
+        private const val LOGO_MAN_SWIPE_OUT_1_END_Y_IN_DP = 10f
 
         private const val LOGO_MAN_SWIPE_OUT_2_DURATION_IN_MS = 270L
-        private const val LOGO_MAN_SWIPE_OUT_2_START_Y_IN_DP = -26f
-        private const val LOGO_MAN_SWIPE_OUT_2_END_Y_IN_DP = 108f
+        private const val LOGO_MAN_SWIPE_OUT_2_START_Y_IN_DP = 10f
+        private const val LOGO_MAN_SWIPE_OUT_2_END_Y_IN_DP = 144f
 
         private const val NOTIFICATION_BOARD_SWIPE_IN_1_DURATION_IN_MS = 300L
         private const val NOTIFICATION_BOARD_SWIPE_IN_1_START_Y_IN_DP = 75f
