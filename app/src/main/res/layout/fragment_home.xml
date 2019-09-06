@@ -101,7 +101,7 @@
         tools:listitem="@layout/home_notification_board" />
 
     <ImageView
-        android:id="@+id/logoman"
+        android:id="@+id/logo_man"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="5dp"

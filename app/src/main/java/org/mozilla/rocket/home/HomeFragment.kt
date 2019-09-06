@@ -30,7 +30,7 @@ import kotlinx.android.synthetic.main.fragment_home.home_fragment_fake_input
 import kotlinx.android.synthetic.main.fragment_home.home_fragment_fake_input_text
 import kotlinx.android.synthetic.main.fragment_home.home_fragment_menu_button
 import kotlinx.android.synthetic.main.fragment_home.home_fragment_tab_counter
-import kotlinx.android.synthetic.main.fragment_home.logoman
+import kotlinx.android.synthetic.main.fragment_home.logo_man
 import kotlinx.android.synthetic.main.fragment_home.main_list
 import kotlinx.android.synthetic.main.fragment_home.mission_button
 import kotlinx.android.synthetic.main.fragment_home.notification_board
@@ -75,7 +75,7 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
     private lateinit var chromeViewModel: ChromeViewModel
     private lateinit var themeManager: ThemeManager
     private lateinit var topSitesAdapter: DelegateAdapter
-    private lateinit var logomanAdapter: DelegateAdapter
+    private lateinit var logoManAdapter: DelegateAdapter
 
     private val topSitesPageChangeCallback = object : OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
@@ -102,11 +102,11 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
         initTopSites()
         initContentHub()
         initFxaView()
-        initLogoman()
+        initLogoMan()
         observeNightMode()
 
         // test
-        showLogomanNotification(
+        showLogoManNotification(
             Notification(
                 icon = "",
                 title = "Win your free coupon",
@@ -303,19 +303,19 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
         startActivity(ShoppingSearchActivity.getStartIntent(context))
     }
 
-    private fun showLogomanNotification(notification: Notification) {
-        logomanAdapter.setData(listOf(notification))
-        startLogomanSwipeIn()
+    private fun showLogoManNotification(notification: Notification) {
+        logoManAdapter.setData(listOf(notification))
+        startLogoManSwipeIn()
     }
 
-    private fun initLogoman() {
-        logomanAdapter = DelegateAdapter(
+    private fun initLogoMan() {
+        logoManAdapter = DelegateAdapter(
             AdapterDelegatesManager().apply {
-                add(Notification::class, R.layout.home_notification_board, LogomanNotificationAdapterDelegate())
+                add(Notification::class, R.layout.home_notification_board, LogoManNotificationAdapterDelegate())
             }
         )
         notification_board.apply {
-            adapter = logomanAdapter
+            adapter = logoManAdapter
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         }
 
@@ -330,7 +330,7 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                startLogomanSwipeOut()
+                startLogoManSwipeOut()
             }
 
             override fun onChildDraw(
@@ -351,12 +351,12 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
         }).attachToRecyclerView(notification_board)
     }
 
-    class LogomanNotificationAdapterDelegate : AdapterDelegate {
+    class LogoManNotificationAdapterDelegate : AdapterDelegate {
         override fun onCreateViewHolder(view: View): DelegateAdapter.ViewHolder =
-                LogomanNotificationViewHolder(view)
+                LogoManNotificationViewHolder(view)
     }
 
-    class LogomanNotificationViewHolder(override val containerView: View) : DelegateAdapter.ViewHolder(containerView) {
+    class LogoManNotificationViewHolder(override val containerView: View) : DelegateAdapter.ViewHolder(containerView) {
         override fun bind(uiModel: DelegateAdapter.UiModel) {
             uiModel as Notification
             notification_title.text = uiModel.title
@@ -370,38 +370,38 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
         val subtitle: String
     ) : DelegateAdapter.UiModel()
 
-    private fun startLogomanSwipeIn() {
-        val logomanListener = ValueAnimator.AnimatorUpdateListener {
+    private fun startLogoManSwipeIn() {
+        val logoManListener = ValueAnimator.AnimatorUpdateListener {
             val value = it.animatedValue as Int
-            logoman.translationY = value.toFloat()
+            logo_man.translationY = value.toFloat()
         }
         val notificationBoardListener = ValueAnimator.AnimatorUpdateListener {
             val value = it.animatedValue as Int
             notification_board.translationY = value.toFloat()
         }
-        val logomanMoveInAnimatorSet = AnimatorSet().apply {
-            val logomanSwipeInAnimator1 = ValueAnimator.ofInt(
-                dpToPx(LOGOMAN_SWIPE_IN_1_START_Y_IN_DP),
-                dpToPx(LOGOMAN_SWIPE_IN_1_END_Y_IN_DP)
+        val logoManMoveInAnimatorSet = AnimatorSet().apply {
+            val logoManSwipeInAnimator1 = ValueAnimator.ofInt(
+                dpToPx(LOGO_MAN_SWIPE_IN_1_START_Y_IN_DP),
+                dpToPx(LOGO_MAN_SWIPE_IN_1_END_Y_IN_DP)
             ).apply {
-                duration = LOGOMAN_SWIPE_IN_1_DURATION_IN_MS
-                addUpdateListener(logomanListener)
+                duration = LOGO_MAN_SWIPE_IN_1_DURATION_IN_MS
+                addUpdateListener(logoManListener)
             }
-            val logomanSwipeInAnimator2 = ValueAnimator.ofInt(
-                dpToPx(LOGOMAN_SWIPE_IN_2_START_Y_IN_DP),
-                dpToPx(LOGOMAN_SWIPE_IN_2_END_Y_IN_DP)
+            val logoManSwipeInAnimator2 = ValueAnimator.ofInt(
+                dpToPx(LOGO_MAN_SWIPE_IN_2_START_Y_IN_DP),
+                dpToPx(LOGO_MAN_SWIPE_IN_2_END_Y_IN_DP)
             ).apply {
-                duration = LOGOMAN_SWIPE_IN_2_DURATION_IN_MS
-                addUpdateListener(logomanListener)
+                duration = LOGO_MAN_SWIPE_IN_2_DURATION_IN_MS
+                addUpdateListener(logoManListener)
             }
-            val logomanSwipeInAnimator3 = ValueAnimator.ofInt(
-                dpToPx(LOGOMAN_SWIPE_IN_3_START_Y_IN_DP),
-                dpToPx(LOGOMAN_SWIPE_IN_3_END_Y_IN_DP)
+            val logoManSwipeInAnimator3 = ValueAnimator.ofInt(
+                dpToPx(LOGO_MAN_SWIPE_IN_3_START_Y_IN_DP),
+                dpToPx(LOGO_MAN_SWIPE_IN_3_END_Y_IN_DP)
             ).apply {
-                duration = LOGOMAN_SWIPE_IN_3_DURATION_IN_MS
-                addUpdateListener(logomanListener)
+                duration = LOGO_MAN_SWIPE_IN_3_DURATION_IN_MS
+                addUpdateListener(logoManListener)
             }
-            playSequentially(logomanSwipeInAnimator1, logomanSwipeInAnimator2, logomanSwipeInAnimator3)
+            playSequentially(logoManSwipeInAnimator1, logoManSwipeInAnimator2, logoManSwipeInAnimator3)
         }
         val notificationBoardMoveInAnimatorSet = AnimatorSet().apply {
             val notificationBoardMoveInAnimator1 = ValueAnimator.ofInt(
@@ -421,56 +421,56 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
             playSequentially(notificationBoardMoveInAnimator1, notificationBoardMoveInAnimator2)
         }
         AnimatorSet().apply {
-            this.play(logomanMoveInAnimatorSet)
+            this.play(logoManMoveInAnimatorSet)
                     .with(notificationBoardMoveInAnimatorSet)
                     .after(1500)
         }.start()
     }
 
-    private fun startLogomanSwipeOut() {
-        val logomanListener = ValueAnimator.AnimatorUpdateListener {
+    private fun startLogoManSwipeOut() {
+        val logoManListener = ValueAnimator.AnimatorUpdateListener {
             val value = it.animatedValue as Int
-            logoman.translationY = value.toFloat()
+            logo_man.translationY = value.toFloat()
         }
         AnimatorSet().apply {
-            val logomanMoveOutAnimator1 = ValueAnimator.ofInt(
-                dpToPx(LOGOMAN_SWIPE_OUT_1_START_Y_IN_DP),
-                dpToPx(LOGOMAN_SWIPE_OUT_1_END_Y_IN_DP)
+            val logoManMoveOutAnimator1 = ValueAnimator.ofInt(
+                dpToPx(LOGO_MAN_SWIPE_OUT_1_START_Y_IN_DP),
+                dpToPx(LOGO_MAN_SWIPE_OUT_1_END_Y_IN_DP)
             ).apply {
-                duration = LOGOMAN_SWIPE_OUT_1_DURATION_IN_MS
-                addUpdateListener(logomanListener)
+                duration = LOGO_MAN_SWIPE_OUT_1_DURATION_IN_MS
+                addUpdateListener(logoManListener)
             }
-            val logomanMoveOutAnimator2 = ValueAnimator.ofInt(
-                dpToPx(LOGOMAN_SWIPE_OUT_2_START_Y_IN_DP),
-                dpToPx(LOGOMAN_SWIPE_OUT_2_END_Y_IN_DP)
+            val logoManMoveOutAnimator2 = ValueAnimator.ofInt(
+                dpToPx(LOGO_MAN_SWIPE_OUT_2_START_Y_IN_DP),
+                dpToPx(LOGO_MAN_SWIPE_OUT_2_END_Y_IN_DP)
             ).apply {
-                duration = LOGOMAN_SWIPE_OUT_2_DURATION_IN_MS
-                addUpdateListener(logomanListener)
+                duration = LOGO_MAN_SWIPE_OUT_2_DURATION_IN_MS
+                addUpdateListener(logoManListener)
             }
-            playSequentially(logomanMoveOutAnimator1, logomanMoveOutAnimator2)
+            playSequentially(logoManMoveOutAnimator1, logoManMoveOutAnimator2)
         }.start()
     }
 
     companion object {
-        private const val LOGOMAN_SWIPE_IN_1_DURATION_IN_MS = 270L
-        private const val LOGOMAN_SWIPE_IN_1_START_Y_IN_DP = 108f
-        private const val LOGOMAN_SWIPE_IN_1_END_Y_IN_DP = 5f
+        private const val LOGO_MAN_SWIPE_IN_1_DURATION_IN_MS = 270L
+        private const val LOGO_MAN_SWIPE_IN_1_START_Y_IN_DP = 108f
+        private const val LOGO_MAN_SWIPE_IN_1_END_Y_IN_DP = 5f
 
-        private const val LOGOMAN_SWIPE_IN_2_DURATION_IN_MS = 100L
-        private const val LOGOMAN_SWIPE_IN_2_START_Y_IN_DP = 5f
-        private const val LOGOMAN_SWIPE_IN_2_END_Y_IN_DP = -5f
+        private const val LOGO_MAN_SWIPE_IN_2_DURATION_IN_MS = 100L
+        private const val LOGO_MAN_SWIPE_IN_2_START_Y_IN_DP = 5f
+        private const val LOGO_MAN_SWIPE_IN_2_END_Y_IN_DP = -5f
 
-        private const val LOGOMAN_SWIPE_IN_3_DURATION_IN_MS = 130L
-        private const val LOGOMAN_SWIPE_IN_3_START_Y_IN_DP = -5f
-        private const val LOGOMAN_SWIPE_IN_3_END_Y_IN_DP = 0f
+        private const val LOGO_MAN_SWIPE_IN_3_DURATION_IN_MS = 130L
+        private const val LOGO_MAN_SWIPE_IN_3_START_Y_IN_DP = -5f
+        private const val LOGO_MAN_SWIPE_IN_3_END_Y_IN_DP = 0f
 
-        private const val LOGOMAN_SWIPE_OUT_1_DURATION_IN_MS = 160L
-        private const val LOGOMAN_SWIPE_OUT_1_START_Y_IN_DP = 0f
-        private const val LOGOMAN_SWIPE_OUT_1_END_Y_IN_DP = -26f
+        private const val LOGO_MAN_SWIPE_OUT_1_DURATION_IN_MS = 160L
+        private const val LOGO_MAN_SWIPE_OUT_1_START_Y_IN_DP = 0f
+        private const val LOGO_MAN_SWIPE_OUT_1_END_Y_IN_DP = -26f
 
-        private const val LOGOMAN_SWIPE_OUT_2_DURATION_IN_MS = 270L
-        private const val LOGOMAN_SWIPE_OUT_2_START_Y_IN_DP = -26f
-        private const val LOGOMAN_SWIPE_OUT_2_END_Y_IN_DP = 108f
+        private const val LOGO_MAN_SWIPE_OUT_2_DURATION_IN_MS = 270L
+        private const val LOGO_MAN_SWIPE_OUT_2_START_Y_IN_DP = -26f
+        private const val LOGO_MAN_SWIPE_OUT_2_END_Y_IN_DP = 108f
 
         private const val NOTIFICATION_BOARD_SWIPE_IN_1_DURATION_IN_MS = 300L
         private const val NOTIFICATION_BOARD_SWIPE_IN_1_START_Y_IN_DP = 75f
