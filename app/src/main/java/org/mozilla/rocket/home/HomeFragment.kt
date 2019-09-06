@@ -1,9 +1,6 @@
 package org.mozilla.rocket.home
 
-import android.animation.AnimatorSet
-import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.Canvas
 import android.os.Bundle
 import android.view.GestureDetector
 import android.view.Gravity
@@ -14,9 +11,6 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import dagger.Lazy
 import kotlinx.android.synthetic.main.fragment_home.account_layout
@@ -30,21 +24,17 @@ import kotlinx.android.synthetic.main.fragment_home.home_fragment_fake_input
 import kotlinx.android.synthetic.main.fragment_home.home_fragment_fake_input_text
 import kotlinx.android.synthetic.main.fragment_home.home_fragment_menu_button
 import kotlinx.android.synthetic.main.fragment_home.home_fragment_tab_counter
-import kotlinx.android.synthetic.main.fragment_home.logo_man
+import kotlinx.android.synthetic.main.fragment_home.logo_man_notification
 import kotlinx.android.synthetic.main.fragment_home.main_list
 import kotlinx.android.synthetic.main.fragment_home.mission_button
-import kotlinx.android.synthetic.main.fragment_home.notification_board
 import kotlinx.android.synthetic.main.fragment_home.page_indicator
 import kotlinx.android.synthetic.main.fragment_home.search_panel
 import kotlinx.android.synthetic.main.fragment_home.shopping_button
-import kotlinx.android.synthetic.main.home_notification_board.notification_subtitle
-import kotlinx.android.synthetic.main.home_notification_board.notification_title
 import org.mozilla.focus.R
 import org.mozilla.focus.locale.LocaleAwareFragment
 import org.mozilla.focus.navigation.ScreenNavigator
 import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.utils.ViewUtils
-import org.mozilla.rocket.adapter.AdapterDelegate
 import org.mozilla.rocket.adapter.AdapterDelegatesManager
 import org.mozilla.rocket.adapter.DelegateAdapter
 import org.mozilla.rocket.chrome.ChromeViewModel
@@ -53,16 +43,15 @@ import org.mozilla.rocket.content.ecommerce.ui.ShoppingActivity
 import org.mozilla.rocket.content.games.ui.GamesActivity
 import org.mozilla.rocket.content.getActivityViewModel
 import org.mozilla.rocket.content.news.ui.NewsActivity
-import org.mozilla.rocket.extension.dpToPx
 import org.mozilla.rocket.home.contenthub.ui.ContentHub
 import org.mozilla.rocket.home.topsites.ui.Site
 import org.mozilla.rocket.home.topsites.ui.SitePage
 import org.mozilla.rocket.home.topsites.ui.SitePageAdapterDelegate
 import org.mozilla.rocket.home.topsites.ui.SiteViewHolder.Companion.TOP_SITE_LONG_CLICK_TARGET
+import org.mozilla.rocket.home.ui.LogoManNotification
 import org.mozilla.rocket.shopping.search.ui.ShoppingSearchActivity
 import org.mozilla.rocket.theme.ThemeManager
 import javax.inject.Inject
-import kotlin.math.abs
 
 class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
 
@@ -75,7 +64,6 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
     private lateinit var chromeViewModel: ChromeViewModel
     private lateinit var themeManager: ThemeManager
     private lateinit var topSitesAdapter: DelegateAdapter
-    private lateinit var logoManAdapter: DelegateAdapter
 
     private val topSitesPageChangeCallback = object : OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
@@ -102,12 +90,11 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
         initTopSites()
         initContentHub()
         initFxaView()
-        initLogoMan()
         observeNightMode()
 
         // test
         showLogoManNotification(
-            Notification(
+            LogoManNotification.Notification(
                 icon = "",
                 title = "Win your free coupon",
                 subtitle = "7-day challenge for Rs 15,000 shopping coupon7-day challenge for Rs 15,000 "
@@ -303,181 +290,7 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
         startActivity(ShoppingSearchActivity.getStartIntent(context))
     }
 
-    private fun showLogoManNotification(notification: Notification) {
-        logoManAdapter.setData(listOf(notification))
-        startLogoManSwipeIn()
-    }
-
-    private fun initLogoMan() {
-        logoManAdapter = DelegateAdapter(
-            AdapterDelegatesManager().apply {
-                add(Notification::class, R.layout.home_notification_board, LogoManNotificationAdapterDelegate())
-            }
-        )
-        notification_board.apply {
-            adapter = logoManAdapter
-            layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-        }
-
-        val swipeFlag = ItemTouchHelper.START or ItemTouchHelper.END
-        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, swipeFlag) {
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                return false
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                startLogoManSwipeOut()
-            }
-
-            override fun onChildDraw(
-                c: Canvas,
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                dX: Float,
-                dY: Float,
-                actionState: Int,
-                isCurrentlyActive: Boolean
-            ) {
-                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-                    val alpha = 1f - abs(dX) / (recyclerView.width / 2f)
-                    viewHolder.itemView.alpha = alpha
-                }
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-            }
-        }).attachToRecyclerView(notification_board)
-    }
-
-    class LogoManNotificationAdapterDelegate : AdapterDelegate {
-        override fun onCreateViewHolder(view: View): DelegateAdapter.ViewHolder =
-                LogoManNotificationViewHolder(view)
-    }
-
-    class LogoManNotificationViewHolder(override val containerView: View) : DelegateAdapter.ViewHolder(containerView) {
-        override fun bind(uiModel: DelegateAdapter.UiModel) {
-            uiModel as Notification
-            notification_title.text = uiModel.title
-            notification_subtitle.text = uiModel.subtitle
-        }
-    }
-
-    data class Notification(
-        val icon: String,
-        val title: String,
-        val subtitle: String
-    ) : DelegateAdapter.UiModel()
-
-    private fun startLogoManSwipeIn() {
-        val logoManListener = ValueAnimator.AnimatorUpdateListener {
-            val value = it.animatedValue as Int
-            logo_man.translationY = value.toFloat()
-        }
-        val notificationBoardListener = ValueAnimator.AnimatorUpdateListener {
-            val value = it.animatedValue as Int
-            notification_board.translationY = value.toFloat()
-        }
-        val logoManMoveInAnimatorSet = AnimatorSet().apply {
-            val logoManSwipeInAnimator1 = ValueAnimator.ofInt(
-                dpToPx(LOGO_MAN_SWIPE_IN_1_START_Y_IN_DP),
-                dpToPx(LOGO_MAN_SWIPE_IN_1_END_Y_IN_DP)
-            ).apply {
-                duration = LOGO_MAN_SWIPE_IN_1_DURATION_IN_MS
-                addUpdateListener(logoManListener)
-            }
-            val logoManSwipeInAnimator2 = ValueAnimator.ofInt(
-                dpToPx(LOGO_MAN_SWIPE_IN_2_START_Y_IN_DP),
-                dpToPx(LOGO_MAN_SWIPE_IN_2_END_Y_IN_DP)
-            ).apply {
-                duration = LOGO_MAN_SWIPE_IN_2_DURATION_IN_MS
-                addUpdateListener(logoManListener)
-            }
-            val logoManSwipeInAnimator3 = ValueAnimator.ofInt(
-                dpToPx(LOGO_MAN_SWIPE_IN_3_START_Y_IN_DP),
-                dpToPx(LOGO_MAN_SWIPE_IN_3_END_Y_IN_DP)
-            ).apply {
-                duration = LOGO_MAN_SWIPE_IN_3_DURATION_IN_MS
-                addUpdateListener(logoManListener)
-            }
-            playSequentially(logoManSwipeInAnimator1, logoManSwipeInAnimator2, logoManSwipeInAnimator3)
-        }
-        val notificationBoardMoveInAnimatorSet = AnimatorSet().apply {
-            val notificationBoardMoveInAnimator1 = ValueAnimator.ofInt(
-                dpToPx(NOTIFICATION_BOARD_SWIPE_IN_1_START_Y_IN_DP),
-                dpToPx(NOTIFICATION_BOARD_SWIPE_IN_1_END_Y_IN_DP)
-            ).apply {
-                duration = NOTIFICATION_BOARD_SWIPE_IN_1_DURATION_IN_MS
-                addUpdateListener(notificationBoardListener)
-            }
-            val notificationBoardMoveInAnimator2 = ValueAnimator.ofInt(
-                dpToPx(NOTIFICATION_BOARD_SWIPE_IN_2_START_Y_IN_DP),
-                dpToPx(NOTIFICATION_BOARD_SWIPE_IN_2_END_Y_IN_DP)
-            ).apply {
-                duration = NOTIFICATION_BOARD_SWIPE_IN_2_DURATION_IN_MS
-                addUpdateListener(notificationBoardListener)
-            }
-            playSequentially(notificationBoardMoveInAnimator1, notificationBoardMoveInAnimator2)
-        }
-        AnimatorSet().apply {
-            this.play(logoManMoveInAnimatorSet)
-                    .with(notificationBoardMoveInAnimatorSet)
-                    .after(1500)
-        }.start()
-    }
-
-    private fun startLogoManSwipeOut() {
-        val logoManListener = ValueAnimator.AnimatorUpdateListener {
-            val value = it.animatedValue as Int
-            logo_man.translationY = value.toFloat()
-        }
-        AnimatorSet().apply {
-            val logoManMoveOutAnimator1 = ValueAnimator.ofInt(
-                dpToPx(LOGO_MAN_SWIPE_OUT_1_START_Y_IN_DP),
-                dpToPx(LOGO_MAN_SWIPE_OUT_1_END_Y_IN_DP)
-            ).apply {
-                duration = LOGO_MAN_SWIPE_OUT_1_DURATION_IN_MS
-                addUpdateListener(logoManListener)
-            }
-            val logoManMoveOutAnimator2 = ValueAnimator.ofInt(
-                dpToPx(LOGO_MAN_SWIPE_OUT_2_START_Y_IN_DP),
-                dpToPx(LOGO_MAN_SWIPE_OUT_2_END_Y_IN_DP)
-            ).apply {
-                duration = LOGO_MAN_SWIPE_OUT_2_DURATION_IN_MS
-                addUpdateListener(logoManListener)
-            }
-            playSequentially(logoManMoveOutAnimator1, logoManMoveOutAnimator2)
-        }.start()
-    }
-
-    companion object {
-        private const val LOGO_MAN_SWIPE_IN_1_DURATION_IN_MS = 270L
-        private const val LOGO_MAN_SWIPE_IN_1_START_Y_IN_DP = 144f
-        private const val LOGO_MAN_SWIPE_IN_1_END_Y_IN_DP = 41f
-
-        private const val LOGO_MAN_SWIPE_IN_2_DURATION_IN_MS = 100L
-        private const val LOGO_MAN_SWIPE_IN_2_START_Y_IN_DP = 41f
-        private const val LOGO_MAN_SWIPE_IN_2_END_Y_IN_DP = 31f
-
-        private const val LOGO_MAN_SWIPE_IN_3_DURATION_IN_MS = 130L
-        private const val LOGO_MAN_SWIPE_IN_3_START_Y_IN_DP = 31f
-        private const val LOGO_MAN_SWIPE_IN_3_END_Y_IN_DP = 36f
-
-        private const val LOGO_MAN_SWIPE_OUT_1_DURATION_IN_MS = 160L
-        private const val LOGO_MAN_SWIPE_OUT_1_START_Y_IN_DP = 36f
-        private const val LOGO_MAN_SWIPE_OUT_1_END_Y_IN_DP = 10f
-
-        private const val LOGO_MAN_SWIPE_OUT_2_DURATION_IN_MS = 270L
-        private const val LOGO_MAN_SWIPE_OUT_2_START_Y_IN_DP = 10f
-        private const val LOGO_MAN_SWIPE_OUT_2_END_Y_IN_DP = 144f
-
-        private const val NOTIFICATION_BOARD_SWIPE_IN_1_DURATION_IN_MS = 300L
-        private const val NOTIFICATION_BOARD_SWIPE_IN_1_START_Y_IN_DP = 75f
-        private const val NOTIFICATION_BOARD_SWIPE_IN_1_END_Y_IN_DP = -60f
-
-        private const val NOTIFICATION_BOARD_SWIPE_IN_2_DURATION_IN_MS = 100L
-        private const val NOTIFICATION_BOARD_SWIPE_IN_2_START_Y_IN_DP = -60f
-        private const val NOTIFICATION_BOARD_SWIPE_IN_2_END_Y_IN_DP = -56f
+    private fun showLogoManNotification(notification: LogoManNotification.Notification) {
+        logo_man_notification.showNotification(notification)
     }
 }

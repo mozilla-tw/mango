@@ -89,25 +89,11 @@
             tools:layout_width="200dp" />
     </LinearLayout>
 
-    <org.mozilla.rocket.nightmode.themed.ThemedRecyclerView
-        android:id="@+id/notification_board"
+    <org.mozilla.rocket.home.ui.LogoManNotification
+        android:id="@+id/logo_man_notification"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:translationY="75dp"
-        app:layout_constraintBottom_toTopOf="@id/arc_panel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:listitem="@layout/home_notification_board" />
-
-    <ImageView
-        android:id="@+id/logo_man"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/logo_man_notification"
-        android:translationY="144dp"
-        app:layout_constraintBottom_toTopOf="@id/arc_panel"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toTopOf="@id/arc_panel"/>
 
     <org.mozilla.rocket.nightmode.themed.ThemedImageView
         android:id="@+id/arc_view"
