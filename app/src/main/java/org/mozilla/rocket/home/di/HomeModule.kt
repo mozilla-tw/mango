@@ -14,6 +14,8 @@ import org.mozilla.rocket.home.topsites.domain.PinTopSiteUseCase
 import org.mozilla.rocket.home.topsites.domain.RemoveTopSiteUseCase
 import org.mozilla.rocket.home.topsites.domain.TopSitesConfigsUseCase
 import org.mozilla.rocket.home.HomeViewModel
+import org.mozilla.rocket.home.logoman.data.LogoManNotificationRepo
+import org.mozilla.rocket.home.logoman.domain.GetLogoManNotificationUseCase
 import javax.inject.Singleton
 
 @Module
@@ -27,14 +29,16 @@ object HomeModule {
         topSitesConfigsUseCase: TopSitesConfigsUseCase,
         pinTopSiteUseCase: PinTopSiteUseCase,
         removeTopSiteUseCase: RemoveTopSiteUseCase,
-        getContentHubItemsUseCase: GetContentHubItemsUseCase
+        getContentHubItemsUseCase: GetContentHubItemsUseCase,
+        getLogoManNotificationUseCase: GetLogoManNotificationUseCase
     ): HomeViewModel = HomeViewModel(
         settings,
         getTopSitesUseCase,
         topSitesConfigsUseCase,
         pinTopSiteUseCase,
         removeTopSiteUseCase,
-        getContentHubItemsUseCase
+        getContentHubItemsUseCase,
+        getLogoManNotificationUseCase
     )
 
     @JvmStatic
@@ -80,4 +84,15 @@ object HomeModule {
     @Singleton
     @Provides
     fun provideContentHubRepo(appContext: Context): ContentHubRepo = ContentHubRepo(appContext)
+
+    @JvmStatic
+    @Singleton
+    @Provides
+    fun provideLogoManNotificationRepo(): LogoManNotificationRepo = LogoManNotificationRepo()
+
+    @JvmStatic
+    @Singleton
+    @Provides
+    fun provideGetLogoManNotificationUseCase(logoManNotificationRepo: LogoManNotificationRepo): GetLogoManNotificationUseCase =
+            GetLogoManNotificationUseCase(logoManNotificationRepo)
 }
