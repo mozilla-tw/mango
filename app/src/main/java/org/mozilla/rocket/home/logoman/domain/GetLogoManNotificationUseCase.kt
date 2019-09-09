@@ -10,4 +10,4 @@ class GetLogoManNotificationUseCase(private val logoManNotificationRepo: LogoMan
         logoManNotificationRepo.getNotification()?.toUiModel()
 }
 
-private fun Notification.toUiModel() = LogoManNotification.Notification(title, subtitle)
+private fun Notification.toUiModel() = LogoManNotification.Notification(serialNumber, title, subtitle)
