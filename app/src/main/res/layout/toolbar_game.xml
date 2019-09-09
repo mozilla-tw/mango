@@ -1,13 +1,12 @@
-<androidx.appcompat.widget.Toolbar android:id="@+id/mtoolbar"
+<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mtoolbar"
     android:layout_width="match_parent"
     android:layout_height="56dp"
-    android:background="@android:color/transparent"
     android:minHeight="?attr/actionBarSize"
     app:title="@string/games"
     app:titleMarginStart="16dp"
-    app:titleTextColor="#0C0C0D"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    app:titleTextColor="#0C0C0D">
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/refresh_button"
@@ -15,7 +14,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_marginEnd="16dp"
-        android:padding="12dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:padding="8dp"
         app:srcCompat="@drawable/action_refresh" />
+
 </androidx.appcompat.widget.Toolbar>
