@@ -191,7 +191,6 @@ class LogoManNotification : FrameLayout {
     }
 
     data class Notification(
-        val icon: String,
         val title: String,
         val subtitle: String
     ) : DelegateAdapter.UiModel()

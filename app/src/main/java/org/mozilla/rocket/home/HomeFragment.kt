@@ -96,7 +96,6 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
         // test
         showLogoManNotification(
             LogoManNotification.Notification(
-                icon = "",
                 title = "Win your free coupon",
                 subtitle = "7-day challenge for Rs 15,000 shopping coupon7-day challenge for Rs 15,000 "
             )
