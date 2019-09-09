@@ -11,55 +11,43 @@
     android:layout_height="@dimen/tab_tray_item_height"
     android:layout_marginStart="@dimen/tab_tray_padding"
     android:layout_marginEnd="@dimen/tab_tray_padding"
+    android:layout_marginBottom="@dimen/tab_tray_padding"
     android:background="@drawable/tab_tray_item_bkg"
-    android:outlineProvider="background"
     android:elevation="1dp"
-    android:layout_marginBottom="@dimen/tab_tray_item_space"
+    android:outlineProvider="background"
     tools:ignore="contentDescription">
+
     <ImageView
-        android:id="@+id/website_icon"
+        android:id="@+id/icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_centerVertical="true"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:background="@color/tabTrayItemIconBackground"
-        android:src="@drawable/favicon_default"/>
-    <LinearLayout
+        android:src="@drawable/ic_shopping_search_tab" />
+
+    <org.mozilla.rocket.nightmode.themed.ThemedTextView
+        android:id="@+id/title"
+        style="@style/Body2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/website_icon"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="1dp"
         android:layout_toStartOf="@+id/close_button"
-        android:orientation="vertical"
-        android:layout_centerVertical="true">
-        <org.mozilla.rocket.nightmode.themed.ThemedTextView
-            style="@style/Body2"
-            android:id="@+id/website_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="1dp"
-            android:textColor="@color/tab_tray_item_title"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:singleLine="true"
-            tools:text="website_title" />
-        <org.mozilla.rocket.nightmode.themed.ThemedTextView
-            style="@style/Body5"
-            android:id="@+id/website_subtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/tab_tray_item_subtitle"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:singleLine="true"
-            tools:text="website_subtitle" />
-    </LinearLayout>
+        android:layout_toEndOf="@id/icon"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColor="@color/tab_tray_item_title"
+        tools:text="Shopping Search" />
+
     <FrameLayout
         android:id="@+id/close_button"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true">
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true">
+
         <View
             android:layout_width="20dp"
             android:layout_height="20dp"
