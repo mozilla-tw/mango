@@ -3,34 +3,32 @@ package org.mozilla.rocket.shopping.search.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.mozilla.rocket.content.Result
-import org.mozilla.rocket.shopping.search.data.ShoppingSearchSiteRepository.Site
-import org.mozilla.rocket.shopping.search.domain.SearchShoppingSiteUseCase
+import org.mozilla.rocket.download.SingleLiveEvent
+import org.mozilla.rocket.shopping.search.domain.CheckOnboardingFirstRunUseCase
+import org.mozilla.rocket.shopping.search.domain.CompleteOnboardingFirstRunUseCase
+import org.mozilla.rocket.shopping.search.domain.GetShoppingSearchSitesUseCase
+import org.mozilla.rocket.shopping.search.domain.GetShoppingSearchSitesUseCase.ShoppingSearchSite
 
 class ShoppingSearchResultViewModel(
-    private val searchShoppingSite: SearchShoppingSiteUseCase
+    private val getShoppingSearchSitesUseCase: GetShoppingSearchSitesUseCase,
+    checkOnboardingFirstRunUseCase: CheckOnboardingFirstRunUseCase,
+    completeOnboardingFirstRunUseCase: CompleteOnboardingFirstRunUseCase
 ) : ViewModel() {
 
-    private val _uiModel = MutableLiveData<ShoppingSearchResultUiModel>()
-    val uiModel: LiveData<ShoppingSearchResultUiModel>
-        get() = _uiModel
+    private val _shoppingSearchSites = MutableLiveData<List<ShoppingSearchSite>>()
+    val shoppingSearchSites: LiveData<List<ShoppingSearchSite>>
+        get() = _shoppingSearchSites
+    val goPreferences = SingleLiveEvent<Unit>()
+    val showOnboardingDialog = SingleLiveEvent<Unit> ()
 
-    fun search(searchKeyword: String) = viewModelScope.launch(Dispatchers.Default) {
-        val searchShoppingSiteResult = searchShoppingSite(searchKeyword)
-        if (searchShoppingSiteResult is Result.Success) {
-            withContext(Dispatchers.Main) { emitUiModel(searchShoppingSiteResult.data) }
+    init {
+        if (checkOnboardingFirstRunUseCase()) {
+            showOnboardingDialog.call()
+            completeOnboardingFirstRunUseCase()
         }
     }
 
-    private fun emitUiModel(sites: List<Site>) {
-        _uiModel.value = ShoppingSearchResultUiModel(sites)
+    fun search(searchKeyword: String) {
+        _shoppingSearchSites.value = getShoppingSearchSitesUseCase(searchKeyword)
     }
 }
-
-data class ShoppingSearchResultUiModel(
-    val sites: List<Site>
-)

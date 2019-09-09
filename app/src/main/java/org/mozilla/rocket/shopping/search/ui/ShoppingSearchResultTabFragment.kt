@@ -90,6 +90,15 @@ class ShoppingSearchResultTabFragment : Fragment(), ContentTabViewContract {
         observeChromeAction()
 
         shoppingSearchResultViewModel.search(searchKeyword)
+
+        observeAction()
+    }
+
+    private fun observeAction() {
+        shoppingSearchResultViewModel.showOnboardingDialog.observe(this, Observer {
+            val dialogFragment = ShoppingSearchOnboardingDialogFragment()
+            dialogFragment.show(childFragmentManager, "onboardingDialogFragment")
+        })
     }
 
     override fun onDestroyView() {
@@ -144,8 +153,8 @@ class ShoppingSearchResultTabFragment : Fragment(), ContentTabViewContract {
     }
 
     private fun initViewPager() {
-        shoppingSearchResultViewModel.uiModel.observe(this, Observer { uiModel ->
-            val tabItems = uiModel.sites.map { site ->
+        shoppingSearchResultViewModel.shoppingSearchSites.observe(this, Observer { shoppingSearchSites ->
+            val tabItems = shoppingSearchSites.map { site ->
                 TabItem(
                     ContentTabFragment.newInstance(site.searchUrl),
                     site.title
@@ -157,6 +166,16 @@ class ShoppingSearchResultTabFragment : Fragment(), ContentTabViewContract {
 
     private fun initTabLayout() {
         tab_layout.setupWithViewPager(view_pager)
+
+        preferenceButton.setOnClickListener {
+            shoppingSearchResultViewModel.goPreferences.call()
+        }
+
+        shoppingSearchResultViewModel.goPreferences.observe(this, Observer {
+            activity?.baseContext?.let {
+                startActivity(ShoppingSearchPreferencesActivity.getStartIntent(it))
+            }
+        })
     }
 
     private fun observeChromeAction() {
@@ -178,10 +197,10 @@ class ShoppingSearchResultTabFragment : Fragment(), ContentTabViewContract {
     }
 
     private fun sendShareIntent() {
-        val list = shoppingSearchResultViewModel.uiModel.value
+        val list = shoppingSearchResultViewModel.shoppingSearchSites.value
         list?.apply {
             val index = view_pager.currentItem
-            val item = list.sites[index]
+            val item = list[index]
             val subject = item.title
             val text = item.title
             val share = Intent(Intent.ACTION_SEND)
