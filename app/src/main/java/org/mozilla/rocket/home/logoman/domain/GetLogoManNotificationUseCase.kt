@@ -2,7 +2,7 @@ package org.mozilla.rocket.home.logoman.domain
 
 import org.mozilla.rocket.home.logoman.data.LogoManNotificationRepo
 import org.mozilla.rocket.home.logoman.data.Notification
-import org.mozilla.rocket.home.ui.LogoManNotification
+import org.mozilla.rocket.home.logoman.ui.LogoManNotification
 
 class GetLogoManNotificationUseCase(private val logoManNotificationRepo: LogoManNotificationRepo) {
 

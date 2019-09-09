@@ -1,4 +1,4 @@
-package org.mozilla.rocket.home.ui
+package org.mozilla.rocket.home.logoman.ui
 
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
