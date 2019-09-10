@@ -12,6 +12,8 @@ import org.mozilla.rocket.content.news.data.NewsSettingsRemoteDataSource
 import org.mozilla.rocket.content.news.data.NewsSettingsRepository
 import org.mozilla.rocket.content.news.domain.LoadNewsLanguagesUseCase
 import org.mozilla.rocket.content.news.domain.LoadNewsSettingsUseCase
+import org.mozilla.rocket.content.news.domain.SetUserPreferenceCategoriesUseCase
+import org.mozilla.rocket.content.news.domain.SetUserPreferenceLanguageUseCase
 import org.mozilla.rocket.content.news.ui.NewsSettingsViewModel
 import org.mozilla.rocket.content.news.ui.NewsViewModel
 import java.util.HashMap
@@ -54,14 +56,28 @@ object NewsModule {
     @JvmStatic
     @Singleton
     @Provides
-    fun provideNewsViewModel(loadNewsSettingsUseCase: LoadNewsSettingsUseCase) =
-        NewsViewModel(loadNewsSettingsUseCase)
+    fun provideSetUserPreferenceLanguageUseCase(newsSettingsRepository: NewsSettingsRepository) =
+        SetUserPreferenceLanguageUseCase(newsSettingsRepository)
 
     @JvmStatic
     @Singleton
     @Provides
-    fun provideNewsSettingsViewModel(loadNewsLanguagesUseCase: LoadNewsLanguagesUseCase) =
-        NewsSettingsViewModel(loadNewsLanguagesUseCase)
+    fun provideSetUserPreferenceCategoriesUseCase(newsSettingsRepository: NewsSettingsRepository) =
+        SetUserPreferenceCategoriesUseCase(newsSettingsRepository)
+
+    @JvmStatic
+    @Provides
+    fun provideNewsViewModel(loadNewsSettingsUseCase: LoadNewsSettingsUseCase) =
+        NewsViewModel(loadNewsSettingsUseCase)
+
+    @JvmStatic
+    @Provides
+    fun provideNewsSettingsViewModel(
+        loadNewsSettingsUseCase: LoadNewsSettingsUseCase,
+        loadNewsLanguagesUseCase: LoadNewsLanguagesUseCase,
+        setUserPreferenceLanguageUseCase: SetUserPreferenceLanguageUseCase,
+        setUserPreferenceCategoriesUseCase: SetUserPreferenceCategoriesUseCase
+    ) = NewsSettingsViewModel(loadNewsSettingsUseCase, loadNewsLanguagesUseCase, setUserPreferenceLanguageUseCase, setUserPreferenceCategoriesUseCase)
 
     @JvmStatic
     @Singleton
