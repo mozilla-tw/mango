@@ -7,24 +7,27 @@ package org.mozilla.rocket.home.ui
 
 import android.app.Activity
 import android.content.Context
-import android.graphics.BitmapFactory
-import android.graphics.BitmapShader
+import android.content.res.Resources
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.ComposeShader
 import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.PorterDuff
-import android.graphics.Rect
+import android.graphics.PorterDuffXfermode
 import android.graphics.Shader
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.util.TypedValue
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.graphics.drawable.toBitmap
+import androidx.core.graphics.drawable.toDrawable
 import org.mozilla.focus.R
 import org.mozilla.focus.utils.ViewUtils
 import org.mozilla.rocket.nightmode.themed.ThemedImageView
 import org.mozilla.rocket.theme.ThemeManager
 
 class HomeScreenBackground : ThemedImageView, ThemeManager.Themeable {
-    private lateinit var paint: Paint
     private var isNight = false
 
     constructor(context: Context) : super(context) {
@@ -40,15 +43,8 @@ class HomeScreenBackground : ThemedImageView, ThemeManager.Themeable {
     }
 
     internal fun init() {
-        val rect = Rect()
-        (context as Activity).window.decorView.getWindowVisibleDisplayFrame(rect)
-        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.home_pattern)
-        paint = Paint()
-        val shader1 = BitmapShader(bitmap, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT)
-        val colors = intArrayOf(Color.parseColor("#99FFFFFF"), Color.parseColor("#4dFFFFFF"), Color.parseColor("#1aFFFFFF"), Color.parseColor("#00FFFFFF"))
-        val positions = floatArrayOf(0.0f, 0.4f, 0.7f, 1f)
-        val shader2 = LinearGradient(0f, rect.top.toFloat(), 0f, rect.bottom.toFloat(), colors, positions, Shader.TileMode.CLAMP)
-        paint.shader = ComposeShader(shader2, shader1, PorterDuff.Mode.MULTIPLY)
+        scaleType = ScaleType.CENTER_CROP
+        onThemeChanged()
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -61,18 +57,67 @@ class HomeScreenBackground : ThemedImageView, ThemeManager.Themeable {
         }
     }
 
-    override fun onThemeChanged() {
-        val drawable = context.theme.getDrawable(R.drawable.bg_homescreen_color)
-        background = drawable
-    }
-
     override fun setNightMode(isNight: Boolean) {
         super.setNightMode(isNight)
         this.isNight = isNight
         if (this.isNight) {
+            setBackgroundResource(R.drawable.bg_homescreen_night_mode)
             setImageResource(R.drawable.star_bg)
         } else {
-            setImageResource(R.drawable.firefox_lite_bg)
+            setBackgroundColor(Color.TRANSPARENT)
+            applyCurrentTheme(context.theme)
         }
+    }
+
+    override fun onThemeChanged() {
+        applyCurrentTheme(context.theme)
+    }
+
+    private fun applyCurrentTheme(theme: Resources.Theme) {
+        val typedValue = TypedValue()
+        theme.resolveAttribute(R.attr.themeGradientStart, typedValue, true)
+        val colorStart = typedValue.data
+        theme.resolveAttribute(R.attr.themeGradientCenter, typedValue, true)
+        val colorCenter = typedValue.data
+        theme.resolveAttribute(R.attr.themeGradientEnd, typedValue, true)
+        val colorEnd = typedValue.data
+
+        setImageDrawable(getPatternDrawable(colorStart, colorCenter, colorEnd))
+    }
+
+    private fun getPatternDrawable(colorStart: Int, colorCenter: Int, colorEnd: Int): Drawable =
+            getScreenedDrawable(
+                PATTERN_IMAGE_RESOURCE_ID,
+                intArrayOf(colorStart, colorCenter, colorEnd),
+                COLORS_GRADIENT_POSITIONS
+            )
+
+    private fun getScreenedDrawable(resId: Int, colors: IntArray, positions: FloatArray): Drawable =
+            applyColorScreen(
+                bitmap = requireNotNull(AppCompatResources.getDrawable(context, resId)).toBitmap(),
+                colors = colors,
+                positions = positions
+            ).toDrawable(resources)
+
+    private fun applyColorScreen(bitmap: Bitmap, colors: IntArray, positions: FloatArray): Bitmap {
+        val width = bitmap.width
+        val height = bitmap.height
+        val updatedBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(updatedBitmap)
+
+        canvas.drawBitmap(bitmap, 0f, 0f, null)
+
+        val paint = Paint()
+        val shader = LinearGradient(0f, 0f, width.toFloat(), height.toFloat(), colors, positions, Shader.TileMode.CLAMP)
+        paint.shader = shader
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SCREEN)
+        canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
+
+        return updatedBitmap
+    }
+
+    companion object {
+        private const val PATTERN_IMAGE_RESOURCE_ID = R.drawable.bg_homescreen_pattern
+        private val COLORS_GRADIENT_POSITIONS = floatArrayOf(0f, 0.65f, 1f)
     }
 }
