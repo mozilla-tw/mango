@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.DataSource;
@@ -103,9 +104,6 @@ public class TabTrayAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 String title = TextUtils.isEmpty(keyword) ? resources.getString(R.string.tab_tray_shopping_search) :
                         String.format("%s: \"%s\"", resources.getString(R.string.tab_tray_shopping_search), keyword);
                 ssHolder.title.setText(title);
-
-                ssHolder.rootView.setNightMode(isNight);
-                ssHolder.title.setNightMode(isNight);
                 break;
             }
             case VIEW_TYPE_TAB: {
@@ -274,13 +272,11 @@ public class TabTrayAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     static class ShoppingSearchViewHolder extends RecyclerView.ViewHolder {
-        ThemedRelativeLayout rootView;
-        ThemedTextView title;
+        TextView title;
         View closeButton;
 
         ShoppingSearchViewHolder(View itemView) {
             super(itemView);
-            rootView = itemView.findViewById(R.id.root_view);
             title = itemView.findViewById(R.id.title);
             closeButton = itemView.findViewById(R.id.close_button);
         }

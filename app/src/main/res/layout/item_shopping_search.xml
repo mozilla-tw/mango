@@ -3,8 +3,7 @@
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
-<org.mozilla.rocket.nightmode.themed.ThemedRelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_view"
     android:layout_width="match_parent"
@@ -12,21 +11,22 @@
     android:layout_marginStart="@dimen/tab_tray_padding"
     android:layout_marginEnd="@dimen/tab_tray_padding"
     android:layout_marginBottom="@dimen/tab_tray_padding"
-    android:background="@drawable/tab_tray_item_bkg"
+    android:background="@drawable/tab_tray_item_shopping_search_bkg"
     android:elevation="1dp"
     android:outlineProvider="background"
     tools:ignore="contentDescription">
 
     <ImageView
         android:id="@+id/icon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_centerVertical="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="14dp"
+        android:scaleType="fitCenter"
         android:src="@drawable/ic_shopping_search_tab" />
 
-    <org.mozilla.rocket.nightmode.themed.ThemedTextView
+    <TextView
         android:id="@+id/title"
         style="@style/Body2"
         android:layout_width="match_parent"
@@ -38,7 +38,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:singleLine="true"
-        android:textColor="@color/tab_tray_item_title"
+        android:textColor="@color/paletteWhite100"
         tools:text="Shopping Search" />
 
     <FrameLayout
@@ -54,4 +54,4 @@
             android:layout_gravity="center"
             android:background="@drawable/action_close_tab" />
     </FrameLayout>
-</org.mozilla.rocket.nightmode.themed.ThemedRelativeLayout>
+</RelativeLayout>
