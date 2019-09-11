@@ -26,12 +26,14 @@ object NewsModule {
     @JvmStatic
     @Singleton
     @Provides
-    fun provideNewsSettingsRemoteDataSource() = NewsSettingsRemoteDataSource()
+    fun provideNewsSettingsRemoteDataSource(): NewsSettingsRemoteDataSource =
+        NewsSettingsRemoteDataSource()
 
     @JvmStatic
     @Singleton
     @Provides
-    fun provideNewsSettingsLocalDataSource(context: Context) = NewsSettingsLocalDataSource(context)
+    fun provideNewsSettingsLocalDataSource(context: Context): NewsSettingsLocalDataSource =
+        NewsSettingsLocalDataSource(context)
 
     @JvmStatic
     @Singleton
@@ -39,35 +41,36 @@ object NewsModule {
     fun provideNewsSettingsRepository(
         newsSettingsRemoteDataSource: NewsSettingsRemoteDataSource,
         newsSettingsLocalDataSource: NewsSettingsLocalDataSource
-    ) = NewsSettingsRepository(newsSettingsRemoteDataSource, newsSettingsLocalDataSource)
+    ): NewsSettingsRepository =
+        NewsSettingsRepository(newsSettingsRemoteDataSource, newsSettingsLocalDataSource)
 
     @JvmStatic
     @Singleton
     @Provides
-    fun provideLoadNewsSettingsUseCase(newsSettingsRepository: NewsSettingsRepository) =
+    fun provideLoadNewsSettingsUseCase(newsSettingsRepository: NewsSettingsRepository): LoadNewsSettingsUseCase =
         LoadNewsSettingsUseCase(newsSettingsRepository)
 
     @JvmStatic
     @Singleton
     @Provides
-    fun provideLoadNewsLanguagesUseCase(newsSettingsRepository: NewsSettingsRepository) =
+    fun provideLoadNewsLanguagesUseCase(newsSettingsRepository: NewsSettingsRepository): LoadNewsLanguagesUseCase =
         LoadNewsLanguagesUseCase(newsSettingsRepository)
 
     @JvmStatic
     @Singleton
     @Provides
-    fun provideSetUserPreferenceLanguageUseCase(newsSettingsRepository: NewsSettingsRepository) =
+    fun provideSetUserPreferenceLanguageUseCase(newsSettingsRepository: NewsSettingsRepository): SetUserPreferenceLanguageUseCase =
         SetUserPreferenceLanguageUseCase(newsSettingsRepository)
 
     @JvmStatic
     @Singleton
     @Provides
-    fun provideSetUserPreferenceCategoriesUseCase(newsSettingsRepository: NewsSettingsRepository) =
+    fun provideSetUserPreferenceCategoriesUseCase(newsSettingsRepository: NewsSettingsRepository): SetUserPreferenceCategoriesUseCase =
         SetUserPreferenceCategoriesUseCase(newsSettingsRepository)
 
     @JvmStatic
     @Provides
-    fun provideNewsViewModel(loadNewsSettingsUseCase: LoadNewsSettingsUseCase) =
+    fun provideNewsViewModel(loadNewsSettingsUseCase: LoadNewsSettingsUseCase): NewsViewModel =
         NewsViewModel(loadNewsSettingsUseCase)
 
     @JvmStatic
@@ -77,7 +80,8 @@ object NewsModule {
         loadNewsLanguagesUseCase: LoadNewsLanguagesUseCase,
         setUserPreferenceLanguageUseCase: SetUserPreferenceLanguageUseCase,
         setUserPreferenceCategoriesUseCase: SetUserPreferenceCategoriesUseCase
-    ) = NewsSettingsViewModel(loadNewsSettingsUseCase, loadNewsLanguagesUseCase, setUserPreferenceLanguageUseCase, setUserPreferenceCategoriesUseCase)
+    ): NewsSettingsViewModel =
+        NewsSettingsViewModel(loadNewsSettingsUseCase, loadNewsLanguagesUseCase, setUserPreferenceLanguageUseCase, setUserPreferenceCategoriesUseCase)
 
     @JvmStatic
     @Singleton
