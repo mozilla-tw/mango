@@ -9,7 +9,7 @@ class ShoppingSearchMode private constructor(context: Context) {
     private val appContext: Context = context.applicationContext
 
     @Suppress("deprecation")
-    fun isIn(): Boolean {
+    fun hasShoppingSearchActivity(): Boolean {
         val manager = appContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         for (task in manager.getRunningTasks(Integer.MAX_VALUE)) {
             if (ShoppingSearchActivity::class.java.name == task.topActivity.className) {

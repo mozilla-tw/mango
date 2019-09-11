@@ -18,7 +18,7 @@ class TabTrayViewModel : ViewModel() {
 
     fun checkShoppingSearchMode(context: Context) {
         ShoppingSearchMode.getInstance(context).let {
-            emitUiModel(it.isIn(), it.retrieveKeyword() ?: "")
+            emitUiModel(it.hasShoppingSearchActivity(), it.retrieveKeyword() ?: "")
         }
     }
 

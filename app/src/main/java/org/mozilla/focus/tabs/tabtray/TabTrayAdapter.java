@@ -304,11 +304,17 @@ public class TabTrayAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         public int getOriginPosition() {
             final int position = getAdapterPosition();
-            return showShoppingSearch ? position - 1 : position;
+            if (position == RecyclerView.NO_POSITION) {
+                return position;
+            } else {
+                return showShoppingSearch ? position - 1 : position;
+            }
         }
     }
 
     static class InternalTabClickListener implements View.OnClickListener {
+        private static final int POSITION_OF_SHOPPING_SEARCH = -99;
+
         private RecyclerView.ViewHolder holder;
         private TabClickListener tabClickListener;
 
@@ -324,7 +330,7 @@ public class TabTrayAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
 
             if (holder instanceof ShoppingSearchViewHolder) {
-                dispatchOnClick(v, RecyclerView.NO_POSITION);
+                dispatchOnClick(v, POSITION_OF_SHOPPING_SEARCH);
             } else if (holder instanceof  TabViewHolder) {
                 int pos = ((TabViewHolder) holder).getOriginPosition();
                 if (pos != RecyclerView.NO_POSITION) {
@@ -336,7 +342,7 @@ public class TabTrayAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private void dispatchOnClick(View v, int position) {
             switch (v.getId()) {
                 case R.id.root_view:
-                    if (position == RecyclerView.NO_POSITION) {
+                    if (position == POSITION_OF_SHOPPING_SEARCH) {
                         tabClickListener.onShoppingSearchClick();
                     } else {
                         tabClickListener.onTabClick(position);
@@ -344,7 +350,7 @@ public class TabTrayAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     break;
 
                 case R.id.close_button:
-                    if (position == RecyclerView.NO_POSITION) {
+                    if (position == POSITION_OF_SHOPPING_SEARCH) {
                         tabClickListener.onShoppingSearchCloseClick();
                     } else {
                         tabClickListener.onTabCloseClick(position);
