@@ -46,7 +46,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_firefox_lite_logo"
-        android:tint="@android:color/white"
         android:visibility="@integer/home_firefox_logo_visibility"
         app:layout_constraintBottom_toTopOf="@id/arc_panel"
         app:layout_constraintEnd_toEndOf="parent"
