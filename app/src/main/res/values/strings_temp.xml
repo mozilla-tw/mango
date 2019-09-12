@@ -23,7 +23,6 @@
     <string name="shopping_search_feature_onboarding_message" translatable="false">Use shopping to find products across different shopping sites.</string>
 
     <!-- MSRP challenge detail -->
-    <string name="msrp_challenge_detail_title_7_day" translatable="false">7-day challenge for Rs 15,000 shopping coupon</string>
     <string name="msrp_challenge_detail_btn_redeem" translatable="false">Use Firefox account to redeem</string>
     <string name="msrp_challenge_detail_desc_point_1_title" translatable="false">1. Join the 7-Day challenge</string>
     <string name="msrp_challenge_detail_desc_point_1_message" translatable="false">View the top sites on Firefox Lite home by simply clicking the buttons for seven days in a row.</string>

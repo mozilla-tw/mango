@@ -18,7 +18,8 @@
 
         <View
             android:layout_width="0dp"
-            android:layout_height="268dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="360:268"
             android:background="@drawable/bg_mission_detail_header"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -42,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="75dp"
                 android:gravity="center"
-                android:text="@string/msrp_challenge_detail_title_7_day"
+                android:text="7-day challenge for Rs 15,000 shopping coupon"
                 android:textColor="@color/contentHeaderTextColor"
                 android:textSize="20sp" />
 
