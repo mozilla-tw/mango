@@ -1,2 +1,116 @@
 package org.mozilla.rocket.msrp.ui
 
+import android.content.Context
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import dagger.Lazy
+import kotlinx.android.synthetic.main.fragment_redeem.rd_code
+import kotlinx.android.synthetic.main.fragment_redeem.rd_text
+import org.mozilla.focus.R
+import org.mozilla.focus.navigation.ScreenNavigator
+import org.mozilla.focus.utils.FirebaseHelper
+import org.mozilla.rocket.content.appComponent
+import org.mozilla.rocket.content.getActivityViewModel
+import org.mozilla.rocket.msrp.data.RedeemResult
+import org.mozilla.rocket.msrp.data.RewardCouponDoc
+import org.mozilla.rocket.widget.FxToast
+import javax.inject.Inject
+
+class RedeemFragment : Fragment(), ScreenNavigator.RedeemSceen {
+
+    private lateinit var viewModel: MissionViewModel
+
+    @Inject
+    lateinit var missionViewModelCreator: Lazy<MissionViewModel>
+
+    override fun getFragment() = this
+
+    fun create(url: String): RedeemFragment {
+        val arguments = Bundle()
+        arguments.putString(ARGUMENT_URL, url)
+
+        val fragment = RedeemFragment()
+        fragment.arguments = arguments
+
+        return fragment
+    }
+
+    // I'm not sure the best place to call `appComponent().inject(this)`.
+    // I guess as long as it's earlier then the usage it's fine.
+    override fun onAttach(context: Context) {
+        appComponent().inject(this)
+        super.onAttach(context)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_redeem, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel = getActivityViewModel(missionViewModelCreator)
+
+        val redeemUrl =
+            arguments?.getString(ARGUMENT_URL)
+                ?: "https://rocket-dev01.appspot.com/api/v1/reward?mid=BOSAEZKpx7aLrQrgSweH" // for development
+//                throw IllegalStateException("Use UI to navigate to RedeemFragment")
+
+        tryRedeem(redeemUrl)
+
+        observeRedeemResult()
+    }
+
+    private fun tryRedeem(redeemUrl: String) {
+        // I don't want to call msrpServerRequest in the UI. maybe put it in another UseCase?
+        // I think fetch mission list will have the same need.
+        // TODO: find a better place for getting the token for msrp http request authorization header
+        FirebaseHelper.msrpServerRequest { userToken ->
+            if (userToken == null) {
+                // maybe we should ask the user to login first instead of take him directly.
+                // FIXME: prevent the infinite loop.
+                // TODO: Maybe show a toast? In the UI design, this won't happen. Just in case.
+                ScreenNavigator.get(context).addFxLogin()
+            } else {
+                viewModel.redeem(userToken, redeemUrl)
+            }
+        }
+    }
+
+    private fun observeRedeemResult() {
+        viewModel.redemResult.observe(viewLifecycleOwner, Observer { redeemResult ->
+            updateUi(redeemResult)
+        })
+    }
+
+    private fun updateUi(redeemResult: RedeemResult?) {
+
+        when (redeemResult) {
+            null -> {} // init state,
+            is RedeemResult.Success -> showSuccessUi(redeemResult.rewardCouponDoc)
+            is RedeemResult.UsedUp -> toast(redeemResult.message)
+            is RedeemResult.NotReady -> toast(redeemResult.message)
+            is RedeemResult.Failure -> toast(redeemResult.message)
+        }
+    }
+
+    private fun showSuccessUi(rewardCouponDoc: RewardCouponDoc) {
+
+        rd_code.text = rewardCouponDoc.code
+        rd_text.text = rewardCouponDoc.title
+        // TODO: show content..etc
+    }
+
+    private fun toast(message: String) {
+        FxToast.show(context!!, message, Toast.LENGTH_LONG)
+        fragmentManager?.popBackStack() // remove self
+    }
+
+    companion object {
+        private const val ARGUMENT_URL = "REDEEM_URL"
+    }
+}

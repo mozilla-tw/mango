@@ -11,7 +11,6 @@ import androidx.lifecycle.Observer
 import dagger.Lazy
 import org.mozilla.focus.R
 import org.mozilla.focus.navigation.ScreenNavigator
-import org.mozilla.rocket.content.appComponent
 import org.mozilla.rocket.content.getActivityViewModel
 import javax.inject.Inject
 
@@ -25,7 +24,6 @@ class MissionDetailFragment : Fragment(), ScreenNavigator.MissionDetailScreen {
     override fun getFragment() = this
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        appComponent().inject(this)
         super.onCreate(savedInstanceState)
     }
 
