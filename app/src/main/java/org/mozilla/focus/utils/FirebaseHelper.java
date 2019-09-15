@@ -318,4 +318,8 @@ final public class FirebaseHelper {
     public static void signInWithCustomToken(@NotNull String jwt, @NotNull Activity activity, Function2<? super String, ? super String, Unit> onSuccess, Function1<? super String, Unit> onFail) {
         getFirebase().signInWithCustomToken(jwt, activity, onSuccess, onFail);
     }
+
+    public static void msrpServerRequest(Function1<? super String, Unit> func){
+        getFirebase().msrpServerRequest(func);
+    }
 }
