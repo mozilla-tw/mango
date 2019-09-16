@@ -24,7 +24,7 @@ open class MissionRepository {
     open fun fetchMission(missionGroupURI: String): List<Mission> {
 
         // pretending we are doing some network request...
-        val fakeUrl = "https://api.github.com/repos/mozilla-mobile/android-components/issues"
+        val fakeUrl = "http://rocket-dev01.appspot.com/health"
         val request = Request(
             url = fakeUrl,
             headers = MutableHeaders(

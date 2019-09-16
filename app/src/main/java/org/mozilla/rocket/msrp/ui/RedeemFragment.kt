@@ -56,7 +56,7 @@ class RedeemFragment : Fragment(), ScreenNavigator.RedeemSceen {
 
         val redeemUrl =
             arguments?.getString(ARGUMENT_URL)
-                ?: "https://rocket-dev01.appspot.com/api/v1/reward?mid=BOSAEZKpx7aLrQrgSweH" // for development
+                ?: "https://rocket-dev01.appspot.com/api/v1/redeem/mission_daily?mid=AZ19ZOreJer4cAZMilrQ" // for development
 //                throw IllegalStateException("Use UI to navigate to RedeemFragment")
 
         tryRedeem(redeemUrl)
