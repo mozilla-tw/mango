@@ -18,6 +18,7 @@ import org.mozilla.rocket.msrp.data.Mission
 import org.mozilla.rocket.msrp.data.MissionRepository
 import org.mozilla.rocket.msrp.data.RewardServiceException
 import org.mozilla.rocket.msrp.domain.LoadMissionsUseCase
+import org.mozilla.rocket.msrp.domain.RedeemUseCase
 import java.util.concurrent.Executors
 
 class MissionViewModelTest {
@@ -57,13 +58,17 @@ class MissionViewModelTest {
 
         Mockito.`when`(missionRepository.fetchMission(Mockito.anyString())).thenReturn(testMissions)
 
-        missionViewModel = MissionViewModel(createLoadMissionsUseCase())
+        missionViewModel = MissionViewModel(createLoadMissionsUseCase(), createRedeemUseCase())
 
         missionViewModel.loadMissions(MISSION_GROUP_URI)
 
         assertEquals(testMissions, LiveDataTestUtil.getValue(missionViewModel.missions))
 
         LiveDataTestUtil.getValue(missionViewModel.missionViewState) is MissionViewModel.State.Idle
+    }
+
+    private fun createRedeemUseCase(): RedeemUseCase {
+        return RedeemUseCase(missionRepository)
     }
 
     @Test
@@ -74,7 +79,7 @@ class MissionViewModelTest {
 
         Mockito.`when`(missionRepository.fetchMission(Mockito.anyString())).thenReturn(emptyList)
 
-        missionViewModel = MissionViewModel(createLoadMissionsUseCase())
+        missionViewModel = MissionViewModel(createLoadMissionsUseCase(), createRedeemUseCase())
 
         missionViewModel.loadMissions(MISSION_GROUP_URI)
 
@@ -91,7 +96,7 @@ class MissionViewModelTest {
         Mockito.`when`(missionRepository.fetchMission(MISSION_GROUP_URI))
             .thenThrow(RewardServiceException.ServerErrorException())
 
-        missionViewModel = MissionViewModel(createLoadMissionsUseCase())
+        missionViewModel = MissionViewModel(createLoadMissionsUseCase(), createRedeemUseCase())
 
         missionViewModel.loadMissions(MISSION_GROUP_URI)
 
@@ -106,7 +111,7 @@ class MissionViewModelTest {
         Mockito.`when`(missionRepository.fetchMission(MISSION_GROUP_URI))
             .thenThrow(RewardServiceException.AuthorizationException())
 
-        missionViewModel = MissionViewModel(createLoadMissionsUseCase())
+        missionViewModel = MissionViewModel(createLoadMissionsUseCase(), createRedeemUseCase())
 
         missionViewModel.loadMissions(MISSION_GROUP_URI)
 
