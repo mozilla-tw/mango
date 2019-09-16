@@ -13,7 +13,6 @@ import kotlinx.android.synthetic.main.fragment_redeem.rd_code
 import kotlinx.android.synthetic.main.fragment_redeem.rd_text
 import org.mozilla.focus.R
 import org.mozilla.focus.navigation.ScreenNavigator
-import org.mozilla.focus.utils.FirebaseHelper
 import org.mozilla.rocket.content.appComponent
 import org.mozilla.rocket.content.getActivityViewModel
 import org.mozilla.rocket.msrp.data.RedeemResult
@@ -66,19 +65,7 @@ class RedeemFragment : Fragment(), ScreenNavigator.RedeemSceen {
     }
 
     private fun tryRedeem(redeemUrl: String) {
-        // I don't want to call msrpServerRequest in the UI. maybe put it in another UseCase?
-        // I think fetch mission list will have the same need.
-        // TODO: find a better place for getting the token for msrp http request authorization header
-        FirebaseHelper.msrpServerRequest { userToken ->
-            if (userToken == null) {
-                // maybe we should ask the user to login first instead of take him directly.
-                // FIXME: prevent the infinite loop.
-                // TODO: Maybe show a toast? In the UI design, this won't happen. Just in case.
-                ScreenNavigator.get(context).addFxLogin()
-            } else {
-                viewModel.redeem(userToken, redeemUrl)
-            }
-        }
+        viewModel.redeem(redeemUrl)
     }
 
     private fun observeRedeemResult() {
@@ -90,11 +77,16 @@ class RedeemFragment : Fragment(), ScreenNavigator.RedeemSceen {
     private fun updateUi(redeemResult: RedeemResult?) {
 
         when (redeemResult) {
-            null -> {} // init state,
+            null -> {
+            } // init state,
             is RedeemResult.Success -> showSuccessUi(redeemResult.rewardCouponDoc)
             is RedeemResult.UsedUp -> toast(redeemResult.message)
             is RedeemResult.NotReady -> toast(redeemResult.message)
             is RedeemResult.Failure -> toast(redeemResult.message)
+            is RedeemResult.NotLogin -> {
+                toast(redeemResult.message)
+                ScreenNavigator.get(context).addFxLogin()
+            }
         }
     }
 

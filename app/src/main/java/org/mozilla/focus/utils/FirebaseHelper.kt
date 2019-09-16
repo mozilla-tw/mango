@@ -21,6 +21,8 @@ import org.mozilla.threadutils.ThreadUtils
 import java.util.HashMap
 
 import org.mozilla.rocket.content.news.data.NewsSourceManager.Companion.PREF_INT_NEWS_PRIORITY
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 /**
  * A wrapper around FirebaseContract. It's job:
@@ -298,8 +300,20 @@ object FirebaseHelper {
         firebaseContract.signInWithCustomToken(jwt, activity, onSuccess, onFail)
     }
 
-    @JvmStatic
-    fun msrpServerRequest(func: Function1<String?, Unit>) {
-        firebaseContract.msrpServerRequest(func)
+    /**
+     *
+     * public interface OnSuccessListener<TResult> {
+    void onSuccess(TResult var1);
     }
+     */
+
+    @JvmStatic
+    suspend fun getUserToken() =
+        suspendCoroutine<String?> { continuation ->
+            firebaseContract.msrpServerRequest(object : (String?) -> Unit {
+                override fun invoke(p1: String?) {
+                    continuation.resume(p1)
+                }
+            })
+        }
 }

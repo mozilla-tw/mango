@@ -3,6 +3,7 @@ package org.mozilla.rocket.msrp.di
 import dagger.Module
 import dagger.Provides
 import org.mozilla.rocket.msrp.data.MissionRepository
+import org.mozilla.rocket.msrp.data.UserRepository
 import org.mozilla.rocket.msrp.domain.LoadMissionsUseCase
 import org.mozilla.rocket.msrp.domain.RedeemUseCase
 import org.mozilla.rocket.msrp.ui.MissionViewModel
@@ -19,13 +20,21 @@ object MissionModule {
     @JvmStatic
     @Singleton
     @Provides
+    fun provideUserRepo(): UserRepository = UserRepository()
+
+    @JvmStatic
+    @Singleton
+    @Provides
     fun providLoadMissionsUseCase(missionRepository: MissionRepository): LoadMissionsUseCase =
         LoadMissionsUseCase(missionRepository)
 
     @JvmStatic
     @Singleton
     @Provides
-    fun provideRedeemUseCase(missionRepository: MissionRepository) = RedeemUseCase(missionRepository)
+    fun provideRedeemUseCase(
+        missionRepository: MissionRepository,
+        userRepository: UserRepository
+    ) = RedeemUseCase(missionRepository, userRepository)
 
     @JvmStatic
     @Provides

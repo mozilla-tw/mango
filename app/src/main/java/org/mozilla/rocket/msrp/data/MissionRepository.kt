@@ -4,6 +4,7 @@ import android.util.Log
 import mozilla.components.concept.fetch.BuildConfig
 import mozilla.components.concept.fetch.MutableHeaders
 import mozilla.components.concept.fetch.Request
+import mozilla.components.concept.fetch.interceptor.withInterceptors
 import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient
 import org.json.JSONObject
 import java.lang.Exception
@@ -34,7 +35,7 @@ open class MissionRepository {
         )
         // pretending we are doing some network request here...
         // since we only have one data source, we'll just do it in the repository.
-        HttpURLConnectionClient().fetch(request).use { response ->
+        HttpURLConnectionClient().withInterceptors(LoggingInterceptor()).fetch(request).use { response ->
             when {
                 response.status >= 500 -> throw RewardServiceException.ServerErrorException()
                 response.status >= 400 -> throw RewardServiceException.AuthorizationException()
@@ -66,8 +67,11 @@ open class MissionRepository {
         }
     }
 
-    fun redeem(userToken: String, redeemUrl: String): RedeemResult {
+    fun redeem(userToken: String?, redeemUrl: String): RedeemResult {
 
+        if (userToken == null) {
+            return RedeemResult.NotLogin("Please login first")
+        }
         val request = Request(
             url = redeemUrl,
             headers = MutableHeaders(
@@ -81,7 +85,7 @@ open class MissionRepository {
 
             // pretending we are doing some network request here...
             // since we only have one data source, we'll just do it in the repository.
-            HttpURLConnectionClient().fetch(request).use { response ->
+            HttpURLConnectionClient().withInterceptors(LoggingInterceptor()).fetch(request).use { response ->
                 return when {
                     response.status == 500 -> { // 500 is define in the server spec...in the future.
                         val resJson = JSONObject(response.body.string())
@@ -93,7 +97,7 @@ open class MissionRepository {
                         val message = resJson.optString("message")
                         RedeemResult.NotReady(message) // return failure with message
                     }
-                    response.status == 204 -> {
+                    response.status == 404 -> {
                         val resJson = JSONObject(response.body.string())
                         val message = resJson.optString("message")
                         RedeemResult.UsedUp(message) // return failure with message
@@ -154,6 +158,7 @@ sealed class RedeemResult {
     class UsedUp(val message: String) : RedeemResult()
     class NotReady(val message: String) : RedeemResult()
     class Failure(val message: String) : RedeemResult()
+    class NotLogin(val message: String) : RedeemResult()
 }
 
 class RedeemResponaw(var rewardCouponDoc: RewardCouponDoc)

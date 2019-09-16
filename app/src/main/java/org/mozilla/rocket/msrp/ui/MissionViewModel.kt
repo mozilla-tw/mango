@@ -50,9 +50,9 @@ class MissionViewModel(
         }
     }
 
-    fun redeem(userToken: String, redeemUrl: String) {
+    fun redeem(redeemUrl: String) {
         launchDataLoad {
-            _redeemResult.postValue(redeemUseCase.execute(RedeemRequest(userToken, redeemUrl)))
+            _redeemResult.postValue(redeemUseCase.execute(RedeemRequest(redeemUrl)))
         }
     }
 

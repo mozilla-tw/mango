@@ -16,6 +16,7 @@ import android.content.res.Resources
 import android.database.ContentObserver
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
@@ -757,9 +758,9 @@ class MainActivity : BaseActivity(),
 
         // TODO: Add the log to profile the slowness of the login
         FirebaseHelper.signInWithCustomToken(jwt, this, { fxUid, oldFbUid ->
-            Toast.makeText(baseContext, "FB user [$oldFbUid] is now matches to Fx User [$fxUid]", Toast.LENGTH_SHORT).show()
+            Log.d(LOG_TAG, "onLoginComplete success oldFbUid [$oldFbUid] is now matches to Fx User [$fxUid]")
         }, {
-            Toast.makeText(baseContext, it, Toast.LENGTH_SHORT).show()
+            Log.d(LOG_TAG, "onLoginComplete fail ===$it")
         })
 
         supportFragmentManager.popBackStack()

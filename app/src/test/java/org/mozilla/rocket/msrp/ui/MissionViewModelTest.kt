@@ -17,6 +17,7 @@ import org.mozilla.rocket.msrp.data.TestData
 import org.mozilla.rocket.msrp.data.Mission
 import org.mozilla.rocket.msrp.data.MissionRepository
 import org.mozilla.rocket.msrp.data.RewardServiceException
+import org.mozilla.rocket.msrp.data.UserRepository
 import org.mozilla.rocket.msrp.domain.LoadMissionsUseCase
 import org.mozilla.rocket.msrp.domain.RedeemUseCase
 import java.util.concurrent.Executors
@@ -25,9 +26,9 @@ class MissionViewModelTest {
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    lateinit var missionViewModel: MissionViewModel
-
-    lateinit var missionRepository: MissionRepository
+    private lateinit var missionViewModel: MissionViewModel
+    private lateinit var missionRepository: MissionRepository
+    private lateinit var userRepository: UserRepository
 
     private val testMissions = TestData.missions
 
@@ -37,6 +38,9 @@ class MissionViewModelTest {
     @kotlinx.coroutines.ExperimentalCoroutinesApi
     fun setup() {
         Dispatchers.setMain(mainThreadSurrogate)
+
+        missionRepository = mock(MissionRepository::class.java)
+        userRepository = mock(UserRepository::class.java)
     }
 
     @After
@@ -54,8 +58,6 @@ class MissionViewModelTest {
     @Test
     fun `When there's data, ViewModel will show data page`() {
 
-        missionRepository = mock(MissionRepository::class.java)
-
         Mockito.`when`(missionRepository.fetchMission(Mockito.anyString())).thenReturn(testMissions)
 
         missionViewModel = MissionViewModel(createLoadMissionsUseCase(), createRedeemUseCase())
@@ -68,12 +70,11 @@ class MissionViewModelTest {
     }
 
     private fun createRedeemUseCase(): RedeemUseCase {
-        return RedeemUseCase(missionRepository)
+        return RedeemUseCase(missionRepository, userRepository)
     }
 
     @Test
     fun `When there's no data, ViewModel will show empty page`() {
-        missionRepository = mock(MissionRepository::class.java)
 
         val emptyList = listOf<Mission>()
 
@@ -91,8 +92,6 @@ class MissionViewModelTest {
     @Test
     fun `When there's a ServerErrorException, ViewModel will show ServerError page`() {
 
-        missionRepository = mock(MissionRepository::class.java)
-
         Mockito.`when`(missionRepository.fetchMission(MISSION_GROUP_URI))
             .thenThrow(RewardServiceException.ServerErrorException())
 
@@ -105,8 +104,6 @@ class MissionViewModelTest {
 
     @Test
     fun `When there's a AuthorizationException, ViewModel will show AuthError page`() {
-
-        missionRepository = mock(MissionRepository::class.java)
 
         Mockito.`when`(missionRepository.fetchMission(MISSION_GROUP_URI))
             .thenThrow(RewardServiceException.AuthorizationException())
