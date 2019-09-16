@@ -141,6 +141,7 @@ class ScreenshotOnBoardingTest {
      * 8. Check no screenshot on-boarding
      * */
     @Test
+    @Ignore
     fun closeScreenshotOnboarding_WhenOpenMyShotsFromMenu() {
 
         session {

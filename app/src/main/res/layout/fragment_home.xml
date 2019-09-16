@@ -161,6 +161,7 @@
                 android:layout_marginStart="12dp"
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/bg_shopping_search_btn"
+                android:elevation="1dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/shopping_button"
@@ -171,17 +172,19 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginStart="12dp"
+                android:elevation="1dp"
                 android:src="@drawable/ic_search_home"
                 android:tint="@color/home_shopping_search"
                 app:layout_constraintBottom_toBottomOf="@id/home_fragment_fake_input"
                 app:layout_constraintStart_toStartOf="@id/home_fragment_fake_input"
                 app:layout_constraintTop_toTopOf="@id/home_fragment_fake_input" />
-            
+
             <org.mozilla.rocket.nightmode.themed.ThemedTextView
                 android:id="@+id/home_fragment_fake_input_text"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginStart="8dp"
+                android:elevation="1dp"
                 android:gravity="center_vertical"
                 android:text="Search..."
                 android:textColor="@color/fake_input_text"
@@ -193,9 +196,11 @@
 
             <org.mozilla.rocket.nightmode.themed.ThemedImageView
                 android:id="@+id/home_fragment_menu_button"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="12dp"
+                android:layout_width="40dp"
+                android:layout_height="48dp"
+                android:elevation="1dp"
+                android:paddingEnd="4dp"
+                android:scaleType="centerInside"
                 android:src="@drawable/ic_menu_home"
                 android:tint="@color/home_shopping_search"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -204,9 +209,9 @@
 
             <org.mozilla.focus.tabs.TabCounter
                 android:id="@+id/home_fragment_tab_counter"
-                android:layout_width="26dp"
-                android:layout_height="26dp"
-                android:layout_marginEnd="16dp"
+                android:layout_width="40dp"
+                android:layout_height="48dp"
+                android:elevation="1dp"
                 app:drawableColor="@color/home_shopping_search"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/home_fragment_menu_button"
