@@ -52,20 +52,23 @@ class BrowserGamesFragment : Fragment() {
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
-        when (item.getItemId()) {
-            R.id.share -> {
-                val sendIntent: Intent = Intent().apply {
-                    action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_SUBJECT, gamesViewModel.selectedGame.name)
-                    putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.share_game_dialog_text, gamesViewModel.selectedGame.linkUrl))
-                    type = "text/plain"
+        if ((gamesViewModel.selectedGame.type == "Browser" && this.gameType == GameType.TYPE_BROWSER)
+                || (gamesViewModel.selectedGame.type == "Premium" && this.gameType == GameType.TYPE_PREMIUM)){
+            when (item.getItemId()) {
+                R.id.share -> {
+                    val sendIntent: Intent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_SUBJECT, gamesViewModel.selectedGame.name)
+                        putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.share_game_dialog_text, gamesViewModel.selectedGame.linkUrl))
+                        type = "text/plain"
+                    }
+                    startActivity(Intent.createChooser(sendIntent, null))
+                    Toast.makeText(activity, "Share", Toast.LENGTH_LONG).show()
                 }
-                startActivity(Intent.createChooser(sendIntent, null))
-                Toast.makeText(activity, "Share", Toast.LENGTH_LONG).show()
+                R.id.remove -> Toast.makeText(activity, "Remove", Toast.LENGTH_LONG).show()
+                R.id.shortcut -> Toast.makeText(activity, "Shortcut", Toast.LENGTH_LONG).show()
+                R.id.delete -> Toast.makeText(activity, "Uninstall", Toast.LENGTH_LONG).show()
             }
-            R.id.remove -> Toast.makeText(activity, "Remove", Toast.LENGTH_LONG).show()
-            R.id.shortcut -> Toast.makeText(activity, "Shortcut", Toast.LENGTH_LONG).show()
-            R.id.delete -> Toast.makeText(activity, "Uninstall", Toast.LENGTH_LONG).show()
         }
         return super.onContextItemSelected(item)
     }
