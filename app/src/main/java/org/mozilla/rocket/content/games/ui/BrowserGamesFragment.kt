@@ -52,10 +52,13 @@ class BrowserGamesFragment : Fragment() {
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
-        if (gamesViewModel.isSelectedGameInitialized()==false)
-            return false
-        if ((gamesViewModel.selectedGame.type == "Browser" && this.gameType == GameType.TYPE_BROWSER)
-                || (gamesViewModel.selectedGame.type == "Premium" && this.gameType == GameType.TYPE_PREMIUM)){
+        val intent = item.getIntent()
+        var gameType = ""
+        if (intent != null) {
+            gameType = intent.getStringExtra("gameType")
+        }
+        if ((gameType == "Browser" && this.gameType == GameType.TYPE_BROWSER) ||
+                (gameType == "Premium" && this.gameType == GameType.TYPE_PREMIUM)) {
             when (item.getItemId()) {
                 R.id.share -> {
                     val sendIntent: Intent = Intent().apply {
@@ -71,8 +74,9 @@ class BrowserGamesFragment : Fragment() {
                 R.id.shortcut -> Toast.makeText(activity, "Shortcut", Toast.LENGTH_LONG).show()
                 R.id.delete -> Toast.makeText(activity, "Uninstall", Toast.LENGTH_LONG).show()
             }
+            return true
         }
-        return true
+        return false
     }
 
     private fun initRecyclerView() {

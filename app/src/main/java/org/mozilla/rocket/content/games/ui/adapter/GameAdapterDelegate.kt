@@ -9,6 +9,7 @@ import org.mozilla.rocket.adapter.AdapterDelegate
 import org.mozilla.rocket.adapter.DelegateAdapter
 import org.mozilla.rocket.content.games.ui.GamesViewModel
 import android.view.ContextMenu
+import android.content.Intent
 
 class GameAdapterDelegate(private val gamesViewModel: GamesViewModel) : AdapterDelegate {
     override fun onCreateViewHolder(view: View): DelegateAdapter.ViewHolder =
@@ -36,12 +37,15 @@ class GameViewHolder(
 
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
         menu?.setHeaderTitle(name.text)
+        val intent = Intent()
+        intent.putExtra("gameType", gamesViewModel.selectedGame.type)
+
         if (gamesViewModel.canShare())
-            menu?.add(0, R.id.share, 0, R.string.game_contextmenu_share)
+            menu?.add(0, R.id.share, 0, R.string.game_contextmenu_share)?.setIntent(intent)
         if (gamesViewModel.canCreateShortCut())
-            menu?.add(0, R.id.shortcut, 0, R.string.game_contextmenu_create_shortcut)
+            menu?.add(0, R.id.shortcut, 0, R.string.game_contextmenu_create_shortcut)?.setIntent(intent)
         if (gamesViewModel.canRemoveFromList())
-            menu?.add(0, R.id.remove, 0, R.string.game_contextmenu_remove_from_gamelist)
+            menu?.add(0, R.id.remove, 0, R.string.game_contextmenu_remove_from_gamelist)?.setIntent(intent)
     }
 }
 

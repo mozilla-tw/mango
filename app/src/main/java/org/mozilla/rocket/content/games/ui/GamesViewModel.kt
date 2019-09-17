@@ -52,10 +52,6 @@ class GamesViewModel(
         _event.value = GameAction.Play(gameItem.linkUrl)
     }
 
-    fun isSelectedGameInitialized() : Boolean {
-        return this::selectedGame.isInitialized
-    }
-
     fun onGameItemLongClicked(gameItem: GameItem): Boolean {
         selectedGame = gameItem
         return false
