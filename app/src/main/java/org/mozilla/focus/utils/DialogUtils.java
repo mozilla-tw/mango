@@ -303,7 +303,7 @@ public class DialogUtils {
 
     public static PromotionDialog createMissionCompleteDialog(@NonNull final Context context) {
         CustomViewDialogData data = new CustomViewDialogData();
-        data.setDrawable(ContextCompat.getDrawable(context, R.drawable.reward_landing));
+        data.setDrawable(ContextCompat.getDrawable(context, R.drawable.ic_reward_ribbon));
         data.setTitle(context.getString(R.string.msrp_completed_popup_title));
         data.setDescription(context.getString(R.string.msrp_completed_popup_body));
         data.setPositiveText(context.getString(R.string.msrp_completed_popup_button1));
