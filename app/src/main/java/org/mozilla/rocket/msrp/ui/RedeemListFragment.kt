@@ -8,12 +8,12 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_missions.*
-import kotlinx.android.synthetic.main.msrp_redeem_mission.*
 import org.mozilla.focus.R
-import org.mozilla.rocket.adapter.AdapterDelegate
 import org.mozilla.rocket.adapter.AdapterDelegatesManager
 import org.mozilla.rocket.adapter.DelegateAdapter
 import org.mozilla.rocket.content.appComponent
+import org.mozilla.rocket.msrp.ui.adapter.RedeemAdapterDelegate
+import org.mozilla.rocket.msrp.ui.adapter.RedeemUiModel
 
 class RedeemListFragment : Fragment() {
 
@@ -47,34 +47,12 @@ class RedeemListFragment : Fragment() {
     }
 
     private fun prepareData() {
-
         val fakeRedeem = RedeemUiModel(
                 title = "7-Day challenge for Rs 15,000 shopping coupon",
-                description_text = "Waiting for redemption",
-                show_redeem_btn = true
+                descriptionText = "Waiting for redemption",
+                showRedeemBtn = true
         )
 
         adapter.setData(listOf(fakeRedeem))
     }
-
-    private class RedeemAdapterDelegate : AdapterDelegate {
-        override fun onCreateViewHolder(view: View): DelegateAdapter.ViewHolder =
-                RedeemViewHolder(view)
-    }
-
-    private class RedeemViewHolder(override val containerView: View) : DelegateAdapter.ViewHolder(containerView) {
-        override fun bind(uiModel: DelegateAdapter.UiModel) {
-            uiModel as RedeemUiModel
-
-            redeem_title.text = uiModel.title
-            redeem_description.text = uiModel.description_text
-            redeem_btn.visibility = if (uiModel.show_redeem_btn) View.VISIBLE else View.INVISIBLE
-        }
-    }
-
-    data class RedeemUiModel(
-        val title: String,
-        val description_text: String,
-        val show_redeem_btn: Boolean
-    ) : DelegateAdapter.UiModel()
 }

@@ -3,16 +3,15 @@ package org.mozilla.rocket.msrp.ui.adapter
 import android.content.res.Resources
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
+import androidx.fragment.app.FragmentStatePagerAdapter
 import org.mozilla.focus.R
 import org.mozilla.rocket.msrp.ui.ChallengeListFragment
 import org.mozilla.rocket.msrp.ui.RedeemListFragment
 
-@Suppress("DEPRECATION")
 class RewardTabsAdapter(
     fm: FragmentManager,
     val resources: Resources
-) : FragmentPagerAdapter(fm) {
+) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     private val items: List<TabItem> = getDefaultTabs()
 
@@ -29,8 +28,8 @@ class RewardTabsAdapter(
 
     companion object {
         private fun getDefaultTabs(): List<TabItem> = listOf(
-                TabItem(ChallengeListFragment(), R.string.msrp_reward_category_1),
-                TabItem(RedeemListFragment(), R.string.msrp_reward_category_2)
+            TabItem(ChallengeListFragment(), R.string.msrp_reward_category_1),
+            TabItem(RedeemListFragment(), R.string.msrp_reward_category_2)
         )
     }
 }

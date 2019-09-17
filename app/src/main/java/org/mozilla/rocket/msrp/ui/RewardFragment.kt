@@ -23,8 +23,7 @@ class RewardFragment : Fragment(), ScreenNavigator.RewardScreen {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val inflate: View = inflater.inflate(R.layout.fragment_reward, container, false)
-        return inflate
+        return inflater.inflate(R.layout.fragment_reward, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
