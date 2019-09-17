@@ -29,14 +29,10 @@ class RedeemFragment : Fragment(), ScreenNavigator.RedeemSceen {
 
     override fun getFragment() = this
 
-    fun create(url: String): RedeemFragment {
-        val arguments = Bundle()
-        arguments.putString(ARGUMENT_URL, url)
-
-        val fragment = RedeemFragment()
-        fragment.arguments = arguments
-
-        return fragment
+    fun create(url: String) = RedeemFragment().apply {
+        arguments = Bundle().apply {
+            putString(ARGUMENT_URL, url)
+        }
     }
 
     // I'm not sure the best place to call `appComponent().inject(this)`.
@@ -69,7 +65,7 @@ class RedeemFragment : Fragment(), ScreenNavigator.RedeemSceen {
     }
 
     private fun observeRedeemResult() {
-        viewModel.redemResult.observe(viewLifecycleOwner, Observer { redeemResult ->
+        viewModel.redeemResult.observe(viewLifecycleOwner, Observer { redeemResult ->
             updateUi(redeemResult)
         })
     }
@@ -91,14 +87,13 @@ class RedeemFragment : Fragment(), ScreenNavigator.RedeemSceen {
     }
 
     private fun showSuccessUi(rewardCouponDoc: RewardCouponDoc) {
-
         rd_code.text = rewardCouponDoc.code
         rd_text.text = rewardCouponDoc.title
         // TODO: show content..etc
     }
 
     private fun toast(message: String) {
-        FxToast.show(context!!, message, Toast.LENGTH_LONG)
+        FxToast.show(requireContext(), message, Toast.LENGTH_LONG)
         fragmentManager?.popBackStack() // remove self
     }
 

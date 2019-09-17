@@ -308,12 +308,11 @@ object FirebaseHelper {
      */
 
     @JvmStatic
-    suspend fun getUserToken() =
-        suspendCoroutine<String?> { continuation ->
-            firebaseContract.msrpServerRequest(object : (String?) -> Unit {
-                override fun invoke(p1: String?) {
-                    continuation.resume(p1)
-                }
-            })
-        }
+    suspend fun getUserToken() = suspendCoroutine<String?> { continuation ->
+        firebaseContract.getUserToken(object : (String?) -> Unit {
+            override fun invoke(p1: String?) {
+                continuation.resume(p1)
+            }
+        })
+    }
 }

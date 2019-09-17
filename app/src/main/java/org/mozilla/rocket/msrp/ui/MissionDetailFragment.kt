@@ -25,8 +25,8 @@ class MissionDetailFragment : Fragment(), ScreenNavigator.MissionDetailScreen {
     override fun getFragment() = this
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         appComponent().inject(this)
+        super.onCreate(savedInstanceState)
     }
 
     @SuppressLint("SetJavaScriptEnabled")

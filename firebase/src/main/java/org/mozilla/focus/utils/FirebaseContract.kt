@@ -60,5 +60,5 @@ abstract class FirebaseContract(var remoteConfigDefault: HashMap<String, Any> = 
         var developerMode: Boolean = false
     }
 
-    abstract fun msrpServerRequest(func: (String?) -> Unit)
+    abstract fun getUserToken(func: (String?) -> Unit)
 }

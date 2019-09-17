@@ -157,7 +157,7 @@ open class FirebaseImp(fromResourceString: HashMap<String, Any>) : FirebaseContr
         }
     }
 
-    override fun msrpServerRequest(func: (String?) -> Unit) {
+    override fun getUserToken(func: (String?) -> Unit) {
         // some http request(mission/redeem) needs user token to access the backend.
         // we need Firebase SDK to get the user token
         // TODO: maybe wrap this logic in a MSRP client SDK
@@ -169,7 +169,6 @@ open class FirebaseImp(fromResourceString: HashMap<String, Any>) : FirebaseContr
     }
 
     private fun fetchClaim(onClaimFetched: (String?, String?) -> Unit) {
-        Log.d(TAG, "current====${firebaseAuth.currentUser?.uid}")
         Log.d(TAG, "current====${firebaseAuth.currentUser?.uid}")
 
         firebaseAuth.currentUser?.getIdToken(true)?.addOnSuccessListener { result ->

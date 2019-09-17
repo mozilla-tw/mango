@@ -20,9 +20,8 @@ class MissionViewModel(
     private val redeemUseCase: RedeemUseCase
 ) : ViewModel() {
 
-    val redemResult: LiveData<RedeemResult>
+    val redeemResult: LiveData<RedeemResult>
         get() = _redeemResult
-
     private val _redeemResult = MediatorLiveData<RedeemResult>()
 
     val missions: LiveData<List<Mission>>
