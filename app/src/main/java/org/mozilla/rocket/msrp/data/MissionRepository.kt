@@ -95,6 +95,11 @@ open class MissionRepository {
                     response.status == 400 -> {
                         val resJson = JSONObject(response.body.string())
                         val message = resJson.optString("message")
+                        RedeemResult.InvalidRewardType(message) // return failure with message
+                    }
+                    response.status == 403 -> {
+                        val resJson = JSONObject(response.body.string())
+                        val message = resJson.optString("message")
                         RedeemResult.NotReady(message) // return failure with message
                     }
                     response.status == 404 -> {
@@ -103,9 +108,9 @@ open class MissionRepository {
                         RedeemResult.UsedUp(message) // return failure with message
                     }
                     response.status == 200 -> {
-                        val str = response.body.string()
-                        Log.d("sasdas", str)
-                        val resJson = JSONObject(str).getJSONObject("rewardCoupon")
+                        val responseStr = response.body.string()
+                        Log.e(TAG, "Redeem responseStr: $responseStr")
+                        val resJson = JSONObject(responseStr).getJSONObject("rewardCoupon")
                         val reward = RewardCouponDoc(
                             resJson.optString("rid"),
                             resJson.optString("uid"),
@@ -158,6 +163,7 @@ sealed class RedeemResult {
     class UsedUp(val message: String) : RedeemResult()
     class NotReady(val message: String) : RedeemResult()
     class Failure(val message: String) : RedeemResult()
+    class InvalidRewardType(val message: String) : RedeemResult()
     class NotLogin(val message: String) : RedeemResult()
 }
 
