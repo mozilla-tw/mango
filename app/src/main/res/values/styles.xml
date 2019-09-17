@@ -49,6 +49,9 @@
 
     </style>
     <style name="PrivateModeTheme" parent="PrivateModeTheme.Base"/>
+    <style name="TransparentStatusBarPrivateModeTheme" parent="PrivateModeTheme.Base">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
 
     <style name="GameModeTheme.Base" parent="AppThemeBase">
         <item name="android:windowNoTitle">true</item>
