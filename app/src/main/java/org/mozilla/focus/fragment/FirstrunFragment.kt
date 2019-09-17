@@ -21,17 +21,17 @@ import android.view.View
 import android.view.ViewGroup
 import org.mozilla.focus.R
 import org.mozilla.focus.activity.MainActivity
-import org.mozilla.focus.firstrun.DefaultFirstrunPagerAdapter
 import org.mozilla.focus.firstrun.UpgradeFirstrunPagerAdapter
 import org.mozilla.focus.navigation.ScreenNavigator.Screen
 import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.utils.DialogUtils
 import org.mozilla.focus.utils.NewFeatureNotice
+import org.mozilla.focus.widget.FirstrunViewPager
 import org.mozilla.rocket.periodic.FirstLaunchWorker
 import org.mozilla.rocket.periodic.PeriodicReceiver
 
 class FirstrunFragment : Fragment(), View.OnClickListener, Screen {
-    private lateinit var viewPager: ViewPager
+    private lateinit var viewPager: FirstrunViewPager
 
     private lateinit var bgTransitionDrawable: TransitionDrawable
     private lateinit var bgDrawables: Array<Drawable>
@@ -76,10 +76,11 @@ class FirstrunFragment : Fragment(), View.OnClickListener, Screen {
             return view
         }
 
-        viewPager = view.findViewById<View>(R.id.pager) as ViewPager
+        viewPager = view.findViewById<View>(R.id.pager) as FirstrunViewPager
 
         viewPager.setPageTransformer(true) { page, position -> page.alpha = 1 - 0.5f * Math.abs(position) }
 
+        viewPager.setSwipeEnabled(false)
         viewPager.clipToPadding = false
         viewPager.adapter = adapter
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -157,16 +158,11 @@ class FirstrunFragment : Fragment(), View.OnClickListener, Screen {
     }
 
     private fun findPagerAdapter(context: Context, onClickListener: View.OnClickListener): PagerAdapter? {
-        val pagerAdapter: PagerAdapter?
-        val shown = NewFeatureNotice.getInstance(getContext()).hasShownFirstRun()
-        pagerAdapter = if (!shown) {
-            DefaultFirstrunPagerAdapter(context, wrapButtonClickListener(onClickListener))
-        } else if (NewFeatureNotice.getInstance(getContext()).shouldShowLiteUpdate()) {
+        return if (NewFeatureNotice.getInstance(getContext()).shouldShowLiteUpdate()) {
             UpgradeFirstrunPagerAdapter(context, onClickListener)
         } else {
             null
         }
-        return pagerAdapter
     }
 
     private fun wrapButtonClickListener(onClickListener: View.OnClickListener): View.OnClickListener {

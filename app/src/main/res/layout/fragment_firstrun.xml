@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <androidx.viewpager.widget.ViewPager
+        <org.mozilla.focus.widget.FirstrunViewPager
             android:id="@+id/pager"
             android:layout_marginTop="24dp"
             android:layout_width="match_parent"
