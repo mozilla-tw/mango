@@ -334,6 +334,7 @@ class MainActivity : BaseActivity(),
         LocalBroadcastManager.getInstance(this).registerReceiver(uiMessageReceiver, uiActionFilter)
         contentResolver.registerContentObserver(DownloadContract.Download.CONTENT_URI, true, downloadObserver)
         downloadIndicatorViewModel.updateIndicator()
+        chromeViewModel.checkIfPrivateBrowsingActive()
     }
 
     override fun onPause() {
