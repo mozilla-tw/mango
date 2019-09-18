@@ -187,7 +187,7 @@ class FirstrunFragment : Fragment(), View.OnClickListener, Screen {
     // lots of drawable resources
     private fun initDrawables() {
         // TODO: needs to remove bg_homescreen_color
-        bgDrawables = arrayOf(resources.getDrawable(R.drawable.bg_homescreen_color, context?.theme), resources.getDrawable(R.drawable.bg_homescreen_color, context?.theme), resources.getDrawable(R.drawable.bg_homescreen_color, context?.theme), resources.getDrawable(R.drawable.bg_homescreen_color, context?.theme))
+        bgDrawables = arrayOf(resources.getDrawable(R.drawable.bg_platform_onboarding_color, context?.theme), resources.getDrawable(R.drawable.bg_platform_onboarding_color, context?.theme), resources.getDrawable(R.drawable.bg_platform_onboarding_color, context?.theme), resources.getDrawable(R.drawable.bg_platform_onboarding_color, context?.theme))
 
         bgTransitionDrawable = TransitionDrawable(bgDrawables)
         bgTransitionDrawable.setId(0, R.id.first_run_bg_even)
