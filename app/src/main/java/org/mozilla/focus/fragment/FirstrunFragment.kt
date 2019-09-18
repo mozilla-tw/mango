@@ -26,12 +26,11 @@ import org.mozilla.focus.navigation.ScreenNavigator.Screen
 import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.utils.DialogUtils
 import org.mozilla.focus.utils.NewFeatureNotice
-import org.mozilla.focus.widget.FirstrunViewPager
 import org.mozilla.rocket.periodic.FirstLaunchWorker
 import org.mozilla.rocket.periodic.PeriodicReceiver
 
 class FirstrunFragment : Fragment(), View.OnClickListener, Screen {
-    private lateinit var viewPager: FirstrunViewPager
+    private lateinit var viewPager: ViewPager
 
     private lateinit var bgTransitionDrawable: TransitionDrawable
     private lateinit var bgDrawables: Array<Drawable>
@@ -76,11 +75,10 @@ class FirstrunFragment : Fragment(), View.OnClickListener, Screen {
             return view
         }
 
-        viewPager = view.findViewById<View>(R.id.pager) as FirstrunViewPager
+        viewPager = view.findViewById<View>(R.id.pager) as ViewPager
 
         viewPager.setPageTransformer(true) { page, position -> page.alpha = 1 - 0.5f * Math.abs(position) }
 
-        viewPager.setSwipeEnabled(false)
         viewPager.clipToPadding = false
         viewPager.adapter = adapter
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {

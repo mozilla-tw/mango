@@ -100,7 +100,7 @@
                 android:id="@+id/button"
                 android:layout_width="113dp"
                 android:layout_height="36dp"
-                android:layout_gravity="bottom|center"
+                android:layout_gravity="center_horizontal"
                 android:background="@drawable/bg_onboarding_button"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
