@@ -1,9 +1,8 @@
 package org.mozilla.rocket.home.domain
 
-class IsShoppingButtonEnabledUseCase {
+import org.mozilla.rocket.shopping.search.data.ShoppingSearchRepository
 
-    operator fun invoke(): Boolean {
-        // TODO
-        return false
-    }
+class IsShoppingButtonEnabledUseCase(private val shoppingSearchRepository: ShoppingSearchRepository) {
+
+    operator fun invoke(): Boolean = shoppingSearchRepository.isShoppingSearchEnabled()
 }

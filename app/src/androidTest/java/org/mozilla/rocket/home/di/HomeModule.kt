@@ -21,6 +21,7 @@ import org.mozilla.rocket.home.topsites.domain.PinTopSiteUseCase
 import org.mozilla.rocket.home.topsites.domain.RemoveTopSiteUseCase
 import org.mozilla.rocket.home.topsites.domain.TopSitesConfigsUseCase
 import org.mozilla.rocket.msrp.data.MissionRepository
+import org.mozilla.rocket.shopping.search.data.ShoppingSearchRepository
 import javax.inject.Singleton
 
 @Module
@@ -122,5 +123,6 @@ object HomeModule {
     @JvmStatic
     @Singleton
     @Provides
-    fun provideIsShoppingButtonEnabledUseCase(): IsShoppingButtonEnabledUseCase = IsShoppingButtonEnabledUseCase()
+    fun provideIsShoppingButtonEnabledUseCase(shoppingSearchRepository: ShoppingSearchRepository): IsShoppingButtonEnabledUseCase =
+            IsShoppingButtonEnabledUseCase(shoppingSearchRepository)
 }
