@@ -16,6 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentActivity;
+
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +31,7 @@ import org.mozilla.focus.notification.NotificationId;
 import org.mozilla.focus.notification.NotificationUtil;
 import org.mozilla.focus.telemetry.TelemetryWrapper;
 import org.mozilla.focus.widget.FocusView;
+import org.mozilla.focus.widget.RoundRecFocusView;
 import org.mozilla.rocket.widget.CustomViewDialogData;
 import org.mozilla.rocket.widget.PromotionDialog;
 
@@ -256,8 +259,83 @@ public class DialogUtils {
 
     }
 
+    public static Dialog showShoppingSearchSpotlight(
+            @NonNull final Activity activity,
+            @NonNull final View targetView,
+            @NonNull final DialogInterface.OnDismissListener dismissListener,
+            View.OnClickListener ok) {
+
+        final ViewGroup container = (ViewGroup) LayoutInflater.from(activity).inflate(R.layout.onboarding_spotlight_shopping_search, null);
+
+        container.findViewById(R.id.next).setOnClickListener(ok);
+
+        Dialog dialog = createShoppingSearchSpotlightDialog(activity, targetView, container, activity.getResources().getDimensionPixelSize(R.dimen.shopping_focus_view_radius));
+
+        dialog.setOnDismissListener(dismissListener);
+        dialog.show();
+
+        return dialog;
+
+    }
+
+    public static Dialog showContentServiceSpotlight(
+            @NonNull final FragmentActivity activity,
+            @NonNull final View targetView,
+            @NonNull final DialogInterface.OnDismissListener dismissListener,
+            View.OnClickListener ok) {
+
+        final ViewGroup container = (ViewGroup) LayoutInflater.from(activity).inflate(R.layout.onboarding_spotlight_content_services, null);
+
+        container.findViewById(R.id.next).setOnClickListener(ok);
+
+        Dialog dialog = createContentServiceSpotlightDialog(activity, targetView, container,
+                activity.getResources().getDimensionPixelSize(R.dimen.content_service_focus_view_radius),
+                activity.getResources().getDimensionPixelSize(R.dimen.content_service_focus_view_height),
+                activity.getResources().getDimensionPixelSize(R.dimen.content_service_focus_view_width));
+
+        dialog.setOnDismissListener(dismissListener);
+        dialog.show();
+
+        return dialog;
+
+    }
+
     @CheckResult
-    public static Dialog createSpotlightDialog(@NonNull final Activity activity, @NonNull final View targetView, final @NonNull ViewGroup container) {
+    private static Dialog createSpotlightDialog(@NonNull final Activity activity, @NonNull final View targetView, final @NonNull ViewGroup container) {
+        return createSpotlightDialog(activity, targetView, container, activity.getResources().getDimensionPixelSize(R.dimen.myshot_focus_view_radius), 0, 0, FocusViewType.CIRCLE, ContextCompat.getColor(activity, R.color.myShotOnBoardingBackground));
+    }
+
+    @CheckResult
+    private static Dialog createShoppingSearchSpotlightDialog(
+            @NonNull final Activity activity,
+            @NonNull final View targetView,
+            final @NonNull ViewGroup container,
+            final @NonNull Integer radius) {
+        return createSpotlightDialog(activity, targetView, container, radius, 0, 0, FocusViewType.CIRCLE, ContextCompat.getColor(activity, R.color.paletteBlack50));
+    }
+
+    @CheckResult
+    private static Dialog createContentServiceSpotlightDialog(
+            @NonNull final Activity activity,
+            @NonNull final View targetView,
+            final @NonNull ViewGroup container,
+            final @NonNull Integer radius,
+            final @NonNull Integer height,
+            final @NonNull Integer width) {
+        return createSpotlightDialog(activity, targetView, container, radius, height, width, FocusViewType.ROUND_REC, ContextCompat.getColor(activity, R.color.paletteBlack50));
+    }
+
+
+    @CheckResult
+    private static Dialog createSpotlightDialog(
+            @NonNull final Activity activity,
+            @NonNull final View targetView,
+            final @NonNull ViewGroup container,
+            final @NonNull Integer radius,
+            final @NonNull Integer height,
+            final @NonNull Integer width,
+            final FocusViewType type,
+            final @NonNull Integer backgroundDimColor) {
         final int[] location = new int[2];
         final int centerX, centerY;
         // Get target view's position
@@ -268,7 +346,7 @@ public class DialogUtils {
         centerY = location[1] + targetView.getMeasuredHeight() / 2;
 
         // Initialize FocusView and add it to container view's index 0(the bottom of Z-order)
-        final FocusView focusView = new FocusView(activity, centerX, centerY, activity.getResources().getDimensionPixelSize(R.dimen.myshot_focus_view_radius));
+        View focusView = getFocusView(activity, centerX, centerY, radius, height, width, type, backgroundDimColor);
 
         container.addView(focusView, 0);
 
@@ -328,4 +406,20 @@ public class DialogUtils {
         return dialog;
     }
 
+    private static View getFocusView(Context context, int centerX, int centerY, int radius, int height, int width, FocusViewType type, int backgroundDimColor) {
+        switch (type) {
+            case CIRCLE:
+                return new FocusView(context, centerX, centerY, radius, backgroundDimColor);
+            case ROUND_REC:
+                return new RoundRecFocusView(context, centerX, centerY, radius, height, width, backgroundDimColor);
+            default: {
+                return new FocusView(context, centerX, centerY, radius, backgroundDimColor);
+            }
+        }
+    }
+
+    enum FocusViewType {
+        CIRCLE,
+        ROUND_REC,
+    }
 }
