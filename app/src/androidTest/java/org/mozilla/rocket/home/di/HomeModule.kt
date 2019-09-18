@@ -8,6 +8,7 @@ import org.mozilla.focus.utils.Settings
 import org.mozilla.rocket.home.HomeViewModel
 import org.mozilla.rocket.home.contenthub.data.ContentHubRepo
 import org.mozilla.rocket.home.contenthub.domain.GetContentHubItemsUseCase
+import org.mozilla.rocket.home.domain.IsShoppingButtonEnabledUseCase
 import org.mozilla.rocket.home.logoman.data.LogoManNotificationRepo
 import org.mozilla.rocket.home.logoman.domain.DismissLogoManNotificationUseCase
 import org.mozilla.rocket.home.logoman.domain.GetLogoManNotificationUseCase
@@ -37,7 +38,8 @@ object HomeModule {
         getContentHubItemsUseCase: GetContentHubItemsUseCase,
         getLogoManNotificationUseCase: GetLogoManNotificationUseCase,
         dismissLogoManNotificationUseCase: DismissLogoManNotificationUseCase,
-        isMsrpAvailableUseCase: IsMsrpAvailableUseCase
+        isMsrpAvailableUseCase: IsMsrpAvailableUseCase,
+        isShoppingButtonEnabledUseCase: IsShoppingButtonEnabledUseCase
     ): HomeViewModel = HomeViewModel(
         settings,
         getTopSitesUseCase,
@@ -47,7 +49,8 @@ object HomeModule {
         getContentHubItemsUseCase,
         getLogoManNotificationUseCase,
         dismissLogoManNotificationUseCase,
-        isMsrpAvailableUseCase
+        isMsrpAvailableUseCase,
+        isShoppingButtonEnabledUseCase
     )
 
     @JvmStatic
@@ -115,4 +118,9 @@ object HomeModule {
     @Singleton
     @Provides
     fun provideIsMsrpAvailableUseCase(missionRepo: MissionRepository) = IsMsrpAvailableUseCase(missionRepo)
+
+    @JvmStatic
+    @Singleton
+    @Provides
+    fun provideIsShoppingButtonEnabledUseCase(): IsShoppingButtonEnabledUseCase = IsShoppingButtonEnabledUseCase()
 }
