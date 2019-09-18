@@ -8,7 +8,7 @@ import org.mozilla.rocket.extension.map
 import org.mozilla.rocket.preference.stringLiveData
 import org.mozilla.strictmodeviolator.StrictModeViolation
 
-class ShoppingSearchSiteRepository(appContext: Context) {
+class ShoppingSearchRepository(appContext: Context) {
 
     private val preference = StrictModeViolation.tempGrant({ builder ->
         builder.permitDiskReads()
