@@ -150,8 +150,6 @@
 
     <!-- Private Mode -->
     <color name="privateBackground">#38383D</color>
-    <color name="privateModeBackgroundGradientStart">#8700BD</color>
-    <color name="privateModeBackgroundGradientEnd">#170067</color>
     <color name="privateModeWidgetnBackground">#414146</color>
 
     <color name="myShotOnBoardingBackground">#B3111111</color>

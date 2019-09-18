@@ -15,8 +15,7 @@
     <org.mozilla.rocket.home.ui.PrivateHomeScreenBackground
         android:id="@+id/pm_home_background"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/background_home" />
+        android:layout_height="match_parent" />
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/pm_home_logo"
@@ -27,7 +26,6 @@
         app:lottie_autoPlay="false"
         app:lottie_fileName="logo_man_private.json"
         app:lottie_loop="false" />
-
 
     <include
         android:id="@+id/pm_home_brand_logo"
@@ -91,13 +89,12 @@
         android:layout_marginEnd="16dp"
         android:layout_toEndOf="@+id/pm_home_private_mode_btn"
         android:background="@drawable/bg_private_mode_widget"
-        android:drawableStart="@drawable/ic_search_home"
+        android:drawableStart="@drawable/ic_search_private_mode"
         android:drawablePadding="8dp"
-        android:drawableTint="@color/paletteWhite100"
         android:gravity="center_vertical"
         android:paddingStart="12dp"
         android:text="@string/home_search_hint"
-        android:textColor="@color/paletteWhite30"
+        android:textColor="@color/paletteWhite60"
         android:textSize="16sp" />
 
 </RelativeLayout>
