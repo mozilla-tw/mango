@@ -36,9 +36,9 @@ class RedeemListFragment : Fragment() {
 
     private fun initRecyclerView() {
         adapter = DelegateAdapter(
-                AdapterDelegatesManager().apply {
-                    add(RedeemUiModel::class, R.layout.msrp_redeem_mission, RedeemAdapterDelegate())
-                }
+            AdapterDelegatesManager().apply {
+                add(RedeemUiModel::class, R.layout.msrp_redeem_mission, RedeemAdapterDelegate())
+            }
         )
         recycler_view.apply {
             adapter = this@RedeemListFragment.adapter
@@ -48,9 +48,9 @@ class RedeemListFragment : Fragment() {
 
     private fun prepareData() {
         val fakeRedeem = RedeemUiModel(
-                title = "7-Day challenge for Rs 15,000 shopping coupon",
-                descriptionText = "Waiting for redemption",
-                showRedeemBtn = true
+            title = "7-Day challenge for Rs 15,000 shopping coupon",
+            descriptionText = "Waiting for redemption",
+            showRedeemBtn = true
         )
 
         adapter.setData(listOf(fakeRedeem))
