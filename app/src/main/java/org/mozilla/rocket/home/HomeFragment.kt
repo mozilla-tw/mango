@@ -29,6 +29,7 @@ import kotlinx.android.synthetic.main.fragment_home.logo_man_notification
 import kotlinx.android.synthetic.main.fragment_home.main_list
 import kotlinx.android.synthetic.main.fragment_home.mission_button
 import kotlinx.android.synthetic.main.fragment_home.page_indicator
+import kotlinx.android.synthetic.main.fragment_home.profile_button
 import kotlinx.android.synthetic.main.fragment_home.search_panel
 import kotlinx.android.synthetic.main.fragment_home.shopping_button
 import org.mozilla.focus.R
@@ -209,11 +210,26 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
         homeViewModel.hasPendingMissions.observe(this, Observer {
             mission_button.isActivated = it
         })
-        mission_button.setOnClickListener { showMissionFragment() }
+        mission_button.setOnClickListener { showRewardFragment() }
+        profile_button.setOnClickListener {
+            ScreenNavigator.get(context).addFxLogin()
+        }
+
+        homeViewModel.isAccountLayerVisible.observe(this, Observer {
+            account_layout.visibility = if (it) { View.VISIBLE } else { View.INVISIBLE }
+        })
     }
 
     private fun showMissionFragment() {
         ScreenNavigator.get(context).addMissionDetail()
+    }
+
+    private fun showRedeem() {
+        ScreenNavigator.get(context).addRedeem()
+    }
+
+    private fun showRewardFragment() {
+        ScreenNavigator.get(context).addReward()
     }
 
     private fun observeNightMode() {

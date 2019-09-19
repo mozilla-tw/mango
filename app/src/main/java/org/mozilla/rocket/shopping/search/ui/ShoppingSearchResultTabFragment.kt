@@ -1,6 +1,7 @@
 package org.mozilla.rocket.shopping.search.ui
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,10 +18,10 @@ import dagger.Lazy
 import kotlinx.android.synthetic.main.fragment_shopping_search_result_tab.*
 import kotlinx.android.synthetic.main.toolbar.*
 import org.mozilla.focus.R
+import org.mozilla.focus.utils.AppConstants
 import org.mozilla.rocket.chrome.BottomBarItemAdapter
 import org.mozilla.rocket.chrome.ChromeViewModel
 import org.mozilla.rocket.content.appComponent
-import org.mozilla.rocket.content.common.ui.ContentTabFragment
 import org.mozilla.rocket.content.common.ui.ContentTabHelper
 import org.mozilla.rocket.content.common.ui.ContentTabViewContract
 import org.mozilla.rocket.content.getActivityViewModel
@@ -28,13 +29,11 @@ import org.mozilla.rocket.content.getViewModel
 import org.mozilla.rocket.content.view.BottomBar
 import org.mozilla.rocket.extension.nonNullObserve
 import org.mozilla.rocket.extension.switchFrom
+import org.mozilla.rocket.shopping.search.data.ShoppingSearchMode
 import org.mozilla.rocket.shopping.search.ui.ShoppingSearchTabsAdapter.TabItem
 import org.mozilla.rocket.tabs.SessionManager
 import org.mozilla.rocket.tabs.TabsSessionProvider
 import javax.inject.Inject
-import android.content.Intent
-import org.mozilla.focus.utils.AppConstants
-import org.mozilla.rocket.shopping.search.ShoppingSearchMode
 
 class ShoppingSearchResultTabFragment : Fragment(), ContentTabViewContract {
 
@@ -136,9 +135,9 @@ class ShoppingSearchResultTabFragment : Fragment(), ContentTabViewContract {
         bottomBar.setOnItemClickListener(object : BottomBar.OnItemClickListener {
             override fun onItemClick(type: Int, position: Int) {
                 when (type) {
-                    BottomBarItemAdapter.TYPE_SHOPPING_SEARCH -> sendHomeIntent(requireContext())
+                    BottomBarItemAdapter.TYPE_HOME -> sendHomeIntent(requireContext())
                     BottomBarItemAdapter.TYPE_REFRESH -> chromeViewModel.refreshOrStop.call()
-                    BottomBarItemAdapter.TYPE_DELETE -> ShoppingSearchMode.getInstance(requireContext()).finish()
+                    BottomBarItemAdapter.TYPE_SHOPPING_SEARCH -> sendNewSearchIntent(requireContext())
                     BottomBarItemAdapter.TYPE_NEXT -> chromeViewModel.goNext.call()
                     BottomBarItemAdapter.TYPE_SHARE -> chromeViewModel.share.call()
                     else -> throw IllegalArgumentException("Unhandled bottom bar item, type: $type")
@@ -160,10 +159,7 @@ class ShoppingSearchResultTabFragment : Fragment(), ContentTabViewContract {
     private fun initViewPager() {
         shoppingSearchResultViewModel.shoppingSearchSites.observe(this, Observer { shoppingSearchSites ->
             val tabItems = shoppingSearchSites.map { site ->
-                TabItem(
-                    ContentTabFragment.newInstance(site.searchUrl),
-                    site.title
-                )
+                TabItem(site.title, site.searchUrl)
             }
             view_pager.adapter = ShoppingSearchTabsAdapter(childFragmentManager, tabItems)
         })
@@ -206,6 +202,14 @@ class ShoppingSearchResultTabFragment : Fragment(), ContentTabViewContract {
             setClassName(context, AppConstants.LAUNCHER_ACTIVITY_ALIAS)
         }
         startActivity(intent)
+    }
+
+    private fun sendNewSearchIntent(context: Context) {
+        startActivity(
+            ShoppingSearchActivity.getStartIntent(context).apply {
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            }
+        )
     }
 
     private fun sendShareIntent() {

@@ -11,6 +11,8 @@ import org.mozilla.rocket.adapter.AdapterDelegatesManager
 import org.mozilla.rocket.adapter.DelegateAdapter
 import org.mozilla.rocket.content.games.ui.GameItemDecoration
 import org.mozilla.rocket.content.games.ui.GamesViewModel
+import org.mozilla.rocket.content.games.vo.Game
+import org.mozilla.rocket.content.games.vo.GameCategory
 
 class GameCategoryAdapterDelegate(private val gamesViewModel: GamesViewModel) : AdapterDelegate {
     override fun onCreateViewHolder(view: View): DelegateAdapter.ViewHolder =
@@ -23,7 +25,7 @@ class GameCategoryViewHolder(
 ) : DelegateAdapter.ViewHolder(containerView) {
     private var adapter = DelegateAdapter(
         AdapterDelegatesManager().apply {
-            add(GameItem::class, R.layout.item_game, GameAdapterDelegate(viewModel))
+            add(Game::class, R.layout.item_game, GameAdapterDelegate(viewModel))
         }
     )
     /* paddingLeftRight is padding for boundary and the first/last item
@@ -41,13 +43,7 @@ class GameCategoryViewHolder(
 
     override fun bind(uiModel: DelegateAdapter.UiModel) {
         uiModel as GameCategory
-        category_title.text = uiModel.title
-        adapter.setData(uiModel.gameList)
+        category_title.text = uiModel.type
+        adapter.setData(uiModel.games)
     }
 }
-
-data class GameCategory(
-    val id: String,
-    val title: String,
-    val gameList: List<GameItem>
-) : DelegateAdapter.UiModel()
