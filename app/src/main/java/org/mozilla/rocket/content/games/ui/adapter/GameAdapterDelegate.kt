@@ -1,6 +1,5 @@
 package org.mozilla.rocket.content.games.ui.adapter
 
-import android.content.Intent
 import android.view.View
 import kotlinx.android.synthetic.main.item_game.image
 import kotlinx.android.synthetic.main.item_game.name
