@@ -13,6 +13,7 @@ import org.mozilla.rocket.content.games.ui.GameItemDecoration
 import org.mozilla.rocket.content.games.ui.GamesViewModel
 import org.mozilla.rocket.content.games.vo.Game
 import org.mozilla.rocket.content.games.vo.GameCategory
+import org.mozilla.rocket.extension.dpToPx
 
 class GameCategoryAdapterDelegate(private val gamesViewModel: GamesViewModel) : AdapterDelegate {
     override fun onCreateViewHolder(view: View): DelegateAdapter.ViewHolder =
@@ -30,8 +31,8 @@ class GameCategoryViewHolder(
     )
     /* paddingLeftRight is padding for boundary and the first/last item
        paddingInBetween is padding for each item */
-    private val paddingWidth = 16
-    private val spaceWidth = 4
+    private val paddingWidth = containerView.dpToPx(16f)
+    private val spaceWidth = containerView.dpToPx(4f)
 
     init {
         game_list.apply {

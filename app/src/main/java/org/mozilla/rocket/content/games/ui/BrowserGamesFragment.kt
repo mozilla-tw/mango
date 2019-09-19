@@ -2,15 +2,19 @@ package org.mozilla.rocket.content.games.ui
 
 import android.Manifest
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
 import android.graphics.Bitmap
+import android.graphics.Rect
 import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Parcelable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -34,27 +38,45 @@ import org.mozilla.rocket.content.appContext
 import org.mozilla.rocket.content.games.vo.GameCategory
 import java.util.Arrays
 import android.webkit.URLUtil
+import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import org.mozilla.focus.download.EnqueueDownloadTask
+import org.mozilla.focus.utils.DialogUtils
 import org.mozilla.focus.web.WebViewProvider
+import org.mozilla.permissionhandler.PermissionHandle
+import org.mozilla.permissionhandler.PermissionHandler
 import org.mozilla.rocket.content.common.ui.ContentTabActivity
 import org.mozilla.rocket.tabs.web.Download
-import java.net.HttpURLConnection
-import java.net.URL
 
-class BrowserGamesFragment : Fragment() {
+class BrowserGamesFragment : Fragment(), FragmentLifecycle {
 
     @Inject
     lateinit var gamesViewModelCreator: Lazy<GamesViewModel>
 
+    @Inject
+    lateinit var applicationContext: Context
+
     private lateinit var gamesViewModel: GamesViewModel
     private lateinit var adapter: DelegateAdapter
     private lateinit var gameType: GameType
+    private lateinit var permissionHandler: PermissionHandler
+
+    override fun onResumeFragment() {
+        gamesViewModel.refreshPersonalGameLists()
+    }
+
+    override fun onPauseFragment() {
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         appComponent().inject(this)
         super.onCreate(savedInstanceState)
         gamesViewModel = getViewModel(gamesViewModelCreator)
+        gamesViewModel.addPackageManager(activity!!.packageManager)
+        gamesViewModel.initGameRepo(applicationContext)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -68,6 +90,11 @@ class BrowserGamesFragment : Fragment() {
         bindPageState()
         registerForContextMenu(recycler_view)
         observeGameAction()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        gamesViewModel.refreshPersonalGameLists()
     }
 
     fun createShortcut(gameName: String, gameURL: String, gameIcon: Bitmap) {
@@ -147,7 +174,7 @@ class BrowserGamesFragment : Fragment() {
         )
         recycler_view.apply {
             adapter = this@BrowserGamesFragment.adapter
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = LinearLayoutManager(this.context)
         }
     }
 
@@ -160,9 +187,11 @@ class BrowserGamesFragment : Fragment() {
             GameType.TYPE_BROWSER -> gamesViewModel.browserGamesItems.observe(this@BrowserGamesFragment, Observer {
                 adapter.setData(it)
             })
-            GameType.TYPE_PREMIUM -> gamesViewModel.premiumGamesItems.observe(this@BrowserGamesFragment, Observer {
-                adapter.setData(it)
-            })
+            GameType.TYPE_PREMIUM -> {
+                gamesViewModel.premiumGamesItems.observe(this@BrowserGamesFragment, Observer {
+                    adapter.setData(it)
+                })
+            }
         }
     }
 
@@ -176,30 +205,105 @@ class BrowserGamesFragment : Fragment() {
         })
     }
 
-    private fun queueDownload(download: Download?, url: String) {
-        val activity = activity
-        if (activity == null || download == null) {
-            return
-        }
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        permissionHandler = PermissionHandler(object : PermissionHandle {
+            override fun doActionDirect(permission: String?, actionId: Int, params: Parcelable?) {
 
-        EnqueueDownloadTask(getActivity()!!, download, url).execute()
+                this@BrowserGamesFragment.context?.also {
+                    val download = params as Download
+
+                    if (PackageManager.PERMISSION_GRANTED ==
+                            ContextCompat.checkSelfPermission(it, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    ) {
+                        // We do have the permission to write to the external storage. Proceed with the download.
+                        queueDownload(download)
+                    }
+                } ?: run {
+                    Log.e("BrowserGamesFragment.kt", "No context to use, abort callback onDownloadStart")
+                }
+            }
+
+            fun actionDownloadGranted(parcelable: Parcelable?) {
+                val download = parcelable as Download
+                queueDownload(download)
+            }
+
+            override fun doActionGranted(permission: String?, actionId: Int, params: Parcelable?) {
+                actionDownloadGranted(params)
+            }
+
+            override fun doActionSetting(permission: String?, actionId: Int, params: Parcelable?) {
+                actionDownloadGranted(params)
+            }
+
+            override fun doActionNoPermission(
+                permission: String?,
+                actionId: Int,
+                params: Parcelable?
+            ) {
+            }
+
+            override fun makeAskAgainSnackBar(actionId: Int): Snackbar {
+                activity?.also {
+                    return PermissionHandler.makeAskAgainSnackBar(
+                            this@BrowserGamesFragment,
+                            it.findViewById(R.id.container),
+                            R.string.permission_toast_storage
+                    )
+                }
+                throw IllegalStateException("No Activity to show Snackbar.")
+            }
+
+            override fun permissionDeniedToast(actionId: Int) {
+                Toast.makeText(getContext(), R.string.permission_toast_storage_deny, Toast.LENGTH_LONG).show()
+            }
+
+            override fun requestPermissions(actionId: Int) {
+                this@BrowserGamesFragment.requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), actionId)
+            }
+
+            private fun queueDownload(download: Download?) {
+                activity?.let { activity ->
+                    download?.let {
+                        EnqueueDownloadTask(activity, it, gamesViewModel.selectedGame.linkUrl).execute()
+                    }
+                }
+            }
+        })
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        permissionHandler.onRequestPermissionsResult(context, requestCode, permissions, grantResults)
     }
 
     fun downloadPremiumGame(downloadURL: String) {
-        if (PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            // We do have the permission to write to the external storage. Proceed with the download.
-            var url = downloadURL
-            var contentDisposition = ""
-            var mimetype = "application/vnd.android.package-archive"
-            var name = URLUtil.guessFileName(url, contentDisposition, mimetype)
-            var download = Download(url,
-                    name,
-                    WebViewProvider.getUserAgentString(context),
-                    contentDisposition,
-                    mimetype, 0, false)
+        var url = downloadURL
+        var contentDisposition = ""
+        var mimetype = "application/vnd.android.package-archive"
+        var name = URLUtil.guessFileName(url, contentDisposition, mimetype)
+        var download = Download(url,
+                name,
+                WebViewProvider.getUserAgentString(context),
+                contentDisposition,
+                mimetype, 0, false)
 
-            queueDownload(download, url)
-        }
+        permissionHandler.tryAction(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                ACTION_DOWNLOAD,
+                download
+        )
+    }
+
+    fun isViewClipped(view: View): Boolean {
+        var rect = Rect()
+        !view.getGlobalVisibleRect(rect)
+        return (rect.height() < view.height)
     }
 
     private fun observeGameAction() {
@@ -207,6 +311,20 @@ class BrowserGamesFragment : Fragment() {
             val gameShortcut = event
             createShortcut(gameShortcut.gameName, gameShortcut.gameUrl, gameShortcut.gameBitmap)
         })
+
+        if (gameType == GameType.TYPE_BROWSER) {
+            gamesViewModel.gamePlayTimeEvent.observe(this, Observer { _ ->
+                // todo: find a better way to identify the correct cardview item
+                var view = recycler_view.layoutManager?.findViewByPosition(1) // should be first gameCategory
+                var recycleView = view?.findViewById<RecyclerView>(R.id.game_list)
+                var cardView = recycleView?.findViewById<CardView>(R.id.game_card_view)
+                if (cardView != null && !isViewClipped(cardView)) {
+                    DialogUtils.showRecSpotlight(getActivity()!!, cardView as View, {},
+                            R.string.game_create_shortcut_hint_title, R.string.game_create_shortcut_hint)
+                    gamesViewModel.setLatestRecentGameHintShown()
+                }
+            })
+        }
 
         gamesViewModel.event.observe(this, Observer { event ->
             when (event) {
@@ -221,7 +339,6 @@ class BrowserGamesFragment : Fragment() {
                 }
 
                 is GamesViewModel.GameAction.Install -> {
-
                     // val install: GamesViewModel.GameAction.Install = event
                     // installa a APK
                     val install: GamesViewModel.GameAction.Install = event
@@ -243,28 +360,12 @@ class BrowserGamesFragment : Fragment() {
         TODO("not implemented")
     }
 
-    fun getFinalURL(url: String): String {
-
-        try {
-            var con = URL(url).openConnection() as HttpURLConnection
-            con.setInstanceFollowRedirects(false)
-            con.connect()
-            con.getInputStream()
-
-            if (con.getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM || con.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP) {
-                var redirectUrl = con.getHeaderField("Location")
-                return getFinalURL(redirectUrl)
-            }
-        } catch (e: Exception) {
-            TODO("not implemented")
-        }
-            return url
-        }
-
     companion object {
 
         private const val GAME_TYPE = "game_type"
         private const val GAME_URL = "url"
+        private const val ACTION_DOWNLOAD = 0
+
         enum class GameType {
             TYPE_BROWSER,
             TYPE_PREMIUM
