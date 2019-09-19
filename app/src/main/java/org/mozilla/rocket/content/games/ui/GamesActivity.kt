@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.FragmentActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.viewpager.widget.ViewPager
 import dagger.Lazy
 import kotlinx.android.synthetic.main.toolbar_game.refresh_button
 import kotlinx.android.synthetic.main.activity_games.*
@@ -54,6 +55,19 @@ class GamesActivity : FragmentActivity() {
         view_pager.apply {
             adapter = this@GamesActivity.adapter
         }
+        view_pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            var currentPosition = 0
+            override fun onPageScrollStateChanged(state: Int) {}
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+            override fun onPageSelected(newPosition: Int) {
+                val fragmentToShow = adapter.getItem(newPosition) as FragmentLifecycle
+                fragmentToShow.onResumeFragment()
+
+                val fragmentToHide = adapter.getItem(currentPosition) as FragmentLifecycle
+                fragmentToHide.onPauseFragment()
+                currentPosition = newPosition
+            }
+        })
     }
 
     private fun initTabLayout() {

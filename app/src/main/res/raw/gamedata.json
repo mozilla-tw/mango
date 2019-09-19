@@ -161,7 +161,8 @@
             "id": 24,
             "name": "BoboiBoy Galaxy Run",
             "imageUrl": "https://media07-gl-ssl-gzip.gameloft.com/products/3662/default/html5/icon/114/icon.png",
-            "linkUrl": "https://github.com/mozilla-tw/FirefoxLite/releases/download/v1.8.0/Firefox-Lite-12883.apk"
+            "linkUrl": "https://github.com/mozilla-tw/FirefoxLite/releases/download/v1.8.0/Firefox-Lite-12883.apk",
+            "packageName": "org.mozilla.rocket"
           },
           {
             "id": 25,

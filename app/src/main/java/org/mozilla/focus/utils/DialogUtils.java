@@ -20,6 +20,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import org.mozilla.focus.R;
@@ -31,6 +32,8 @@ import org.mozilla.focus.telemetry.TelemetryWrapper;
 import org.mozilla.focus.widget.FocusView;
 import org.mozilla.rocket.widget.CustomViewDialogData;
 import org.mozilla.rocket.widget.PromotionDialog;
+import org.mozilla.rocket.widget.RecFocusView;
+
 
 public class DialogUtils {
 
@@ -235,6 +238,60 @@ public class DialogUtils {
         dialog.setOnCancelListener(onCancelListener);
 
         dialog.show();
+
+        return dialog;
+    }
+
+    public static Dialog showRecSpotlight(@NonNull final Activity activity, @NonNull final View targetView, @NonNull DialogInterface.OnCancelListener onCancelListener, int titleId, int messageId) {
+        final ViewGroup container = (ViewGroup) LayoutInflater.from(activity).inflate(R.layout.game_spotlight, null);
+
+        TextView messageTextView = container.findViewById(R.id.spotlight_message);
+        messageTextView.setText(messageId);
+
+        TextView titleTextView = container.findViewById(R.id.spotlight_title);
+        titleTextView.setText(titleId);
+
+
+        Dialog dialog = createRecSpotlightDialog(activity, targetView, container);
+
+        // Press back key will dismiss on boarding view and menu view
+        dialog.setOnCancelListener(onCancelListener);
+
+        dialog.show();
+
+        return dialog;
+    }
+
+    @CheckResult
+    public static Dialog createRecSpotlightDialog(@NonNull final Activity activity, @NonNull final View targetView, final @NonNull ViewGroup container) {
+        final int[] location = new int[2];
+        final int centerX, centerY;
+        // Get target view's position
+        targetView.getLocationInWindow(location);
+
+        // Initialize FocusView and add it to container view's index 0(the bottom of Z-order)
+        final RecFocusView focusView = new RecFocusView(activity, location[0], location[1], targetView.getMeasuredWidth(), targetView.getMeasuredHeight() );
+
+        container.addView(focusView, 0);
+
+        // Add a delegate view to determine the position of hint image and text. Also consuming the click/longClick event.
+        final View delegateView = container.findViewById(R.id.spotlight_arrow);
+        final RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) delegateView.getLayoutParams();
+
+        params.topMargin = targetView.getMeasuredHeight()  + location[1] - ViewUtils.getStatusBarHeight(activity);
+        final View popupView = container.findViewById(R.id.spotlight_mock_menu);
+        final RelativeLayout.LayoutParams paramsPopView = (RelativeLayout.LayoutParams) popupView.getLayoutParams();
+        paramsPopView.topMargin = targetView.getMeasuredHeight() + 30 + location[1] - ViewUtils.getStatusBarHeight(activity);
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.TabTrayTheme);
+        builder.setView(container);
+
+        final Dialog dialog = builder.create();
+
+        final Button buttonOK = container.findViewById(R.id.btn_ok);
+        buttonOK.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
 
         return dialog;
     }
