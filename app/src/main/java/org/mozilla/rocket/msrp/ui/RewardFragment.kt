@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_reward.reward_tabs
 import kotlinx.android.synthetic.main.fragment_reward.view_pager
 import org.mozilla.focus.R
@@ -40,5 +41,13 @@ class RewardFragment : Fragment() {
 
     private fun initTabLayout() {
         reward_tabs.setupWithViewPager(view_pager)
+    }
+
+    private fun openMissionDetailPage() {
+        findNavController().navigate(RewardFragmentDirections.actionRewardDestToMissionDetailDest())
+    }
+
+    private fun openRedeemPage() {
+        findNavController().navigate(RewardFragmentDirections.actionRewardDestToRedeemDest())
     }
 }

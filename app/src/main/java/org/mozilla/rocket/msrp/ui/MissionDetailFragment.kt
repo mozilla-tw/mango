@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import dagger.Lazy
 import org.mozilla.focus.R
 import org.mozilla.rocket.content.appComponent
@@ -46,5 +47,13 @@ class MissionDetailFragment : Fragment() {
             Toast.makeText(context, "size:${it?.size}", Toast.LENGTH_LONG).show()
         })
         viewModel.loadMissions()
+    }
+
+    private fun openFxLoginPage(prevUid: String) {
+        findNavController().navigate(MissionDetailFragmentDirections.actionMissionDetailDestToFxLoginDest(prevUid))
+    }
+
+    private fun openRewardPage() {
+        findNavController().navigate(MissionDetailFragmentDirections.actionMissionDetailDestToRewardDest())
     }
 }

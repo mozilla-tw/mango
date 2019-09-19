@@ -39,6 +39,9 @@
         <action
             android:id="@+id/action_fx_login_dest_to_redeem_dest"
             app:destination="@id/redeem_dest" />
+        <argument
+            android:name="prevUid"
+            app:argType="string" />
     </fragment>
 
     <fragment
