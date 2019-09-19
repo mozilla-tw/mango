@@ -220,29 +220,22 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
     }
 
     private fun initFxaView() {
+        homeViewModel.isAccountLayerVisible.observe(this, Observer {
+            account_layout.isVisible = it
+        })
         homeViewModel.hasPendingMissions.observe(this, Observer {
             mission_button.isActivated = it
         })
-        mission_button.setOnClickListener { showRewardFragment() }
-        profile_button.setOnClickListener {
-            ScreenNavigator.get(context).addFxLogin()
-        }
-
-        homeViewModel.isAccountLayerVisible.observe(this, Observer {
-            account_layout.visibility = if (it) { View.VISIBLE } else { View.INVISIBLE }
-        })
+        mission_button.setOnClickListener { showRewardPage() }
+        profile_button.setOnClickListener { showProfilePage() }
     }
 
-    private fun showMissionFragment() {
-        ScreenNavigator.get(context).addMissionDetail()
+    private fun showRewardPage() {
+        // TODO: Evan
     }
 
-    private fun showRedeem() {
-        ScreenNavigator.get(context).addRedeem()
-    }
-
-    private fun showRewardFragment() {
-        ScreenNavigator.get(context).addReward()
+    private fun showProfilePage() {
+        // TODO: Evan
     }
 
     private fun observeNightMode() {

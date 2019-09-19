@@ -21,12 +21,9 @@ import androidx.fragment.app.Fragment
 import org.mozilla.focus.BuildConfig.FXA_API_URL
 import org.mozilla.focus.BuildConfig.FXA_CLIENT_ID
 import org.mozilla.focus.R
-import org.mozilla.focus.navigation.ScreenNavigator
 import java.net.URL
 
-class FxLoginFragment : Fragment(), ScreenNavigator.FxLoginScreen {
-
-    override fun getFragment() = this
+class FxLoginFragment : Fragment() {
 
     private lateinit var prevUid: String
     private var mWebView: WebView? = null
