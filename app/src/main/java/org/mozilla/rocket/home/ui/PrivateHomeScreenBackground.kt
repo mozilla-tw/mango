@@ -24,8 +24,6 @@ import androidx.core.graphics.drawable.toDrawable
 import org.mozilla.focus.R
 
 class PrivateHomeScreenBackground : AppCompatImageView {
-    private var paint: Paint? = null
-
     constructor(context: Context) : super(context, null) {
         init(context)
     }
