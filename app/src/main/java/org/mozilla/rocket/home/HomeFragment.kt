@@ -53,6 +53,7 @@ import org.mozilla.rocket.home.topsites.ui.Site
 import org.mozilla.rocket.home.topsites.ui.SitePage
 import org.mozilla.rocket.home.topsites.ui.SitePageAdapterDelegate
 import org.mozilla.rocket.home.topsites.ui.SiteViewHolder.Companion.TOP_SITE_LONG_CLICK_TARGET
+import org.mozilla.rocket.msrp.ui.RewardActivity
 import org.mozilla.rocket.shopping.search.ui.ShoppingSearchActivity
 import org.mozilla.rocket.theme.ThemeManager
 import javax.inject.Inject
@@ -231,7 +232,7 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
     }
 
     private fun showRewardPage() {
-        // TODO: Evan
+        startActivity(RewardActivity.getStartIntent(requireContext()))
     }
 
     private fun showProfilePage() {
