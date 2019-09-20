@@ -112,9 +112,16 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
             chromeViewModel.showUrlInput.call()
             TelemetryWrapper.showSearchBarHome()
         }
-        home_fragment_menu_button.setOnClickListener {
-            chromeViewModel.showMenu.call()
-            TelemetryWrapper.showMenuHome()
+        home_fragment_menu_button.apply {
+            setOnClickListener {
+                chromeViewModel.showMenu.call()
+                TelemetryWrapper.showMenuHome()
+            }
+            setOnLongClickListener {
+                chromeViewModel.showDownloadPanel.call()
+                TelemetryWrapper.longPressDownloadIndicator()
+                true
+            }
         }
         home_fragment_tab_counter.setOnClickListener {
             chromeViewModel.showTabTray.call()
@@ -139,11 +146,13 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
             chromeViewModel.togglePrivateMode.call()
         })
         downloadIndicatorViewModel.downloadIndicatorObservable.observe(this, Observer {
-            when (it) {
-                DownloadIndicatorViewModel.Status.DOWNLOADING -> home_fragment_menu_button.setDownloadState(DOWNLOAD_STATE_DOWNLOADING)
-                DownloadIndicatorViewModel.Status.UNREAD -> home_fragment_menu_button.setDownloadState(DOWNLOAD_STATE_UNREAD)
-                DownloadIndicatorViewModel.Status.WARNING -> home_fragment_menu_button.setDownloadState(DOWNLOAD_STATE_WARNING)
-                else -> home_fragment_menu_button.setDownloadState(DOWNLOAD_STATE_DEFAULT)
+            home_fragment_menu_button.apply {
+                when (it) {
+                    DownloadIndicatorViewModel.Status.DOWNLOADING -> setDownloadState(DOWNLOAD_STATE_DOWNLOADING)
+                    DownloadIndicatorViewModel.Status.UNREAD -> setDownloadState(DOWNLOAD_STATE_UNREAD)
+                    DownloadIndicatorViewModel.Status.WARNING -> setDownloadState(DOWNLOAD_STATE_WARNING)
+                    else -> setDownloadState(DOWNLOAD_STATE_DEFAULT)
+                }
             }
         })
     }
@@ -279,6 +288,7 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
             home_fragment_menu_button.setNightMode(isNightMode)
             account_layout.setNightMode(isNightMode)
             shopping_button.setNightMode(isNightMode)
+            private_mode_button.setNightMode(isNightMode)
         })
     }
 

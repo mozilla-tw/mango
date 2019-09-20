@@ -214,7 +214,6 @@
                 android:layout_width="44dp"
                 android:layout_height="48dp"
                 android:elevation="1dp"
-                android:gravity="center_vertical"
                 android:paddingEnd="4dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/home_fragment_fake_input"

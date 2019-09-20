@@ -5,12 +5,12 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.airbnb.lottie.LottieAnimationView
 import org.mozilla.focus.R
 import org.mozilla.rocket.nightmode.themed.ThemedImageView
-import org.mozilla.rocket.nightmode.themed.ThemedRelativeLayout
 
-class MenuButton : ThemedRelativeLayout {
+class MenuButton : ConstraintLayout {
     private val menu: ThemedImageView
     private val downloadingIndicator: LottieAnimationView
     private val unreadIndicator: ImageView
@@ -61,8 +61,7 @@ class MenuButton : ThemedRelativeLayout {
         }
     }
 
-    override fun setNightMode(isNight: Boolean) {
-        super.setNightMode(isNight)
+    fun setNightMode(isNight: Boolean) {
         menu.setNightMode(isNight)
     }
 
