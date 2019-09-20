@@ -46,7 +46,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
-                android:text="@string/shopping_search_plateform_onboarding_title"
+                android:text="@string/onboarding_2_smart_shopping_search_title"
                 android:textColor="@color/paletteLightBlack100"
                 android:textSize="14sp"
                 android:textStyle="bold"
