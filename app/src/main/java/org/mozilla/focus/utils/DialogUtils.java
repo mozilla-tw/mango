@@ -278,16 +278,20 @@ public class DialogUtils {
         final View delegateView = container.findViewById(R.id.spotlight_arrow);
         final RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) delegateView.getLayoutParams();
 
-        params.topMargin = targetView.getMeasuredHeight()  + location[1] - ViewUtils.getStatusBarHeight(activity);
+        params.topMargin = targetView.getMeasuredHeight()  + location[1] ;
         final View popupView = container.findViewById(R.id.spotlight_mock_menu);
         final RelativeLayout.LayoutParams paramsPopView = (RelativeLayout.LayoutParams) popupView.getLayoutParams();
-        paramsPopView.topMargin = targetView.getMeasuredHeight() + 30 + location[1] - ViewUtils.getStatusBarHeight(activity);
+        final int spacing = 30;
+        paramsPopView.topMargin = targetView.getMeasuredHeight() + spacing + location[1] ;
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.TabTrayTheme);
         builder.setView(container);
 
-        final Dialog dialog = builder.create();
 
+        final Dialog dialog = builder.create();
+        dialog.getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         final Button buttonOK = container.findViewById(R.id.btn_ok);
         buttonOK.setOnClickListener(v -> {
             dialog.dismiss();
@@ -360,7 +364,7 @@ public class DialogUtils {
 
     public static PromotionDialog createMissionCompleteDialog(@NonNull final Context context) {
         CustomViewDialogData data = new CustomViewDialogData();
-        data.setDrawable(ContextCompat.getDrawable(context, R.drawable.ic_reward_ribbon));
+        //data.setDrawable(ContextCompat.getDrawable(context, R.drawable.ic_reward_ribbon));
         data.setTitle(context.getString(R.string.msrp_completed_popup_title));
         data.setDescription(context.getString(R.string.msrp_completed_popup_body));
         data.setPositiveText(context.getString(R.string.msrp_completed_popup_button1));

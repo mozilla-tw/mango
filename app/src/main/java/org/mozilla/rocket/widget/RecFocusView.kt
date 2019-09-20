@@ -1,6 +1,5 @@
 package org.mozilla.rocket.widget
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -10,14 +9,12 @@ import androidx.core.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
 import org.mozilla.focus.R
-import org.mozilla.focus.utils.ViewUtils
 
 class RecFocusView : View {
     private val transparentPaint: Paint = Paint()
     private val path = Path()
     private var startX: Int = 0
     private var startY: Int = 0
-    private var statusBarOffset: Int = 0
     private var _width: Int = 0
     private var _height: Int = 0
 
@@ -38,7 +35,6 @@ class RecFocusView : View {
     constructor(context: Context, startX: Int, startY: Int, width: Int, height: Int) : super(context) {
         this.startX = startX
         this.startY = startY
-        this.statusBarOffset = ViewUtils.getStatusBarHeight(context as Activity)
         this._width = width
         this._height = height
 
@@ -54,11 +50,12 @@ class RecFocusView : View {
         super.onDraw(canvas)
 
         path.reset()
-
-        path.addRect(startX.toFloat(), (startY - statusBarOffset).toFloat(), (startX + _width).toFloat(), (startY - statusBarOffset + _height).toFloat(), Path.Direction.CW)
+        var padding = 4
+        var round = 16f
+        path.addRoundRect((startX - padding).toFloat(), (startY - padding).toFloat(), (startX + _width + padding).toFloat(), (startY + _height + padding).toFloat(), round, round, Path.Direction.CW)
         path.fillType = Path.FillType.INVERSE_EVEN_ODD
 
-        canvas.drawRect(startX.toFloat(), (startY - statusBarOffset).toFloat(), (startX + _width).toFloat(), (startY + _height).toFloat(), transparentPaint)
+        canvas.drawRect(startX.toFloat(), startY.toFloat(), (startX + _width).toFloat(), (startY + _height).toFloat(), transparentPaint)
         canvas.clipPath(path)
         canvas.drawColor(ContextCompat.getColor(context, R.color.myShotOnBoardingBackground))
     }
