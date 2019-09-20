@@ -137,4 +137,28 @@ object HomeModule {
     @Provides
     fun provideIsShoppingButtonEnabledUseCase(shoppingSearchRepository: ShoppingSearchRepository): IsShoppingButtonEnabledUseCase =
             IsShoppingButtonEnabledUseCase(shoppingSearchRepository)
+
+    @JvmStatic
+    @Singleton
+    @Provides
+    fun provideCheckFirstRunUseCase(appContext: Context): CheckFirstRunUseCase =
+        CheckFirstRunUseCase(appContext)
+
+    @JvmStatic
+    @Singleton
+    @Provides
+    fun provideCheckLiteUpdateUseCase(appContext: Context): CheckLiteUpdate =
+        CheckLiteUpdate(appContext)
+
+    @JvmStatic
+    @Singleton
+    @Provides
+    fun provideCompleteFirstRunUseCase(appContext: Context): CompleteFirstRunUseCase =
+        CompleteFirstRunUseCase(appContext)
+
+    @JvmStatic
+    @Singleton
+    @Provides
+    fun provideCompleteLiteUpdateUseCase(appContext: Context): CompleteLiteUpdate =
+        CompleteLiteUpdate(appContext)
 }
