@@ -9,7 +9,6 @@ import android.graphics.Path
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
-import org.mozilla.focus.R
 import org.mozilla.focus.utils.ViewUtils
 
 class RoundRecFocusView : View {
@@ -21,7 +20,6 @@ class RoundRecFocusView : View {
     private var radius: Int = 0
     private var rectangleHeight: Int = 0
     private var rectangleWidth: Int = 0
-    private var contentServicesOffset = 0
     private var backgroundDimColor = 0
     private lateinit var rectF: RectF
 
@@ -37,10 +35,9 @@ class RoundRecFocusView : View {
         initPaints()
     }
 
-    constructor(context: Context, centerX: Int, centerY: Int, radius: Int, height: Int, width: Int, backgroundColor: Int) : super(context) {
-        this.contentServicesOffset = context.resources.getDimensionPixelSize(R.dimen.content_services_offset)
+    constructor(context: Context, centerX: Int, centerY: Int, offsetY: Int, radius: Int, height: Int, width: Int, backgroundColor: Int) : super(context) {
         this.centerX = centerX
-        this.centerY = centerY - contentServicesOffset
+        this.centerY = centerY - offsetY
         this.statusBarOffset = ViewUtils.getStatusBarHeight(context as Activity)
         this.radius = radius
         this.rectangleHeight = height

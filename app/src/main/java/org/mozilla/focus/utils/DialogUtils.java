@@ -269,7 +269,13 @@ public class DialogUtils {
 
         container.findViewById(R.id.next).setOnClickListener(ok);
 
-        Dialog dialog = createShoppingSearchSpotlightDialog(activity, targetView, container, activity.getResources().getDimensionPixelSize(R.dimen.shopping_focus_view_radius));
+        Dialog dialog = createShoppingSearchSpotlightDialog(
+                activity,
+                targetView,
+                container,
+                activity.getResources().getDimensionPixelSize(R.dimen.shopping_focus_view_radius),
+                activity.getResources().getDimensionPixelSize(R.dimen.shopping_focus_view_height),
+                activity.getResources().getDimensionPixelSize(R.dimen.shopping_focus_view_width));
 
         dialog.setOnDismissListener(dismissListener);
         dialog.show();
@@ -302,7 +308,17 @@ public class DialogUtils {
 
     @CheckResult
     private static Dialog createSpotlightDialog(@NonNull final Activity activity, @NonNull final View targetView, final @NonNull ViewGroup container) {
-        return createSpotlightDialog(activity, targetView, container, activity.getResources().getDimensionPixelSize(R.dimen.myshot_focus_view_radius), 0, 0, FocusViewType.CIRCLE, ContextCompat.getColor(activity, R.color.myShotOnBoardingBackground));
+        return createSpotlightDialog(
+                activity,
+                targetView,
+                container,
+                0,
+                activity.getResources().getDimensionPixelSize(R.dimen.myshot_focus_view_radius),
+                0,
+                0,
+                FocusViewType.CIRCLE, ContextCompat.getColor(activity, R.color.myShotOnBoardingBackground),
+                true
+        );
     }
 
     @CheckResult
@@ -310,8 +326,21 @@ public class DialogUtils {
             @NonNull final Activity activity,
             @NonNull final View targetView,
             final @NonNull ViewGroup container,
-            final @NonNull Integer radius) {
-        return createSpotlightDialog(activity, targetView, container, radius, 0, 0, FocusViewType.CIRCLE, ContextCompat.getColor(activity, R.color.paletteBlack50));
+            final @NonNull Integer radius,
+            final @NonNull Integer height,
+            final @NonNull Integer width) {
+        return createSpotlightDialog(
+                activity,
+                targetView,
+                container,
+                0,
+                radius,
+                height,
+                width,
+                FocusViewType.ROUND_REC,
+                ContextCompat.getColor(activity, R.color.paletteBlack50),
+                false
+        );
     }
 
     @CheckResult
@@ -322,7 +351,18 @@ public class DialogUtils {
             final @NonNull Integer radius,
             final @NonNull Integer height,
             final @NonNull Integer width) {
-        return createSpotlightDialog(activity, targetView, container, radius, height, width, FocusViewType.ROUND_REC, ContextCompat.getColor(activity, R.color.paletteBlack50));
+        return createSpotlightDialog(
+                activity,
+                targetView,
+                container,
+                activity.getResources().getDimensionPixelSize(R.dimen.content_services_offset),
+                radius,
+                height,
+                width,
+                FocusViewType.ROUND_REC,
+                ContextCompat.getColor(activity, R.color.paletteBlack50),
+                false
+        );
     }
 
 
@@ -331,11 +371,13 @@ public class DialogUtils {
             @NonNull final Activity activity,
             @NonNull final View targetView,
             final @NonNull ViewGroup container,
+            final @NonNull Integer offsetY,
             final @NonNull Integer radius,
             final @NonNull Integer height,
             final @NonNull Integer width,
             final FocusViewType type,
-            final @NonNull Integer backgroundDimColor) {
+            final @NonNull Integer backgroundDimColor,
+            final @NonNull Boolean cancelOnTouchOutside) {
         final int[] location = new int[2];
         final int centerX, centerY;
         // Get target view's position
@@ -346,7 +388,7 @@ public class DialogUtils {
         centerY = location[1] + targetView.getMeasuredHeight() / 2;
 
         // Initialize FocusView and add it to container view's index 0(the bottom of Z-order)
-        View focusView = getFocusView(activity, centerX, centerY, radius, height, width, type, backgroundDimColor);
+        View focusView = getFocusView(activity, centerX, centerY, offsetY, radius, height, width, type, backgroundDimColor);
 
         container.addView(focusView, 0);
 
@@ -362,20 +404,22 @@ public class DialogUtils {
 
         final Dialog dialog = builder.create();
 
-        // Click delegateView will dismiss on boarding view and open my shot panel
-        delegateView.setOnClickListener(v -> {
-            dialog.dismiss();
-            targetView.performClick();
-        });
+        if (cancelOnTouchOutside) {
+            // Click delegateView will dismiss on boarding view and open my shot panel
+            delegateView.setOnClickListener(v -> {
+                dialog.dismiss();
+                targetView.performClick();
+            });
 
-        delegateView.setOnLongClickListener(v -> {
-            dialog.dismiss();
-            return targetView.performLongClick();
-        });
-        // Click outside of the delegateView will dismiss on boarding view
-        container.setOnClickListener(v -> {
-            dialog.dismiss();
-        });
+            delegateView.setOnLongClickListener(v -> {
+                dialog.dismiss();
+                return targetView.performLongClick();
+            });
+            // Click outside of the delegateView will dismiss on boarding view
+            container.setOnClickListener(v -> {
+                dialog.dismiss();
+            });
+        }
         return dialog;
     }
 
@@ -406,12 +450,12 @@ public class DialogUtils {
         return dialog;
     }
 
-    private static View getFocusView(Context context, int centerX, int centerY, int radius, int height, int width, FocusViewType type, int backgroundDimColor) {
+    private static View getFocusView(Context context, int centerX, int centerY, int offsetY, int radius, int height, int width, FocusViewType type, int backgroundDimColor) {
         switch (type) {
             case CIRCLE:
                 return new FocusView(context, centerX, centerY, radius, backgroundDimColor);
             case ROUND_REC:
-                return new RoundRecFocusView(context, centerX, centerY, radius, height, width, backgroundDimColor);
+                return new RoundRecFocusView(context, centerX, centerY, offsetY, radius, height, width, backgroundDimColor);
             default: {
                 return new FocusView(context, centerX, centerY, radius, backgroundDimColor);
             }
