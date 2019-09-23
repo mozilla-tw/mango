@@ -58,16 +58,16 @@ class HomeViewModel(
     val openBrowser = SingleLiveEvent<Site>()
     val showTopSiteMenu = SingleLiveEvent<ShowTopSiteMenuData>()
     val navigateToContentPage = SingleLiveEvent<ContentHub.Item>()
-    val showOnboardingSpotlight = SingleLiveEvent<Boolean> ()
+    val showOnboardingSpotlight = SingleLiveEvent<Unit> ()
 
     init {
         getLogoManNotificationUseCase()?.let { notification ->
             logoManNotification.value = StateNotification(notification, true)
         }
-        if (!checkFirstRunUseCase() || checkLiteUpdate()) {
+        if (!checkFirstRunUseCase() || !checkLiteUpdate()) {
             completeFirstRunUseCase()
             completeLiteUpdate()
-            showOnboardingSpotlight.value = true
+            showOnboardingSpotlight.call()
         }
     }
 

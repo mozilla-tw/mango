@@ -74,6 +74,7 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
     private lateinit var topSitesAdapter: DelegateAdapter
     private lateinit var contentServiceSpotlightDialog: Dialog
     private lateinit var shoppingSearchSpotlightDialog: Dialog
+    private var currentShoppingBtnVisibleState = false
 
     private val topSitesPageChangeCallback = object : OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
@@ -407,8 +408,8 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
 
     private fun restoreStatusBarColor() {
         activity?.window?.statusBarColor = Color.TRANSPARENT
-        shopping_button.isVisible = false
-        private_mode_button.isVisible = true
+        shopping_button.isVisible = currentShoppingBtnVisibleState
+        private_mode_button.isVisible = !currentShoppingBtnVisibleState
     }
 
     private fun setOnboardingStatusBarColor() {
@@ -419,11 +420,10 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
 
     private fun initOnboardingSpotlight() {
         homeViewModel.showOnboardingSpotlight.observe(this, Observer {
-            if (it != null && it == true) {
-                shopping_button.isVisible = true
-                private_mode_button.isVisible = false
-                showShoppingSearchSpotlight()
-            }
+            currentShoppingBtnVisibleState = shopping_button.isVisible
+            shopping_button.isVisible = true
+            private_mode_button.isVisible = false
+            showShoppingSearchSpotlight()
         })
     }
 }
