@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.fragment_missions.*
+import kotlinx.android.synthetic.main.fragment_challenge_list.*
 import org.mozilla.focus.R
 import org.mozilla.rocket.adapter.AdapterDelegatesManager
 import org.mozilla.rocket.adapter.DelegateAdapter
@@ -25,7 +25,7 @@ class RedeemListFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_missions, container, false)
+        return inflater.inflate(R.layout.fragment_challenge_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
