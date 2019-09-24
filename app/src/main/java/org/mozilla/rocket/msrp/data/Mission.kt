@@ -1,7 +1,6 @@
 package org.mozilla.rocket.msrp.data
 
 data class Mission(
-
     val mid: String,
     val missionType: String,
 
@@ -21,16 +20,20 @@ data class Mission(
 
     val status: Int, // 0:new, 1:joined, 2:redeem-able 3:redeemed
     val missionProgress: MissionProgress
-)
+) {
+    companion object {
+        const val STATUS_NEW = 0
+        const val STATUS_JOINED = 1
+        const val STATUS_REDEEMABLE = 2
+        const val STATUS_REDEEMED = 3
+    }
+}
 
-/**
- *
- * */
 sealed class MissionProgress {
     data class TypeDaily(
-        val joinDate: Long?, // the date the user join this mission
-        val currentDay: Int?, // number of the total days accomplished
-        val totalDays: Int?, // number of the total days needed
-        val message: String?
+        val joinDate: Long, // the date the user join this mission
+        val currentDay: Int, // number of the total days accomplished
+        val totalDays: Int, // number of the total days needed
+        val message: String
     ) : MissionProgress()
 }
