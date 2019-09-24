@@ -165,7 +165,7 @@ open class FirebaseImp(fromResourceString: HashMap<String, Any>) : FirebaseContr
             Log.d(TAG, "jwt====${result.token}")
 
             func(result.token)
-        }
+        } ?: func(null)
     }
 
     private fun fetchClaim(onClaimFetched: (String?, String?) -> Unit) {
