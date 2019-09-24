@@ -16,6 +16,6 @@ class RedeemedMissionsViewHolder(override val containerView: View) : DelegateAda
         uiModel as MissionUiModel.RedeemedMission
 
         title.text = uiModel.title
-        expiration_text.text = uiModel.expirationText
+        expiration_text.text = uiModel.expirationTime
     }
 }
