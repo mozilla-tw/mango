@@ -103,7 +103,7 @@ private suspend fun List<Mission>.toUiModel(): List<MissionUiModel> = withContex
 private fun Mission.toUiModel(): MissionUiModel = when (status) {
     Mission.STATUS_NEW -> MissionUiModel.UnjoinedMission(
         title = title,
-        expirationText = expiredDate.toDateString(),
+        expirationText = joinEndDate.toDateString(),
         showRedDot = false, // TODO: Evan
         imageUrl = imageUrl
     )
