@@ -1,6 +1,8 @@
 package org.mozilla.rocket.msrp.data
 
+import android.content.Context
 import android.util.Log
+import androidx.lifecycle.LiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mozilla.components.concept.fetch.MutableHeaders
@@ -12,10 +14,19 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.mozilla.focus.BuildConfig
 import org.mozilla.focus.utils.FirebaseHelper
+import org.mozilla.rocket.extension.map
+import org.mozilla.rocket.preference.stringLiveData
 import org.mozilla.rocket.util.Result
+import org.mozilla.strictmodeviolator.StrictModeViolation
 import java.util.TimeZone
 
-open class MissionRepository {
+open class MissionRepository(appContext: Context) {
+
+    private val preference = StrictModeViolation.tempGrant({ builder ->
+        builder.permitDiskReads()
+    }, {
+        appContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+    })
 
     private val missionListEndpoint: String
         get() = FirebaseHelper.getFirebase().getRcString(STR_RC_MISSION_LIST_ENDPOINT)
@@ -367,6 +378,37 @@ open class MissionRepository {
         }
     }
 
+    fun getReadMissionIdsLiveData(): LiveData<List<String>> =
+            preference.stringLiveData(KEY_READ_MISSIONS, "[]")
+                    .map { parseReadMissionsString(it) }
+
+    suspend fun addReadMissionId(id: String) = withContext(Dispatchers.IO) {
+        val updatedIds = getReadMissionIds()
+                .toMutableSet()
+                .apply { add(id) }
+                .toList()
+        saveReadMissionIds(updatedIds)
+    }
+
+    private fun getReadMissionIds(): List<String> =
+            parseReadMissionsString(
+                requireNotNull(preference.getString(KEY_READ_MISSIONS, "[]"))
+            )
+
+    private fun saveReadMissionIds(ids: List<String>) {
+        preference.edit().apply {
+            putString(KEY_READ_MISSIONS, ids.toString())
+        }.apply()
+    }
+
+    private fun parseReadMissionsString(idsStr: String): List<String> =
+            mutableListOf<String>().apply {
+                val jsonArray = JSONArray(idsStr)
+                for (i in 0 until jsonArray.length()) {
+                    add(jsonArray.getString(i))
+                }
+            }
+
     companion object {
         private const val TAG = "MissionRepository"
         private const val BOOL_RC_MSRP_ENABLED = "bool_msrp_enabled"
@@ -374,6 +416,9 @@ open class MissionRepository {
 
         // TODO: Update host url
         private const val MSRP_HOST = "https://rocket-dev01.appspot.com"
+
+        private const val PREF_NAME = "msrp"
+        private const val KEY_READ_MISSIONS = "read_missions"
     }
 }
 
