@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.mozilla.rocket.download.SingleLiveEvent
 import org.mozilla.rocket.msrp.data.Mission
 import org.mozilla.rocket.msrp.data.MissionProgress
 import org.mozilla.rocket.msrp.data.RewardCouponDoc
@@ -34,7 +35,11 @@ class MissionViewModel(
     val hasUnreadMissions = MediatorLiveData<Boolean>()
     val redeemResult = MediatorLiveData<RewardCouponDoc>()
 
+    val openMissionDetailPage = SingleLiveEvent<String>()
+
     private var missionsLiveData: LiveData<Result<Pair<List<Mission>, List<Mission>>, LoadMissionsUseCase.Error>>? = null
+    private var challengeList: List<Mission> = emptyList()
+    private var redeemList: List<Mission> = emptyList()
 
     init {
         loadMissions()
@@ -83,6 +88,7 @@ class MissionViewModel(
                 is LoadMissionsUseCase.Error.UnknownError -> State.UnknownError
             }
         }
+        this.challengeList = challengeList
         return if (challengeList.isNotEmpty()) {
             State.Loaded(challengeList.toUiModel())
         } else {
@@ -99,6 +105,7 @@ class MissionViewModel(
                 is LoadMissionsUseCase.Error.UnknownError -> State.UnknownError
             }
         }
+        this.redeemList = redeemList
         return if (redeemList.isNotEmpty()) {
             State.Loaded(redeemList.toUiModel())
         } else {
@@ -106,7 +113,17 @@ class MissionViewModel(
         }
     }
 
-    fun onMissionRead(missionId: String) = viewModelScope.launch {
+    fun onChallengeItemClicked(position: Int) {
+        val mission = challengeList[position]
+        // TODO: Evan
+    }
+
+    fun onRedeemItemClicked(position: Int) {
+        val mission = redeemList[position]
+        // TODO: Evan
+    }
+
+    fun onMissionDetailViewed(missionId: String) = viewModelScope.launch {
         readMissionUseCase(missionId)
     }
 

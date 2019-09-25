@@ -50,9 +50,9 @@ class RedeemListFragment : Fragment() {
     private fun initRecyclerView() {
         adapter = DelegateAdapter(
             AdapterDelegatesManager().apply {
-                add(MissionUiModel.RedeemableMission::class, R.layout.item_redeemable_mission, RedeemableMissionAdapterDelegate())
-                add(MissionUiModel.RedeemedMission::class, R.layout.item_redeemed_mission, RedeemedMissionAdapterDelegate())
-                add(MissionUiModel.ExpiredMission::class, R.layout.item_expired_mission, ExpiredMissionAdapterDelegate())
+                add(MissionUiModel.RedeemableMission::class, R.layout.item_redeemable_mission, RedeemableMissionAdapterDelegate(missionViewModel))
+                add(MissionUiModel.RedeemedMission::class, R.layout.item_redeemed_mission, RedeemedMissionAdapterDelegate(missionViewModel))
+                add(MissionUiModel.ExpiredMission::class, R.layout.item_expired_mission, ExpiredMissionAdapterDelegate(missionViewModel))
             }
         )
         recycler_view.apply {

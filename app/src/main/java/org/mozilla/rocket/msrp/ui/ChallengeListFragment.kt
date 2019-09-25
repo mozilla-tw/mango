@@ -54,8 +54,8 @@ class ChallengeListFragment : Fragment() {
     private fun initRecyclerView() {
         adapter = DelegateAdapter(
             AdapterDelegatesManager().apply {
-                add(MissionUiModel.UnjoinedMission::class, R.layout.item_unjoined_mission, UnjoinedMissionsAdapterDelegate())
-                add(MissionUiModel.JoinedMission::class, R.layout.item_joined_mission, JoinedMissionsAdapterDelegate())
+                add(MissionUiModel.UnjoinedMission::class, R.layout.item_unjoined_mission, UnjoinedMissionsAdapterDelegate(missionViewModel))
+                add(MissionUiModel.JoinedMission::class, R.layout.item_joined_mission, JoinedMissionsAdapterDelegate(missionViewModel))
             }
         )
         recycler_view.apply {

@@ -14,13 +14,19 @@ import kotlinx.android.synthetic.main.item_joined_mission.title
 import org.mozilla.rocket.adapter.AdapterDelegate
 import org.mozilla.rocket.adapter.DelegateAdapter
 import org.mozilla.rocket.extension.dpToPx
+import org.mozilla.rocket.msrp.ui.MissionViewModel
 
-class JoinedMissionsAdapterDelegate : AdapterDelegate {
+class JoinedMissionsAdapterDelegate(
+    private val missionViewModel: MissionViewModel
+) : AdapterDelegate {
     override fun onCreateViewHolder(view: View): DelegateAdapter.ViewHolder =
-            JoinedMissionsViewHolder(view)
+            JoinedMissionsViewHolder(missionViewModel, view)
 }
 
-class JoinedMissionsViewHolder(override val containerView: View) : DelegateAdapter.ViewHolder(containerView) {
+class JoinedMissionsViewHolder(
+    private val missionViewModel: MissionViewModel,
+    override val containerView: View
+) : DelegateAdapter.ViewHolder(containerView) {
 
     private val imgReqOpts = RequestOptions().apply { transforms(CenterCrop(), RoundedCorners(containerView.dpToPx(4f))) }
 
@@ -37,5 +43,9 @@ class JoinedMissionsViewHolder(override val containerView: View) : DelegateAdapt
                 .load(uiModel.imageUrl)
                 .apply(imgReqOpts)
                 .into(image)
+
+        itemView.setOnClickListener {
+            missionViewModel.onChallengeItemClicked(adapterPosition)
+        }
     }
 }
