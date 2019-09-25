@@ -29,21 +29,10 @@ class MissionViewModel(
     private val redeemUseCase: RedeemUseCase
 ) : ViewModel() {
 
-    val redeemResult: LiveData<RewardCouponDoc>
-        get() = _redeemResult
-    private val _redeemResult = MediatorLiveData<RewardCouponDoc>()
-
-    val challengeListViewState: LiveData<State>
-        get() = _missionViewState
-    private val _missionViewState = MediatorLiveData<State>()
-
-    val hasUnreadMissions: LiveData<Boolean>
-        get() = _hasUnreadMissions
-    private val _hasUnreadMissions = MediatorLiveData<Boolean>()
-
-    val redeemListViewState: LiveData<State>
-        get() = _redeemListViewState
-    private val _redeemListViewState = MediatorLiveData<State>()
+    val challengeListViewState = MediatorLiveData<State>()
+    val redeemListViewState = MediatorLiveData<State>()
+    val hasUnreadMissions = MediatorLiveData<Boolean>()
+    val redeemResult = MediatorLiveData<RewardCouponDoc>()
 
     private var missionsLiveData: LiveData<Result<Pair<List<Mission>, List<Mission>>, LoadMissionsUseCase.Error>>? = null
 
@@ -56,32 +45,32 @@ class MissionViewModel(
     }
 
     private fun loadMissions() = viewModelScope.launch {
-        _missionViewState.value = State.Loading
-        _redeemListViewState.value = State.Loading
+        challengeListViewState.value = State.Loading
+        redeemListViewState.value = State.Loading
 
         val oldSource = missionsLiveData
         val newSource = loadMissionsUseCase()
         missionsLiveData = newSource
 
         oldSource?.let {
-            _missionViewState.removeSource(it)
-            _redeemListViewState.removeSource(it)
-            _hasUnreadMissions.removeSource(it)
+            challengeListViewState.removeSource(it)
+            redeemListViewState.removeSource(it)
+            hasUnreadMissions.removeSource(it)
         }
 
-        _missionViewState.addSource(newSource) { result ->
+        challengeListViewState.addSource(newSource) { result ->
             viewModelScope.launch {
-                _missionViewState.value = parseChallengeListResult(result)
+                challengeListViewState.value = parseChallengeListResult(result)
             }
         }
-        _redeemListViewState.addSource(newSource) { result ->
+        redeemListViewState.addSource(newSource) { result ->
             viewModelScope.launch {
-                _redeemListViewState.value = parseRedeemListResult(result)
+                redeemListViewState.value = parseRedeemListResult(result)
             }
         }
-        _hasUnreadMissions.addSource(newSource) { result ->
+        hasUnreadMissions.addSource(newSource) { result ->
             val challengeList = result.data?.first ?: emptyList()
-            _hasUnreadMissions.value = hasUnreadMissionsUseCase(challengeList)
+            hasUnreadMissions.value = hasUnreadMissionsUseCase(challengeList)
         }
     }
 
