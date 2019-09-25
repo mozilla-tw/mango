@@ -4,7 +4,6 @@ import org.mozilla.rocket.msrp.data.MissionRepository
 import org.mozilla.rocket.msrp.data.RedeemServiceError
 import org.mozilla.rocket.msrp.data.RewardCouponDoc
 import org.mozilla.rocket.msrp.data.UserRepository
-import org.mozilla.rocket.msrp.data.UserServiceError
 import org.mozilla.rocket.util.Result
 import org.mozilla.rocket.util.getNotNull
 
@@ -14,11 +13,7 @@ class RedeemUseCase(
 ) : UseCase<RedeemRequest, Result<RewardCouponDoc, RedeemUseCase.Error>>() {
 
     override suspend fun execute(parameters: RedeemRequest): Result<RewardCouponDoc, Error> {
-        val userToken = userRepository.getUserToken().getNotNull { error ->
-            when (error) {
-                is UserServiceError.GetUserTokenError -> Result.error<RewardCouponDoc, Error>(error = Error.UnknownError)
-            }
-        }
+        val userToken = userRepository.getUserToken()
         val rewardCouponDoc = missionRepository.redeem(userToken, parameters.redeemUrl).getNotNull { error ->
             when (error) {
                 is RedeemServiceError.Failure,
