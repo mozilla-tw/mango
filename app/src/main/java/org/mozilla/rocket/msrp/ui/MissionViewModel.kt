@@ -150,7 +150,7 @@ private fun Mission.toUiModel(): MissionUiModel = when (status) {
     Mission.STATUS_NEW -> MissionUiModel.UnjoinedMission(
         title = title,
         expirationText = joinEndDate.toDateString(),
-        showRedDot = false, // TODO: Evan
+        showRedDot = unread,
         imageUrl = imageUrl
     )
     Mission.STATUS_JOINED -> MissionUiModel.JoinedMission(

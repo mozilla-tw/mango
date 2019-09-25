@@ -67,8 +67,8 @@ object MissionModule {
     @Singleton
     @Provides
     fun provideRedeemUseCase(
-            missionRepository: MissionRepository,
-            userRepository: UserRepository
+        missionRepository: MissionRepository,
+        userRepository: UserRepository
     ) = RedeemUseCase(missionRepository, userRepository)
 
     @JvmStatic
