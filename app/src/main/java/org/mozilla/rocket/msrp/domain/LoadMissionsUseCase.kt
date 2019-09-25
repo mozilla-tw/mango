@@ -14,7 +14,7 @@ import org.mozilla.rocket.util.getNotNull
 class LoadMissionsUseCase(
     private val missionRepository: MissionRepository,
     private val userRepository: UserRepository
-) : UseCase<LoadMissionsUseCaseParameter, LiveData<Result<Pair<List<Mission>, List<Mission>>, LoadMissionsUseCase.Error>>>() {
+) {
 
     private val missionsLiveData = MutableLiveData<Result<List<Mission>, RewardServiceError>>()
     private val readMissionIdsLiveData: LiveData<List<String>> = missionRepository.getReadMissionIdsLiveData()
@@ -51,7 +51,7 @@ class LoadMissionsUseCase(
         forEach { it.unread = !readIds.contains(it.mid) }
     }
 
-    override suspend fun execute(parameters: LoadMissionsUseCaseParameter): LiveData<Result<Pair<List<Mission>, List<Mission>>, Error>> =
+    suspend operator fun invoke(): LiveData<Result<Pair<List<Mission>, List<Mission>>, Error>> =
             resultLiveData.also { updateMissions() }
 
     private suspend fun updateMissions() {
@@ -65,5 +65,3 @@ class LoadMissionsUseCase(
         object UnknownError : Error()
     }
 }
-
-class LoadMissionsUseCaseParameter

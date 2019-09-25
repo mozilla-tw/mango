@@ -11,9 +11,7 @@ import org.mozilla.rocket.msrp.data.Mission
 import org.mozilla.rocket.msrp.data.MissionProgress
 import org.mozilla.rocket.msrp.data.RewardCouponDoc
 import org.mozilla.rocket.msrp.domain.LoadMissionsUseCase
-import org.mozilla.rocket.msrp.domain.LoadMissionsUseCaseParameter
 import org.mozilla.rocket.msrp.domain.ReadMissionUseCase
-import org.mozilla.rocket.msrp.domain.ReadMissionUseCaseParameter
 import org.mozilla.rocket.msrp.domain.RedeemUseCase
 import org.mozilla.rocket.msrp.ui.adapter.MissionUiModel
 import org.mozilla.rocket.util.Result
@@ -56,7 +54,7 @@ class MissionViewModel(
         _redeemListViewState.value = State.Loading
 
         val oldSource = missionsLiveData
-        val newSource = loadMissionsUseCase.execute(LoadMissionsUseCaseParameter())
+        val newSource = loadMissionsUseCase()
         missionsLiveData = newSource
 
         oldSource?.let {
@@ -109,7 +107,7 @@ class MissionViewModel(
     }
 
     fun onMissionRead(missionId: String) = viewModelScope.launch {
-        readMissionUseCase.execute(ReadMissionUseCaseParameter(missionId))
+        readMissionUseCase(missionId)
     }
 
     // TODO: Evan

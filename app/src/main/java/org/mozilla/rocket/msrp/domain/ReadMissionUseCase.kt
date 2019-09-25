@@ -4,13 +4,9 @@ import org.mozilla.rocket.msrp.data.MissionRepository
 
 class ReadMissionUseCase(
     private val missionRepository: MissionRepository
-) : UseCase<ReadMissionUseCaseParameter, Unit>() {
+) {
 
-    override suspend fun execute(parameters: ReadMissionUseCaseParameter) {
-        missionRepository.addReadMissionId(parameters.missionId)
+    suspend operator fun invoke(missionId: String) {
+        missionRepository.addReadMissionId(missionId)
     }
 }
-
-data class ReadMissionUseCaseParameter(
-    val missionId: String
-)
