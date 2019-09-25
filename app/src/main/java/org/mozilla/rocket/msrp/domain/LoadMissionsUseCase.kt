@@ -56,7 +56,7 @@ class LoadMissionsUseCase(
 
     private suspend fun updateMissions() {
         val userToken = userRepository.getUserToken()
-        val missionsResult = missionRepository.fetchMission(userToken)
+        val missionsResult = missionRepository.getMissions(userToken)
         missionsLiveData.value = missionsResult
     }
 

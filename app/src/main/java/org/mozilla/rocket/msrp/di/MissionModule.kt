@@ -3,6 +3,8 @@ package org.mozilla.rocket.msrp.di
 import android.content.Context
 import dagger.Module
 import dagger.Provides
+import org.mozilla.rocket.msrp.data.MissionLocalDataSource
+import org.mozilla.rocket.msrp.data.MissionRemoteDataSource
 import org.mozilla.rocket.msrp.data.MissionRepository
 import org.mozilla.rocket.msrp.data.UserRepository
 import org.mozilla.rocket.msrp.domain.LoadMissionsUseCase
@@ -17,7 +19,24 @@ object MissionModule {
     @JvmStatic
     @Singleton
     @Provides
-    fun provideMissionRepo(appContext: Context): MissionRepository = MissionRepository(appContext)
+    fun provideMissionLocalDataSource(appContext: Context): MissionLocalDataSource =
+            MissionLocalDataSource(appContext)
+
+    @JvmStatic
+    @Singleton
+    @Provides
+    fun provideMissionRemoteDataSource(): MissionRemoteDataSource = MissionRemoteDataSource()
+
+    @JvmStatic
+    @Singleton
+    @Provides
+    fun provideMissionRepo(
+        missionLocalDataSource: MissionLocalDataSource,
+        missionRemoteDataSource: MissionRemoteDataSource
+    ): MissionRepository = MissionRepository(
+        missionLocalDataSource,
+        missionRemoteDataSource
+    )
 
     @JvmStatic
     @Singleton
