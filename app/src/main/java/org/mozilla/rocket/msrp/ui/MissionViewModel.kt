@@ -10,6 +10,7 @@ import kotlinx.coroutines.withContext
 import org.mozilla.rocket.msrp.data.Mission
 import org.mozilla.rocket.msrp.data.MissionProgress
 import org.mozilla.rocket.msrp.data.RewardCouponDoc
+import org.mozilla.rocket.msrp.domain.HasUnreadMissionsUseCase
 import org.mozilla.rocket.msrp.domain.LoadMissionsUseCase
 import org.mozilla.rocket.msrp.domain.ReadMissionUseCase
 import org.mozilla.rocket.msrp.domain.RedeemUseCase
@@ -24,6 +25,7 @@ import java.util.Locale
 class MissionViewModel(
     private val loadMissionsUseCase: LoadMissionsUseCase,
     private val readMissionUseCase: ReadMissionUseCase,
+    private val hasUnreadMissionsUseCase: HasUnreadMissionsUseCase,
     private val redeemUseCase: RedeemUseCase
 ) : ViewModel() {
 
@@ -34,6 +36,10 @@ class MissionViewModel(
     val challengeListViewState: LiveData<State>
         get() = _missionViewState
     private val _missionViewState = MediatorLiveData<State>()
+
+    val hasUnreadMissions: LiveData<Boolean>
+        get() = _hasUnreadMissions
+    private val _hasUnreadMissions = MediatorLiveData<Boolean>()
 
     val redeemListViewState: LiveData<State>
         get() = _redeemListViewState
@@ -60,6 +66,7 @@ class MissionViewModel(
         oldSource?.let {
             _missionViewState.removeSource(it)
             _redeemListViewState.removeSource(it)
+            _hasUnreadMissions.removeSource(it)
         }
 
         _missionViewState.addSource(newSource) { result ->
@@ -71,6 +78,10 @@ class MissionViewModel(
             viewModelScope.launch {
                 _redeemListViewState.value = parseRedeemListResult(result)
             }
+        }
+        _hasUnreadMissions.addSource(newSource) { result ->
+            val challengeList = result.data?.first ?: emptyList()
+            _hasUnreadMissions.value = hasUnreadMissionsUseCase(challengeList)
         }
     }
 

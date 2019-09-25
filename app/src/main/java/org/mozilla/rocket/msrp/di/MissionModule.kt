@@ -7,6 +7,7 @@ import org.mozilla.rocket.msrp.data.MissionLocalDataSource
 import org.mozilla.rocket.msrp.data.MissionRemoteDataSource
 import org.mozilla.rocket.msrp.data.MissionRepository
 import org.mozilla.rocket.msrp.data.UserRepository
+import org.mozilla.rocket.msrp.domain.HasUnreadMissionsUseCase
 import org.mozilla.rocket.msrp.domain.LoadMissionsUseCase
 import org.mozilla.rocket.msrp.domain.ReadMissionUseCase
 import org.mozilla.rocket.msrp.domain.RedeemUseCase
@@ -15,6 +16,11 @@ import javax.inject.Singleton
 
 @Module
 object MissionModule {
+
+    @JvmStatic
+    @Singleton
+    @Provides
+    fun provideUserRepo(): UserRepository = UserRepository()
 
     @JvmStatic
     @Singleton
@@ -41,11 +47,6 @@ object MissionModule {
     @JvmStatic
     @Singleton
     @Provides
-    fun provideUserRepo(): UserRepository = UserRepository()
-
-    @JvmStatic
-    @Singleton
-    @Provides
     fun provideLoadMissionsUseCase(
         missionRepository: MissionRepository,
         userRepository: UserRepository
@@ -54,22 +55,33 @@ object MissionModule {
     @JvmStatic
     @Singleton
     @Provides
-    fun provideRedeemUseCase(
-        missionRepository: MissionRepository,
-        userRepository: UserRepository
-    ) = RedeemUseCase(missionRepository, userRepository)
+    fun provideReadMissionUseCase(missionRepository: MissionRepository) =
+            ReadMissionUseCase(missionRepository)
 
     @JvmStatic
     @Singleton
     @Provides
-    fun provideReadMissionUseCase(missionRepository: MissionRepository) =
-            ReadMissionUseCase(missionRepository)
+    fun provideHasUnreadMissionsUseCase() = HasUnreadMissionsUseCase()
+
+    @JvmStatic
+    @Singleton
+    @Provides
+    fun provideRedeemUseCase(
+            missionRepository: MissionRepository,
+            userRepository: UserRepository
+    ) = RedeemUseCase(missionRepository, userRepository)
 
     @JvmStatic
     @Provides
     fun provideMissionViewModel(
         loadMissionsUseCase: LoadMissionsUseCase,
         readMissionUseCase: ReadMissionUseCase,
+        hasUnreadMissionsUseCase: HasUnreadMissionsUseCase,
         redeemUseCase: RedeemUseCase
-    ): MissionViewModel = MissionViewModel(loadMissionsUseCase, readMissionUseCase, redeemUseCase)
+    ): MissionViewModel = MissionViewModel(
+        loadMissionsUseCase,
+        readMissionUseCase,
+        hasUnreadMissionsUseCase,
+        redeemUseCase
+    )
 }
