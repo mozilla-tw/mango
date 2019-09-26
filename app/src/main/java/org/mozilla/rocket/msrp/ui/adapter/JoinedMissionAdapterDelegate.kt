@@ -34,7 +34,7 @@ class JoinedMissionsViewHolder(
         uiModel as MissionUiModel.JoinedMission
 
         title.text = uiModel.title
-        expiration_text.text = uiModel.expirationText
+        expiration_text.text = uiModel.expirationTime
         progress.progress = uiModel.progress
         @SuppressLint("SetTextI18n")
         progress_text.text = "${uiModel.progress}%"

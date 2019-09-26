@@ -155,13 +155,13 @@ private suspend fun List<Mission>.toUiModel(): List<MissionUiModel> = withContex
 private fun Mission.toUiModel(): MissionUiModel = when (status) {
     Mission.STATUS_NEW -> MissionUiModel.UnjoinedMission(
         title = title,
-        expirationText = joinEndDate.toDateString(),
+        expirationTime = joinEndDate.toDateString(),
         showRedDot = unread,
         imageUrl = imageUrl
     )
     Mission.STATUS_JOINED -> MissionUiModel.JoinedMission(
         title = title,
-        expirationText = expiredDate.toDateString(),
+        expirationTime = expiredDate.toDateString(),
         imageUrl = imageUrl,
         progress = when (missionProgress) {
             is MissionProgress.TypeDaily -> { 100 * missionProgress.currentDay / missionProgress.totalDays }
@@ -173,7 +173,7 @@ private fun Mission.toUiModel(): MissionUiModel = when (status) {
         if (expired) {
             MissionUiModel.ExpiredMission(
                 title = title,
-                expirationText = expiredDate.toDateString()
+                expirationTime = expiredDate.toDateString()
             )
         } else {
             MissionUiModel.RedeemableMission(
@@ -183,7 +183,7 @@ private fun Mission.toUiModel(): MissionUiModel = when (status) {
     }
     Mission.STATUS_REDEEMED -> MissionUiModel.RedeemedMission(
         title = title,
-        expirationTime = expiredDate.toDateString()
+        expirationTime = redeemedDate.toDateString()
     )
     else -> error("unexpected mission status: $status")
 }

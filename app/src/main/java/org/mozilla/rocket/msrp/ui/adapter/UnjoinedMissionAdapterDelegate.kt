@@ -33,7 +33,7 @@ class UnjoinedMissionsViewHolder(
         uiModel as MissionUiModel.UnjoinedMission
 
         title.text = uiModel.title
-        expiration_text.text = uiModel.expirationText
+        expiration_text.text = uiModel.expirationTime
         red_dot.isVisible = uiModel.showRedDot
 
         Glide.with(containerView.context)

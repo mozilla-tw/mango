@@ -22,7 +22,7 @@ class ExpiredMissionsViewHolder(
         uiModel as MissionUiModel.ExpiredMission
 
         title.text = uiModel.title
-        expiration_text.text = uiModel.expirationText
+        expiration_text.text = uiModel.expirationTime
 
         itemView.setOnClickListener {
             missionViewModel.onRedeemItemClicked(adapterPosition)
