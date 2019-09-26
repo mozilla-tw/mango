@@ -366,9 +366,9 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
             content_hub.post {
                 setOnboardingStatusBarColor()
                 contentServiceSpotlightDialog = DialogUtils.showContentServiceSpotlight(it, content_hub, {
-                    restoreStatusBarColor()
                 }) {
                     closeContentServiceSpotlight()
+                    showShoppingSearchSpotlight()
                 }
             }
         }
@@ -388,7 +388,6 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
                     restoreStatusBarColor()
                 }) {
                     closeShoppingSearchSpotlight()
-                    showContentServiceSpotlight()
                 }
             }
         }
@@ -417,7 +416,7 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
             currentShoppingBtnVisibleState = shopping_button.isVisible
             shopping_button.isVisible = true
             private_mode_button.isVisible = false
-            showShoppingSearchSpotlight()
+            showContentServiceSpotlight()
         })
     }
 }
