@@ -14,14 +14,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
+import androidx.viewpager.widget.ViewPager
 import dagger.Lazy
 import kotlinx.android.synthetic.main.fragment_shopping_search_result_tab.*
 import kotlinx.android.synthetic.main.toolbar.*
 import org.mozilla.focus.R
 import org.mozilla.focus.utils.AppConstants
+import org.mozilla.focus.widget.BackKeyHandleable
 import org.mozilla.rocket.chrome.BottomBarItemAdapter
 import org.mozilla.rocket.chrome.ChromeViewModel
 import org.mozilla.rocket.content.appComponent
+import org.mozilla.rocket.content.common.ui.ContentTabFragment
 import org.mozilla.rocket.content.common.ui.ContentTabHelper
 import org.mozilla.rocket.content.common.ui.ContentTabViewContract
 import org.mozilla.rocket.content.getActivityViewModel
@@ -31,11 +34,13 @@ import org.mozilla.rocket.extension.nonNullObserve
 import org.mozilla.rocket.extension.switchFrom
 import org.mozilla.rocket.shopping.search.data.ShoppingSearchMode
 import org.mozilla.rocket.shopping.search.ui.ShoppingSearchTabsAdapter.TabItem
+import org.mozilla.rocket.tabs.Session
 import org.mozilla.rocket.tabs.SessionManager
 import org.mozilla.rocket.tabs.TabsSessionProvider
+import org.mozilla.rocket.tabs.utils.TabUtil
 import javax.inject.Inject
 
-class ShoppingSearchResultTabFragment : Fragment(), ContentTabViewContract {
+class ShoppingSearchResultTabFragment : Fragment(), ContentTabViewContract, BackKeyHandleable {
 
     @Inject
     lateinit var viewModelCreator: Lazy<ShoppingSearchResultViewModel>
@@ -55,6 +60,7 @@ class ShoppingSearchResultTabFragment : Fragment(), ContentTabViewContract {
 
     private val safeArgs: ShoppingSearchResultTabFragmentArgs by navArgs()
     private val searchKeyword by lazy { safeArgs.searchKeyword }
+    private val tabItems = arrayListOf<TabItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         appComponent().inject(this)
@@ -105,6 +111,16 @@ class ShoppingSearchResultTabFragment : Fragment(), ContentTabViewContract {
         })
     }
 
+    override fun onResume() {
+        super.onResume()
+        sessionManager.resume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        sessionManager.pause()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
 
@@ -129,6 +145,22 @@ class ShoppingSearchResultTabFragment : Fragment(), ContentTabViewContract {
     override fun getFullScreenInvisibleViews() = listOf(view_pager)
 
     override fun getFullScreenContainerView(): ViewGroup = video_container
+
+    override fun onBackPressed(): Boolean {
+        val tabItem =
+            if (tabItems.size > view_pager.currentItem) {
+                tabItems[view_pager.currentItem]
+            } else {
+                null
+            }
+        val tabView = tabItem?.session?.engineSession?.tabView ?: return false
+        if (tabView.canGoBack()) {
+            goBack()
+            return true
+        }
+
+        return false
+    }
 
     private fun setupBottomBar(rootView: View) {
         val bottomBar = rootView.findViewById<BottomBar>(R.id.bottom_bar)
@@ -158,11 +190,37 @@ class ShoppingSearchResultTabFragment : Fragment(), ContentTabViewContract {
 
     private fun initViewPager() {
         shoppingSearchResultViewModel.shoppingSearchSites.observe(this, Observer { shoppingSearchSites ->
-            val tabItems = shoppingSearchSites.map { site ->
-                TabItem(site.title, site.searchUrl)
-            }
-            view_pager.adapter = ShoppingSearchTabsAdapter(childFragmentManager, tabItems)
+            tabItems.clear()
+            tabItems.addAll(shoppingSearchSites.mapIndexed { index, site ->
+                TabItem(site.title, site.searchUrl, createTabSession(site.searchUrl, index == 0))
+            })
+            val shoppingSearchTabsAdapter = ShoppingSearchTabsAdapter(childFragmentManager, tabItems)
+            view_pager.adapter = shoppingSearchTabsAdapter
+            view_pager.clearOnPageChangeListeners()
+            view_pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+                override fun onPageScrollStateChanged(state: Int) = Unit
+
+                override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) = Unit
+
+                override fun onPageSelected(position: Int) {
+                    getCurrentSession()?.unregisterObservers()
+                    (shoppingSearchTabsAdapter.getRegisteredFragment(position) as ContentTabFragment).switchToFocusTab()
+                    getCurrentSession()?.register(contentTabObserver)
+                }
+            })
+            view_pager.setSwipeable(false)
         })
+    }
+
+    private fun createTabSession(url: String, focus: Boolean): Session {
+        val tabId = sessionManager.addTab("https://", TabUtil.argument(null, false, focus))
+        val tabSession = sessionManager.getTabs().find { it.id == tabId }!!
+        tabSession.engineSession?.tabView?.apply {
+            setContentBlockingEnabled(true)
+            loadUrl(url)
+        }
+
+        return tabSession
     }
 
     private fun initTabLayout() {
@@ -193,8 +251,17 @@ class ShoppingSearchResultTabFragment : Fragment(), ContentTabViewContract {
             }
         })
         chromeViewModel.share.observe(this, Observer {
-            sendShareIntent()
+            chromeViewModel.currentUrl.value?.let { url ->
+                onShareClicked(url)
+            }
         })
+    }
+
+    private fun onShareClicked(url: String) {
+        val shareIntent = Intent(Intent.ACTION_SEND)
+        shareIntent.type = "text/plain"
+        shareIntent.putExtra(Intent.EXTRA_TEXT, url)
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.share_dialog_title)))
     }
 
     private fun sendHomeIntent(context: Context) {
@@ -210,23 +277,6 @@ class ShoppingSearchResultTabFragment : Fragment(), ContentTabViewContract {
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             }
         )
-    }
-
-    private fun sendShareIntent() {
-        val list = shoppingSearchResultViewModel.shoppingSearchSites.value
-        list?.apply {
-            val index = view_pager.currentItem
-            val item = list[index]
-            val subject = item.title
-            val text = item.title
-            val share = Intent(Intent.ACTION_SEND)
-
-            share.type = "text/plain"
-            share.putExtra(Intent.EXTRA_SUBJECT, subject)
-            share.putExtra(Intent.EXTRA_TEXT, text)
-
-            startActivity(share)
-        }
     }
 
     private fun goBack() = sessionManager.focusSession?.engineSession?.goBack()

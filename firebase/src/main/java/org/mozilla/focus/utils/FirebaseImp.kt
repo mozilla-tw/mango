@@ -85,7 +85,7 @@ open class FirebaseImp(fromResourceString: HashMap<String, Any>) : FirebaseContr
                 remoteConfig.activateFetched()
                 callback.onRemoteConfigFetched()
             } else {
-                Log.d(TAG, "Firebase RemoteConfig Fetch Failed: ")
+                Log.d(TAG, "Firebase RemoteConfig Fetch Failed: ${task.exception}")
             }
         }
     }
@@ -161,11 +161,12 @@ open class FirebaseImp(fromResourceString: HashMap<String, Any>) : FirebaseContr
         // some http request(mission/redeem) needs user token to access the backend.
         // we need Firebase SDK to get the user token
         // TODO: maybe wrap this logic in a MSRP client SDK
-        firebaseAuth.currentUser?.getIdToken(true)?.addOnSuccessListener { result ->
-            Log.d(TAG, "jwt====${result.token}")
+        firebaseAuth.currentUser?.getIdToken(false)?.addOnCompleteListener { task ->
+            val token = if (task.isSuccessful) { task.result?.token } else { null }
+            Log.d(TAG, "jwt====$token")
 
-            func(result.token)
-        }
+            func(token)
+        } ?: func(null)
     }
 
     private fun fetchClaim(onClaimFetched: (String?, String?) -> Unit) {
@@ -183,6 +184,19 @@ open class FirebaseImp(fromResourceString: HashMap<String, Any>) : FirebaseContr
             } else {
                 Log.d(TAG, "===fxuid====$fxUid====")
                 Log.d(TAG, "===oldFbUid====$oldFbUid====")
+            }
+        }
+    }
+
+    override fun refreshRemoteConfig(callback: (Boolean, e: Exception?) -> Unit) {
+        remoteConfig.fetch(0).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.d(TAG, "Firebase RemoteConfig Fetch Successfully ")
+                callback(true, null)
+                remoteConfig.activateFetched()
+            } else {
+                Log.d(TAG, "Firebase RemoteConfig Fetch Failed: ${task.exception}")
+                callback(false, task.exception)
             }
         }
     }

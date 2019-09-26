@@ -5,11 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.view.View
 import androidx.fragment.app.FragmentActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import dagger.Lazy
-import kotlinx.android.synthetic.main.toolbar_game.refresh_button
 import kotlinx.android.synthetic.main.activity_games.*
 import org.mozilla.focus.R
 import org.mozilla.focus.download.DownloadInfoManager
@@ -27,8 +25,6 @@ class GamesActivity : FragmentActivity() {
     private lateinit var gamesViewModel: GamesViewModel
     private lateinit var adapter: GameTabsAdapter
     private lateinit var uiMessageReceiver: BroadcastReceiver
-    private lateinit var snackBarContainer: View
-    private val LOG_TAG = "GameActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         appComponent().inject(this)
@@ -39,14 +35,7 @@ class GamesActivity : FragmentActivity() {
         initTabLayout()
         initToolBar()
 
-        snackBarContainer = findViewById(R.id.container)
         initBroadcastReceivers()
-    }
-
-    private fun initToolBar() {
-        refresh_button.setOnClickListener {
-            gamesViewModel.onRefreshGameListButtonClicked()
-        }
     }
 
     private fun initViewPager() {
@@ -58,6 +47,15 @@ class GamesActivity : FragmentActivity() {
 
     private fun initTabLayout() {
         games_tabs.setupWithViewPager(view_pager)
+    }
+
+    private fun initToolBar() {
+        refresh_button.setOnClickListener {
+            when (games_tabs.selectedTabPosition) {
+                TAB_BASIC -> gamesViewModel.getLatestBasicGames()
+                TAB_PREMIUM -> gamesViewModel.getLatestPremiumGames()
+            }
+        }
     }
 
     override fun onResume() {
@@ -77,13 +75,15 @@ class GamesActivity : FragmentActivity() {
         uiMessageReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 if (intent.action == Constants.ACTION_NOTIFY_RELOCATE_FINISH) {
-                    DownloadInfoManager.getInstance().showOpenDownloadSnackBar(intent.getLongExtra(Constants.EXTRA_ROW_ID, -1), snackBarContainer, LOG_TAG)
+                    DownloadInfoManager.getInstance().showOpenDownloadSnackBar(intent.getLongExtra(Constants.EXTRA_ROW_ID, -1), snack_bar_container, this@GamesActivity.javaClass.name)
                 }
             }
         }
     }
 
     companion object {
+        const val TAB_BASIC = 0
+        const val TAB_PREMIUM = 1
         fun getStartIntent(context: Context) =
             Intent(context, GamesActivity::class.java).also { it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
     }

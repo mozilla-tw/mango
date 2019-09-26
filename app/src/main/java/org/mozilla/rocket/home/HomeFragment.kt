@@ -1,6 +1,8 @@
 package org.mozilla.rocket.home
 
+import android.app.Dialog
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.view.GestureDetector
 import android.view.Gravity
@@ -10,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
@@ -38,6 +41,7 @@ import org.mozilla.focus.R
 import org.mozilla.focus.locale.LocaleAwareFragment
 import org.mozilla.focus.navigation.ScreenNavigator
 import org.mozilla.focus.telemetry.TelemetryWrapper
+import org.mozilla.focus.utils.DialogUtils
 import org.mozilla.focus.utils.ViewUtils
 import org.mozilla.rocket.adapter.AdapterDelegatesManager
 import org.mozilla.rocket.adapter.DelegateAdapter
@@ -58,6 +62,7 @@ import org.mozilla.rocket.home.ui.MenuButton.Companion.DOWNLOAD_STATE_DEFAULT
 import org.mozilla.rocket.home.ui.MenuButton.Companion.DOWNLOAD_STATE_DOWNLOADING
 import org.mozilla.rocket.home.ui.MenuButton.Companion.DOWNLOAD_STATE_UNREAD
 import org.mozilla.rocket.home.ui.MenuButton.Companion.DOWNLOAD_STATE_WARNING
+import org.mozilla.rocket.msrp.ui.RewardActivity
 import org.mozilla.rocket.shopping.search.ui.ShoppingSearchActivity
 import org.mozilla.rocket.theme.ThemeManager
 import javax.inject.Inject
@@ -76,6 +81,9 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
     private lateinit var downloadIndicatorViewModel: DownloadIndicatorViewModel
     private lateinit var themeManager: ThemeManager
     private lateinit var topSitesAdapter: DelegateAdapter
+    private lateinit var contentServiceSpotlightDialog: Dialog
+    private lateinit var shoppingSearchSpotlightDialog: Dialog
+    private var currentShoppingBtnVisibleState = false
 
     private val topSitesPageChangeCallback = object : OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
@@ -105,6 +113,7 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
         initFxaView()
         initLogoManNotification()
         observeNightMode()
+        initOnboardingSpotlight()
     }
 
     private fun initSearchToolBar() {
@@ -246,29 +255,22 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
     }
 
     private fun initFxaView() {
+        homeViewModel.isAccountLayerVisible.observe(this, Observer {
+            account_layout.isVisible = it
+        })
         homeViewModel.hasPendingMissions.observe(this, Observer {
             mission_button.isActivated = it
         })
-        mission_button.setOnClickListener { showRewardFragment() }
-        profile_button.setOnClickListener {
-            ScreenNavigator.get(context).addFxLogin()
-        }
-
-        homeViewModel.isAccountLayerVisible.observe(this, Observer {
-            account_layout.visibility = if (it) { View.VISIBLE } else { View.INVISIBLE }
-        })
+        mission_button.setOnClickListener { showRewardPage() }
+        profile_button.setOnClickListener { showProfilePage() }
     }
 
-    private fun showMissionFragment() {
-        ScreenNavigator.get(context).addMissionDetail()
+    private fun showRewardPage() {
+        startActivity(RewardActivity.getStartIntent(requireContext()))
     }
 
-    private fun showRedeem() {
-        ScreenNavigator.get(context).addRedeem()
-    }
-
-    private fun showRewardFragment() {
-        ScreenNavigator.get(context).addReward()
+    private fun showProfilePage() {
+        // TODO: Evan
     }
 
     private fun observeNightMode() {
@@ -384,5 +386,65 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
     private fun showLogoManNotification(notification: LogoManNotification.Notification, animate: Boolean) {
         logo_man_notification.showNotification(notification, animate)
         homeViewModel.onLogoManShown()
+    }
+
+    private fun showContentServiceSpotlight() {
+        activity?.let {
+            content_hub.post {
+                setOnboardingStatusBarColor()
+                contentServiceSpotlightDialog = DialogUtils.showContentServiceSpotlight(it, content_hub, {
+                    restoreStatusBarColor()
+                }) {
+                    closeContentServiceSpotlight()
+                }
+            }
+        }
+    }
+
+    private fun closeContentServiceSpotlight() {
+        if (::contentServiceSpotlightDialog.isInitialized) {
+            contentServiceSpotlightDialog.dismiss()
+        }
+    }
+
+    private fun showShoppingSearchSpotlight() {
+        activity?.let {
+            shopping_button.post {
+                setOnboardingStatusBarColor()
+                shoppingSearchSpotlightDialog = DialogUtils.showShoppingSearchSpotlight(it, shopping_button, {
+                    restoreStatusBarColor()
+                }) {
+                    closeShoppingSearchSpotlight()
+                    showContentServiceSpotlight()
+                }
+            }
+        }
+    }
+
+    private fun closeShoppingSearchSpotlight() {
+        if (::shoppingSearchSpotlightDialog.isInitialized) {
+            shoppingSearchSpotlightDialog.dismiss()
+        }
+    }
+
+    private fun restoreStatusBarColor() {
+        activity?.window?.statusBarColor = Color.TRANSPARENT
+        shopping_button.isVisible = currentShoppingBtnVisibleState
+        private_mode_button.isVisible = !currentShoppingBtnVisibleState
+    }
+
+    private fun setOnboardingStatusBarColor() {
+        activity?.let {
+            it.window.statusBarColor = ContextCompat.getColor(it, R.color.paletteBlack50)
+        }
+    }
+
+    private fun initOnboardingSpotlight() {
+        homeViewModel.showOnboardingSpotlight.observe(this, Observer {
+            currentShoppingBtnVisibleState = shopping_button.isVisible
+            shopping_button.isVisible = true
+            private_mode_button.isVisible = false
+            showShoppingSearchSpotlight()
+        })
     }
 }

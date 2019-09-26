@@ -22,6 +22,7 @@ import com.google.android.material.snackbar.Snackbar
 import org.mozilla.focus.R
 import org.mozilla.focus.download.EnqueueDownloadTask
 import org.mozilla.focus.menu.WebContextMenu
+import org.mozilla.focus.utils.IntentUtils
 import org.mozilla.focus.utils.ViewUtils
 import org.mozilla.focus.web.HttpAuthenticationDialogBuilder
 import org.mozilla.permissionhandler.PermissionHandle
@@ -140,8 +141,9 @@ class ContentTabHelper(private val contentTabViewContract: ContentTabViewContrac
         }
 
         override fun handleExternalUrl(url: String?): Boolean {
-            // do nothing, exist for interface compatibility only.
-            return false
+            return contentTabViewContract.getHostActivity()?.let {
+                IntentUtils.handleExternalUri(it, url)
+            } ?: false
         }
 
         override fun onShowFileChooser(
@@ -305,6 +307,11 @@ class ContentTabHelper(private val contentTabViewContract: ContentTabViewContrac
         override fun onFocusChanged(session: Session?, factor: SessionManager.Factor) {
             contentTabViewContract.getChromeViewModel().onFocusedUrlChanged(session?.url)
             contentTabViewContract.getChromeViewModel().onFocusedTitleChanged(session?.title)
+            session?.url?.let {
+                if (!UrlUtils.isInternalErrorURL(it)) {
+                    contentTabViewContract.getDisplayUrlView()?.text = it
+                }
+            }
             if (session != null) {
                 val canGoBack = contentTabViewContract.getCurrentSession()?.canGoBack ?: false
                 val canGoForward = contentTabViewContract.getCurrentSession()?.canGoForward ?: false

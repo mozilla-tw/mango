@@ -1,96 +1,93 @@
 package org.mozilla.rocket.shopping.search.data
 
-import android.content.Context
 import androidx.lifecycle.LiveData
-import org.json.JSONArray
-import org.json.JSONObject
-import org.mozilla.focus.utils.FirebaseHelper
-import org.mozilla.rocket.extension.map
-import org.mozilla.rocket.preference.stringLiveData
-import org.mozilla.strictmodeviolator.StrictModeViolation
+import androidx.lifecycle.MutableLiveData
 
-class ShoppingSearchRepository(appContext: Context) {
+class ShoppingSearchRepository(
+    private val remoteDataSource: ShoppingSearchDataSource,
+    private val localDataSource: ShoppingSearchDataSource
+) {
 
-    private val preference = StrictModeViolation.tempGrant({ builder ->
-        builder.permitDiskReads()
-    }, {
-        appContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-    })
+    private val shoppingSitesData: MutableLiveData<List<ShoppingSite>> = MutableLiveData()
 
-    private val mockPreferenceSiteList = listOf(
-        ShoppingSite("Lazada", "https://www.lazada.co.id/catalog/?q=", "lazada.co.id", isEnabled = true),
-        ShoppingSite("Bukalapak", "https://www.bukalapak.com/products?utf8=✓&search%5Bkeywords%5D=", "bukalapak.com", isEnabled = true),
-        ShoppingSite("Tokopedia", "https://www.tokopedia.com/search?st=product&q=", "tokopedia.com", isEnabled = true),
-        ShoppingSite("JD.ID", "https://m.jd.id/search?keywords=", "jd.id", isEnabled = true),
-        ShoppingSite("Shopee", "https://shopee.co.id/search?keyword=", "shopee.co.id", isEnabled = true),
-        ShoppingSite("BliBli", "https://www.blibli.com/jual/backpack?searchTerm=", "blibli.com", isEnabled = true)
-    )
+    fun isShoppingSearchEnabled() = remoteDataSource.isShoppingSearchEnabled()
 
-    fun isShoppingSearchEnabled(): Boolean =
-            FirebaseHelper.getFirebase().getRcBoolean(RC_KEY_ENABLE_SHOPPING_SEARCH)
+    fun getShoppingSitesData(): LiveData<List<ShoppingSite>> {
+        val remoteShoppingSites = remoteDataSource.getShoppingSites()
+        val localShoppingSites = localDataSource.getShoppingSites()
 
-    fun getShoppingSites(): List<ShoppingSite> {
-        val shoppingSitesJsonString = preference.getString(KEY_SHOPPING_SEARCH_SITE, "")
-        return if (shoppingSitesJsonString.isNullOrEmpty()) {
-            getDefaultShoppingSites()
-        } else {
-            shoppingSitesJsonString.toPreferenceSiteList()
-        }
-    }
-
-    fun getShoppingSitesLiveData(): LiveData<List<ShoppingSite>> =
-        preference.stringLiveData(KEY_SHOPPING_SEARCH_SITE, "")
-            .map {
-                if (it.isNotEmpty()) {
-                    it.toPreferenceSiteList()
-                } else {
-                    getDefaultShoppingSites()
-                }
+        if (localShoppingSites.isEmpty() && remoteShoppingSites.isNotEmpty()) {
+            updateShoppingSites(remoteShoppingSites)
+            shoppingSitesData.postValue(remoteShoppingSites)
+        } else if (localShoppingSites.isNotEmpty()) {
+            val mergedShoppingSites = arrayListOf<ShoppingSite>()
+            if (shouldMergeShoppingSites(remoteShoppingSites, localShoppingSites)) {
+                mergedShoppingSites.addAll(getMergedShoppingSites(remoteShoppingSites, localShoppingSites))
+                updateShoppingSites(mergedShoppingSites)
+            } else {
+                mergedShoppingSites.addAll(localShoppingSites)
             }
+            shoppingSitesData.postValue(mergedShoppingSites)
+        }
 
-    private fun getDefaultShoppingSites(): List<ShoppingSite> {
-        // TODO:
-        return mockPreferenceSiteList
+        return shoppingSitesData
     }
 
     fun updateShoppingSites(shoppingSites: List<ShoppingSite>) {
-        val siteJsonArray = JSONArray()
-        shoppingSites.map { it.toJson() }
-            .forEach { siteJsonArray.put(it) }
-        preference.edit().putString(KEY_SHOPPING_SEARCH_SITE, siteJsonArray.toString()).apply()
+        localDataSource.updateShoppingSites(shoppingSites)
+        shoppingSitesData.postValue(shoppingSites)
     }
 
-    companion object {
-        const val PREF_NAME = "shopping_search"
-        const val KEY_SHOPPING_SEARCH_SITE = "shopping_search_site"
-        const val RC_KEY_ENABLE_SHOPPING_SEARCH = "key_enable_shopping_search"
+    private fun shouldMergeShoppingSites(remoteShoppingSites: List<ShoppingSite>, localShoppingSites: List<ShoppingSite>): Boolean {
+        if (remoteShoppingSites.size != localShoppingSites.size) {
+            return true
+        }
+
+        val remoteSites = remoteShoppingSites.sortedBy { it.title }
+        val localSites = localShoppingSites.sortedBy { it.title }
+        remoteSites.forEachIndexed { index, remoteSite ->
+            if (!remoteSite.contentEquals(localSites[index])) {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    private fun getMergedShoppingSites(remoteShoppingSites: List<ShoppingSite>, localShoppingSites: List<ShoppingSite>): List<ShoppingSite> {
+        val sitesToAdd = arrayListOf<ShoppingSite>()
+        for (remoteSite in remoteShoppingSites) {
+            var matched = false
+            for (localSite in localShoppingSites) {
+                if (localSite.contentEquals(remoteSite)) {
+                    matched = true
+                    break
+                }
+            }
+            if (!matched) {
+                sitesToAdd.add(remoteSite)
+            }
+        }
+
+        val sitesToDelete = arrayListOf<ShoppingSite>()
+        for (localSite in localShoppingSites) {
+            var matched = false
+            for (remoteSite in remoteShoppingSites) {
+                if (localSite.contentEquals(remoteSite)) {
+                    matched = true
+                    break
+                }
+            }
+            if (!matched) {
+                sitesToDelete.add(localSite)
+            }
+        }
+
+        val mergedSites = arrayListOf<ShoppingSite>()
+        mergedSites.addAll(localShoppingSites)
+        mergedSites.removeAll(sitesToDelete)
+        mergedSites.addAll(sitesToAdd)
+
+        return mergedSites
     }
 }
-
-data class ShoppingSite(
-    val title: String,
-    val searchUrl: String,
-    val displayUrl: String,
-    var isEnabled: Boolean
-) {
-    constructor(obj: JSONObject) : this(
-        obj.optString("title"),
-        obj.optString("searchUrl"),
-        obj.optString("displayUrl"),
-        obj.optBoolean("isEnabled")
-    )
-
-    fun toJson(): JSONObject = JSONObject().apply {
-        put("title", title)
-        put("searchUrl", searchUrl)
-        put("displayUrl", displayUrl)
-        put("isEnabled", isEnabled)
-    }
-}
-
-private fun String.toPreferenceSiteList(): List<ShoppingSite> =
-    JSONArray(this).run {
-        (0 until length())
-            .map { index -> optJSONObject(index) }
-            .map { jsonObject -> ShoppingSite(jsonObject) }
-    }

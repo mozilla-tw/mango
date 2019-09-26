@@ -6,10 +6,8 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
-import androidx.core.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
-import org.mozilla.focus.R
 import org.mozilla.focus.utils.ViewUtils
 
 class FocusView : View {
@@ -19,6 +17,7 @@ class FocusView : View {
     private var centerY: Int = 0
     private var statusBarOffset = 0
     private var radius: Int = 0
+    private var backgroundDimColor: Int = 0
 
     constructor(context: Context) : super(context) {
         initPaints()
@@ -34,11 +33,12 @@ class FocusView : View {
 
     /** FocusView will draw a spotlight circle(total transparent) at coordinates X = centerX and Y = centerY with radius.
      * The view's background except the spotlight circle is half-transparent. */
-    constructor(context: Context, centerX: Int, centerY: Int, radius: Int) : super(context) {
+    constructor(context: Context, centerX: Int, centerY: Int, radius: Int, backgroundColor: Int) : super(context) {
         this.centerX = centerX
         this.centerY = centerY
         this.statusBarOffset = ViewUtils.getStatusBarHeight(context as Activity)
         this.radius = radius
+        this.backgroundDimColor = backgroundColor
         initPaints()
     }
 
@@ -57,6 +57,6 @@ class FocusView : View {
 
         canvas.drawCircle(centerX.toFloat(), (centerY - statusBarOffset).toFloat(), radius.toFloat(), transparentPaint)
         canvas.clipPath(path)
-        canvas.drawColor(ContextCompat.getColor(context, R.color.myShotOnBoardingBackground))
+        canvas.drawColor(backgroundDimColor)
     }
 }

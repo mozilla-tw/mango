@@ -6,7 +6,6 @@ object TestData {
         mid = "000001",
         title = "TypeDaily Mission 1",
         description = "Click vertical everyday",
-        expireDate = System.currentTimeMillis(),
 
         events = listOf("CLICK_PANEL_PIN_TOP_SITE"),
 
@@ -16,19 +15,19 @@ object TestData {
         endpoint = "/v1/daily_mission/xxdase-eadsad",
         redeem = "/v1/redeem/asdsa-esadsa=das-dased-sadas",
 
-        missionProgress = MissionProgress.TypeDaily(
-            // progress, TODO: make it another class
-            joinDate = null,
-            currentDay = null,
-            totalDays = 10
-        )
+        minVersion = 1234,
+        missionType = "mission_daily",
+        imageUrl = "",
+        expiredDate = 12345,
+        joinEndDate = 54321,
+
+        missionProgress = null
     )
 
     val mission02 = Mission(
         mid = "000002",
         title = "TypeDaily Mission 1",
         description = "Click vertical everyday",
-        expireDate = System.currentTimeMillis(),
 
         events = listOf("CLICK_PANEL_PIN_TOP_SITE"),
 
@@ -37,11 +36,18 @@ object TestData {
         endpoint = "/v1/daily_mission/xxdase-eadsad",
         redeem = "/v1/redeem/asdsa-esadsa=das-dased-sadas",
 
+        minVersion = 4321,
+        missionType = "mission_daily",
+        imageUrl = "",
+        expiredDate = 12345,
+        joinEndDate = 54321,
+
         missionProgress = MissionProgress.TypeDaily(
             // progress, TODO: make it another class
-            joinDate = null,
-            currentDay = null,
-            totalDays = 10
+            joinDate = 0,
+            currentDay = 1,
+            totalDays = 10,
+            message = ""
         )
     )
 
