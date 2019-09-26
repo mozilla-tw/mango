@@ -10,6 +10,7 @@ import kotlinx.android.synthetic.main.item_unjoined_mission.expiration_text
 import kotlinx.android.synthetic.main.item_unjoined_mission.image
 import kotlinx.android.synthetic.main.item_unjoined_mission.red_dot
 import kotlinx.android.synthetic.main.item_unjoined_mission.title
+import org.mozilla.focus.R
 import org.mozilla.rocket.adapter.AdapterDelegate
 import org.mozilla.rocket.adapter.DelegateAdapter
 import org.mozilla.rocket.extension.dpToPx
@@ -33,7 +34,7 @@ class UnjoinedMissionsViewHolder(
         uiModel as MissionUiModel.UnjoinedMission
 
         title.text = uiModel.title
-        expiration_text.text = uiModel.expirationTime
+        expiration_text.text = itemView.resources.getString(R.string.msrp_reward_challenge_expire, uiModel.expirationTime)
         red_dot.isVisible = uiModel.showRedDot
 
         Glide.with(containerView.context)

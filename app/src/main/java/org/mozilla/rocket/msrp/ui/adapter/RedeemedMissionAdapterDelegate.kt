@@ -3,6 +3,7 @@ package org.mozilla.rocket.msrp.ui.adapter
 import android.view.View
 import kotlinx.android.synthetic.main.item_redeemed_mission.expiration_text
 import kotlinx.android.synthetic.main.item_redeemed_mission.title
+import org.mozilla.focus.R
 import org.mozilla.rocket.adapter.AdapterDelegate
 import org.mozilla.rocket.adapter.DelegateAdapter
 import org.mozilla.rocket.msrp.ui.MissionViewModel
@@ -22,7 +23,7 @@ class RedeemedMissionsViewHolder(
         uiModel as MissionUiModel.RedeemedMission
 
         title.text = uiModel.title
-        expiration_text.text = uiModel.expirationTime
+        expiration_text.text = itemView.resources.getString(R.string.msrp_reward_challenge_used, uiModel.expirationTime)
 
         itemView.setOnClickListener {
             missionViewModel.onRedeemItemClicked(adapterPosition)

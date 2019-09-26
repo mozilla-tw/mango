@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.item_joined_mission.image
 import kotlinx.android.synthetic.main.item_joined_mission.progress
 import kotlinx.android.synthetic.main.item_joined_mission.progress_text
 import kotlinx.android.synthetic.main.item_joined_mission.title
+import org.mozilla.focus.R
 import org.mozilla.rocket.adapter.AdapterDelegate
 import org.mozilla.rocket.adapter.DelegateAdapter
 import org.mozilla.rocket.extension.dpToPx
@@ -34,7 +35,7 @@ class JoinedMissionsViewHolder(
         uiModel as MissionUiModel.JoinedMission
 
         title.text = uiModel.title
-        expiration_text.text = uiModel.expirationTime
+        expiration_text.text = itemView.resources.getString(R.string.msrp_reward_challenge_expire, uiModel.expirationTime)
         progress.progress = uiModel.progress
         @SuppressLint("SetTextI18n")
         progress_text.text = "${uiModel.progress}%"

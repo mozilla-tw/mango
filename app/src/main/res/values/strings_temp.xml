@@ -5,4 +5,6 @@
     <string name="travel_vertical_title" translatable="false" tools:ignore="MissingTranslation">Travel</string>
     <string name="travel_vertical_category_1" translatable="false" tools:ignore="MissingTranslation">Explore</string>
     <string name="travel_vertical_category_2" translatable="false" tools:ignore="MissingTranslation">Bucket list</string>
+    <string name="msrp_reward_challenge_expired" tools:ignore="MissingTranslation">Expired on %s</string>
+    <string name="msrp_reward_challenge_used" tools:ignore="MissingTranslation">Used on %s</string>
 </resources>

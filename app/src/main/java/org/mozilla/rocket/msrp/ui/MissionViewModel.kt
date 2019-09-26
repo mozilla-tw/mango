@@ -189,5 +189,5 @@ private fun Mission.toUiModel(): MissionUiModel = when (status) {
 }
 
 private fun Long.toDateString(): String =
-        SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.getDefault())
+        SimpleDateFormat("dd/MM/yyyy, HH:mm", Locale.getDefault())
             .format(Date(this))
