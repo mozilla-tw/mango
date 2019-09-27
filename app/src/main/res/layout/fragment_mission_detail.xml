@@ -2,8 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/dmd_container"
@@ -55,13 +54,13 @@
                 android:layout_marginEnd="28dp">
 
                 <LinearLayout
-                    android:id="@+id/dmd_day_0"
+                    android:id="@+id/dmd_day_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_marginEnd="1dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/dmd_day_1"
+                    app:layout_constraintEnd_toStartOf="@id/dmd_day_2"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintHorizontal_chainStyle="spread_inside">
@@ -71,7 +70,7 @@
                         android:layout_height="@dimen/msrp_mission_detail_day_width">
 
                         <ImageView
-                            android:id="@+id/dmd_day_0_image"
+                            android:id="@+id/dmd_day_1_image"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:background="@null"
@@ -89,58 +88,13 @@
                     </FrameLayout>
 
                     <TextView
-                        android:id="@+id/dmd_day_0_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="@dimen/msrp_mission_detail_day_text_margin_top"
-                        android:gravity="center"
-                        android:text="Sep 12"
-                        android:textColor="@color/paletteDarkGreyE100"
-                        android:textSize="@dimen/msrp_mission_detail_day_text_size" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/dmd_day_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/dmd_day_2"
-                    app:layout_constraintStart_toEndOf="@id/dmd_day_0"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <FrameLayout
-                        android:layout_width="@dimen/msrp_mission_detail_day_width"
-                        android:layout_height="@dimen/msrp_mission_detail_day_width">
-
-                        <ImageView
-                            android:id="@+id/dmd_day_1_image"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@null"
-                            android:src="@drawable/bg_mission_detail_day_normal" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:text="2"
-                            android:textColor="@color/paletteLightGreyA100"
-                            android:textSize="@dimen/msrp_mission_detail_button_text_size" />
-
-                    </FrameLayout>
-
-                    <TextView
                         android:id="@+id/dmd_day_1_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="@dimen/msrp_mission_detail_day_text_margin_top"
                         android:gravity="center"
-                        android:text="Sep 13"
+                        android:text="Sep 12"
                         android:textColor="@color/paletteDarkGreyE100"
                         android:textSize="@dimen/msrp_mission_detail_day_text_size" />
 
@@ -172,7 +126,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:gravity="center"
-                            android:text="3"
+                            android:text="2"
                             android:textColor="@color/paletteLightGreyA100"
                             android:textSize="@dimen/msrp_mission_detail_button_text_size" />
 
@@ -185,7 +139,7 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="@dimen/msrp_mission_detail_day_text_margin_top"
                         android:gravity="center"
-                        android:text="Sep 14"
+                        android:text="Sep 13"
                         android:textColor="@color/paletteDarkGreyE100"
                         android:textSize="@dimen/msrp_mission_detail_day_text_size" />
 
@@ -197,7 +151,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/dmd_day_4"
                     app:layout_constraintStart_toEndOf="@id/dmd_day_2"
                     app:layout_constraintTop_toTopOf="parent">
 
@@ -217,7 +171,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:gravity="center"
-                            android:text="4"
+                            android:text="3"
                             android:textColor="@color/paletteLightGreyA100"
                             android:textSize="@dimen/msrp_mission_detail_button_text_size" />
 
@@ -225,6 +179,51 @@
 
                     <TextView
                         android:id="@+id/dmd_day_3_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/msrp_mission_detail_day_text_margin_top"
+                        android:gravity="center"
+                        android:text="Sep 14"
+                        android:textColor="@color/paletteDarkGreyE100"
+                        android:textSize="@dimen/msrp_mission_detail_day_text_size" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/dmd_day_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/dmd_day_3"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <FrameLayout
+                        android:layout_width="@dimen/msrp_mission_detail_day_width"
+                        android:layout_height="@dimen/msrp_mission_detail_day_width">
+
+                        <ImageView
+                            android:id="@+id/dmd_day_4_image"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@null"
+                            android:src="@drawable/bg_mission_detail_day_normal" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:text="4"
+                            android:textColor="@color/paletteLightGreyA100"
+                            android:textSize="@dimen/msrp_mission_detail_button_text_size" />
+
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/dmd_day_4_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
@@ -246,61 +245,16 @@
                 android:layout_marginEnd="28dp">
 
                 <LinearLayout
-                    android:id="@+id/dmd_day_4"
+                    android:id="@+id/dmd_day_5"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_marginEnd="1dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/dmd_day_5"
+                    app:layout_constraintEnd_toStartOf="@id/dmd_day_6"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintHorizontal_chainStyle="spread_inside">
-
-                    <FrameLayout
-                        android:layout_width="@dimen/msrp_mission_detail_day_width"
-                        android:layout_height="@dimen/msrp_mission_detail_day_width">
-
-                        <ImageView
-                            android:id="@+id/dmd_day_4_image"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@null"
-                            android:src="@drawable/bg_mission_detail_day_normal" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:text="5"
-                            android:textColor="@color/paletteLightGreyA100"
-                            android:textSize="@dimen/msrp_mission_detail_button_text_size" />
-
-                    </FrameLayout>
-
-                    <TextView
-                        android:id="@+id/dmd_day_4_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="@dimen/msrp_mission_detail_day_text_margin_top"
-                        android:gravity="center"
-                        android:text="Sep 16"
-                        android:textColor="@color/paletteDarkGreyE100"
-                        android:textSize="@dimen/msrp_mission_detail_day_text_size" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/dmd_day_5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/dmd_day_6"
-                    app:layout_constraintStart_toEndOf="@id/dmd_day_4"
-                    app:layout_constraintTop_toTopOf="parent">
 
                     <FrameLayout
                         android:layout_width="@dimen/msrp_mission_detail_day_width"
@@ -318,7 +272,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:gravity="center"
-                            android:text="6"
+                            android:text="5"
                             android:textColor="@color/paletteLightGreyA100"
                             android:textSize="@dimen/msrp_mission_detail_button_text_size" />
 
@@ -331,7 +285,7 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="@dimen/msrp_mission_detail_day_text_margin_top"
                         android:gravity="center"
-                        android:text="Sep 17"
+                        android:text="Sep 16"
                         android:textColor="@color/paletteDarkGreyE100"
                         android:textSize="@dimen/msrp_mission_detail_day_text_size" />
 
@@ -363,7 +317,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:gravity="center"
-                            android:text="7"
+                            android:text="6"
                             android:textColor="@color/paletteLightGreyA100"
                             android:textSize="@dimen/msrp_mission_detail_button_text_size" />
 
@@ -376,7 +330,7 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="@dimen/msrp_mission_detail_day_text_margin_top"
                         android:gravity="center"
-                        android:text="Sep 18"
+                        android:text="Sep 17"
                         android:textColor="@color/paletteDarkGreyE100"
                         android:textSize="@dimen/msrp_mission_detail_day_text_size" />
 
@@ -387,9 +341,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:visibility="invisible"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/dmd_day_8"
                     app:layout_constraintStart_toEndOf="@id/dmd_day_6"
                     app:layout_constraintTop_toTopOf="parent">
 
@@ -409,7 +362,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:gravity="center"
-                            android:text="8"
+                            android:text="7"
                             android:textColor="@color/paletteLightGreyA100"
                             android:textSize="@dimen/msrp_mission_detail_button_text_size" />
 
@@ -417,6 +370,52 @@
 
                     <TextView
                         android:id="@+id/dmd_day_7_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/msrp_mission_detail_day_text_margin_top"
+                        android:gravity="center"
+                        android:text="Sep 18"
+                        android:textColor="@color/paletteDarkGreyE100"
+                        android:textSize="@dimen/msrp_mission_detail_day_text_size" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/dmd_day_8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/dmd_day_7"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <FrameLayout
+                        android:layout_width="@dimen/msrp_mission_detail_day_width"
+                        android:layout_height="@dimen/msrp_mission_detail_day_width">
+
+                        <ImageView
+                            android:id="@+id/dmd_day_8_image"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@null"
+                            android:src="@drawable/bg_mission_detail_day_normal" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:text="8"
+                            android:textColor="@color/paletteLightGreyA100"
+                            android:textSize="@dimen/msrp_mission_detail_button_text_size" />
+
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/dmd_day_8_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
