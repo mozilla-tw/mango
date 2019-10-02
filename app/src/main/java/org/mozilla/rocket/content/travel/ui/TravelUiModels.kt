@@ -12,7 +12,7 @@ data class BucketListCityUiModel(
 data class CitySearchResultUiModel(
     val id: Int,
     val name: CharSequence
-)
+) : DelegateAdapter.UiModel()
 
 data class SectionUiModel(
     val type: SectionType

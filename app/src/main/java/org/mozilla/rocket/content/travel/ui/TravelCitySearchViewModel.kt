@@ -1,7 +1,11 @@
 package org.mozilla.rocket.content.travel.ui
 
+import android.graphics.Color
+import org.mozilla.rocket.download.SingleLiveEvent
 import android.text.Spannable
 import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
+import android.text.style.TypefaceSpan
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -18,6 +22,7 @@ class TravelCitySearchViewModel(private val searchCityUseCase: SearchCityUseCase
     val items: LiveData<List<CitySearchResultUiModel>> = _items
 
     private var searchCityJob: Job? = null
+    val openCity = SingleLiveEvent<CharSequence>()
 
     fun search(keyword: String) {
         if (searchCityJob?.isCompleted == false) {
@@ -42,13 +47,21 @@ class TravelCitySearchViewModel(private val searchCityUseCase: SearchCityUseCase
         val idx = keywordSerchResult.toLowerCase(Locale.getDefault()).indexOf(keyword)
         if (idx != -1) {
             return SpannableStringBuilder(keywordSerchResult).apply {
-                setSpan(android.text.style.StyleSpan(android.graphics.Typeface.BOLD),
-                        idx,
-                        idx + keyword.length,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                setSpan(ForegroundColorSpan(Color.BLACK),
+                    idx,
+                    idx + keyword.length,
+                    Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+                setSpan(TypefaceSpan("sans-serif-medium"),
+                    idx,
+                    idx + keyword.length,
+                    Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
             }
         } else {
             return keywordSerchResult
         }
+    }
+
+    fun onCityClicked(it: CitySearchResultUiModel) {
+        openCity.value = it.name
     }
 }
