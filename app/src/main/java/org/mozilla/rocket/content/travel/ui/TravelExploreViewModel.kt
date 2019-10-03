@@ -1,0 +1,58 @@
+package org.mozilla.rocket.content.travel.ui
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import org.mozilla.rocket.adapter.DelegateAdapter
+import org.mozilla.rocket.content.Result
+import org.mozilla.rocket.content.travel.domain.GetExploreUseCase
+
+class TravelExploreViewModel(private val getExploreUseCase: GetExploreUseCase) : ViewModel() {
+
+    private val _isDataLoading = MutableLiveData<State>()
+    val isDataLoading: LiveData<State> = _isDataLoading
+
+    private val _items by lazy {
+        MutableLiveData<List<DelegateAdapter.UiModel>>().apply {
+            launchDataLoad {
+                val result = getExploreUseCase()
+                if (result is Result.Success) {
+                    value = result.data
+                }
+                // TODO: handle error
+            }
+        }
+    }
+    val items: LiveData<List<DelegateAdapter.UiModel>> = _items
+
+    fun getLatestItems() {
+        launchDataLoad {
+            val result = getExploreUseCase()
+            if (result is Result.Success) {
+                _items.postValue(result.data)
+            }
+            // TODO: handle error
+        }
+    }
+
+    private fun launchDataLoad(block: suspend () -> Unit): Job {
+        return viewModelScope.launch {
+            try {
+                _isDataLoading.value = State.Loading
+                block()
+                _isDataLoading.value = State.Idle
+            } catch (t: Throwable) {
+                _isDataLoading.value = State.Error(t)
+            }
+        }
+    }
+
+    sealed class State {
+        object Idle : State()
+        object Loading : State()
+        class Error(val t: Throwable) : State()
+    }
+}

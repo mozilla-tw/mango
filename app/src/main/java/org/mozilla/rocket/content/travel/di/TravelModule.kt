@@ -6,6 +6,8 @@ import dagger.Provides
 import org.mozilla.rocket.content.travel.data.TravelLocalDataSource
 import org.mozilla.rocket.content.travel.data.TravelRemoteDataSource
 import org.mozilla.rocket.content.travel.data.TravelRepository
+import org.mozilla.rocket.content.travel.domain.GetExploreUseCase
+import org.mozilla.rocket.content.travel.ui.TravelExploreViewModel
 import javax.inject.Singleton
 
 @Module
@@ -28,4 +30,13 @@ object TravelModule {
         travelRemoteDataSource: TravelRemoteDataSource,
         travelLocalDataSource: TravelLocalDataSource
     ): TravelRepository = TravelRepository(travelRemoteDataSource, travelLocalDataSource)
+
+    @JvmStatic
+    @Singleton
+    @Provides
+    fun provideGetExploreUseCase(travelRepository: TravelRepository): GetExploreUseCase = GetExploreUseCase(travelRepository)
+
+    @JvmStatic
+    @Provides
+    fun provideTravelExploreViewModel(getExploreUseCase: GetExploreUseCase): TravelExploreViewModel = TravelExploreViewModel(getExploreUseCase)
 }
