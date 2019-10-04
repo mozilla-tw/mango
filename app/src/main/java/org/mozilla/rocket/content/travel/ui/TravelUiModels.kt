@@ -15,3 +15,10 @@ data class CityCategoryUiModel(
     val title: String,
     val cityList: List<CityUiModel>
 ) : DelegateAdapter.UiModel()
+
+data class BucketListCityUiModel(
+    val id: Int,
+    val imageUrl: String,
+    val name: String,
+    val favorite: Boolean
+) : DelegateAdapter.UiModel()
