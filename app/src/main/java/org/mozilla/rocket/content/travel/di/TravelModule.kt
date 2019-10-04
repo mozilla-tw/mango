@@ -8,7 +8,9 @@ import org.mozilla.rocket.content.travel.data.TravelRemoteDataSource
 import org.mozilla.rocket.content.travel.data.TravelRepository
 import org.mozilla.rocket.content.travel.domain.GetBucketListUseCase
 import org.mozilla.rocket.content.travel.domain.GetExploreUseCase
+import org.mozilla.rocket.content.travel.domain.SearchCityUseCase
 import org.mozilla.rocket.content.travel.ui.TravelBucketListViewModel
+import org.mozilla.rocket.content.travel.ui.TravelCitySearchViewModel
 import org.mozilla.rocket.content.travel.ui.TravelExploreViewModel
 import javax.inject.Singleton
 
@@ -44,10 +46,19 @@ object TravelModule {
     fun provideGetBucketListUseCase(travelRepository: TravelRepository): GetBucketListUseCase = GetBucketListUseCase(travelRepository)
 
     @JvmStatic
+    @Singleton
+    @Provides
+    fun provideSearchCityUseCase(travelRepository: TravelRepository): SearchCityUseCase = SearchCityUseCase(travelRepository)
+
+    @JvmStatic
     @Provides
     fun provideTravelExploreViewModel(getExploreUseCase: GetExploreUseCase): TravelExploreViewModel = TravelExploreViewModel(getExploreUseCase)
 
     @JvmStatic
     @Provides
     fun provideTravelBucketListViewModel(getBucketListUseCase: GetBucketListUseCase): TravelBucketListViewModel = TravelBucketListViewModel(getBucketListUseCase)
+
+    @JvmStatic
+    @Provides
+    fun provideTravelCitySearchViewModel(searchCityUseCase: SearchCityUseCase): TravelCitySearchViewModel = TravelCitySearchViewModel(searchCityUseCase)
 }

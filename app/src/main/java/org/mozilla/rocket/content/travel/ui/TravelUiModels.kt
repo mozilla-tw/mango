@@ -22,3 +22,8 @@ data class BucketListCityUiModel(
     val name: String,
     val favorite: Boolean
 ) : DelegateAdapter.UiModel()
+
+data class CitySearchResultUiModel(
+    val id: Int,
+    val name: CharSequence
+)
