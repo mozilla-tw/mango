@@ -1,156 +1,108 @@
 package org.mozilla.rocket.msrp.ui
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.mozilla.rocket.download.SingleLiveEvent
+import org.mozilla.rocket.extension.map
 import org.mozilla.rocket.msrp.data.Mission
 import org.mozilla.rocket.msrp.data.MissionProgress
-import org.mozilla.rocket.msrp.data.RewardCouponDoc
-import org.mozilla.rocket.msrp.domain.HasUnreadMissionsUseCase
-import org.mozilla.rocket.msrp.domain.LoadMissionsUseCase
-import org.mozilla.rocket.msrp.domain.ReadMissionUseCase
-import org.mozilla.rocket.msrp.domain.RedeemUseCase
+import org.mozilla.rocket.msrp.domain.GetChallengeMissionsUseCase
+import org.mozilla.rocket.msrp.domain.GetRedeemMissionsUseCase
+import org.mozilla.rocket.msrp.domain.RefreshMissionsUseCase
 import org.mozilla.rocket.msrp.ui.adapter.MissionUiModel
-import org.mozilla.rocket.util.Result
 import org.mozilla.rocket.util.TimeUtils
-import org.mozilla.rocket.util.getNotNull
+import org.mozilla.rocket.util.isSuccess
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 class MissionViewModel(
-    private val loadMissionsUseCase: LoadMissionsUseCase,
-    private val readMissionUseCase: ReadMissionUseCase,
-    private val hasUnreadMissionsUseCase: HasUnreadMissionsUseCase,
-    private val redeemUseCase: RedeemUseCase
+    getChallengeMissionsUseCase: GetChallengeMissionsUseCase,
+    getRedeemMissionsUseCase: GetRedeemMissionsUseCase,
+    private val refreshMissionsUseCase: RefreshMissionsUseCase
 ) : ViewModel() {
 
-    val challengeListViewState = MediatorLiveData<State>()
-    val redeemListViewState = MediatorLiveData<State>()
-    val hasUnreadMissions = MediatorLiveData<Boolean>()
-    val redeemResult = MediatorLiveData<RewardCouponDoc>()
+    val challengeList: LiveData<List<MissionUiModel>>
+    val isChallengeListEmpty = MutableLiveData<Boolean>()
+    val challengeListViewState = MutableLiveData<State>()
+    val redeemList: LiveData<List<MissionUiModel>>
+    val isRedeemListEmpty = MutableLiveData<Boolean>()
+    val redeemListViewState = MutableLiveData<State>()
 
-    val openMissionDetailPage = SingleLiveEvent<String>()
+    val openMissionDetailPage = SingleLiveEvent<Mission>()
+    val openRedeemPage = SingleLiveEvent<Mission>()
 
-    private var missionsLiveData: LiveData<Result<Pair<List<Mission>, List<Mission>>, LoadMissionsUseCase.Error>>? = null
-    private var challengeList: List<Mission> = emptyList()
-    private var redeemList: List<Mission> = emptyList()
+    private var challengeMissions: List<Mission> = emptyList()
+    private var redeemMissions: List<Mission> = emptyList()
 
     init {
-        loadMissions()
+        challengeList = getChallengeMissionsUseCase().map {
+            challengeMissions = it
+            isChallengeListEmpty.value = it.isEmpty()
+            it.toUiModel()
+        }
+        redeemList = getRedeemMissionsUseCase().map {
+            redeemMissions = it
+            isRedeemListEmpty.value = it.isEmpty()
+            it.toUiModel()
+        }
+
+        refreshMissions()
     }
 
     fun onRetryButtonClicked() {
-        loadMissions()
+        refreshMissions()
     }
 
-    private fun loadMissions() = viewModelScope.launch {
+    private fun refreshMissions() = viewModelScope.launch {
         challengeListViewState.value = State.Loading
         redeemListViewState.value = State.Loading
 
-        val oldSource = missionsLiveData
-        val newSource = loadMissionsUseCase()
-        missionsLiveData = newSource
-
-        oldSource?.let {
-            challengeListViewState.removeSource(it)
-            redeemListViewState.removeSource(it)
-            hasUnreadMissions.removeSource(it)
-        }
-
-        challengeListViewState.addSource(newSource) { result ->
-            viewModelScope.launch {
-                challengeListViewState.value = parseChallengeListResult(result)
-            }
-        }
-        redeemListViewState.addSource(newSource) { result ->
-            viewModelScope.launch {
-                redeemListViewState.value = parseRedeemListResult(result)
-            }
-        }
-        hasUnreadMissions.addSource(newSource) { result ->
-            val challengeList = result.data?.first ?: emptyList()
-            hasUnreadMissions.value = hasUnreadMissionsUseCase(challengeList)
-        }
-    }
-
-    private suspend fun parseChallengeListResult(
-        result: Result<Pair<List<Mission>, List<Mission>>, LoadMissionsUseCase.Error>
-    ): State {
-        val (challengeList, _) = result.getNotNull { error ->
-            return when (error) {
-                is LoadMissionsUseCase.Error.NoConnectionError -> State.NoConnectionError
-                is LoadMissionsUseCase.Error.UnknownError -> State.UnknownError
-            }
-        }
-        this.challengeList = challengeList
-        return if (challengeList.isNotEmpty()) {
-            State.Loaded(challengeList.toUiModel())
+        val refreshResult = refreshMissionsUseCase()
+        val state = if (refreshResult.isSuccess) {
+            State.Loaded
         } else {
-            State.Empty
-        }
-    }
-
-    private suspend fun parseRedeemListResult(
-        result: Result<Pair<List<Mission>, List<Mission>>, LoadMissionsUseCase.Error>
-    ): State {
-        val (_, redeemList) = result.getNotNull { error ->
-            return when (error) {
-                is LoadMissionsUseCase.Error.NoConnectionError -> State.NoConnectionError
-                is LoadMissionsUseCase.Error.UnknownError -> State.UnknownError
+            when (refreshResult.error!!) {
+                is RefreshMissionsUseCase.Error.NetworkError -> State.NoConnectionError
+                is RefreshMissionsUseCase.Error.UnknownError -> State.UnknownError
             }
         }
-        this.redeemList = redeemList
-        return if (redeemList.isNotEmpty()) {
-            State.Loaded(redeemList.toUiModel())
-        } else {
-            State.Empty
-        }
+        challengeListViewState.value = state
+        redeemListViewState.value = state
     }
 
     fun onChallengeItemClicked(position: Int) {
-        val mission = challengeList[position]
-        // TODO: Evan
+        val mission = challengeMissions[position]
+        openMissionDetailPage.value = mission
     }
 
     fun onRedeemItemClicked(position: Int) {
-        val mission = redeemList[position]
-        // TODO: Evan
+        val mission = redeemMissions[position]
+        when (mission.status) {
+            Mission.STATUS_REDEEMABLE -> {
+                val expired = TimeUtils.getTimestampNow() > mission.expiredDate
+                if (!expired) {
+                    openMissionDetailPage.value = mission
+                }
+            }
+            Mission.STATUS_REDEEMED -> {
+                openRedeemPage.value = mission
+            }
+        }
     }
-
-    fun onMissionDetailViewed(missionId: String) = viewModelScope.launch {
-        readMissionUseCase(missionId)
-    }
-
-    // TODO: Evan
-//    fun redeem(redeemUrl: String) = viewModelScope.launch {
-//        _redeemResult.value = redeemUseCase.execute(RedeemRequest(redeemUrl)).getNotNull {
-//            when (error) {
-//                RedeemUseCase.Error.UnknownError -> {
-//                    // TODO: Evan
-//                }
-//            }
-//            return@launch
-//        }
-//    }
 
     sealed class State {
-        data class Loaded(val data: List<MissionUiModel>) : State()
-        object Empty : State()
+        object Loaded : State()
         object Loading : State()
         object NoConnectionError : State()
         object UnknownError : State()
     }
 }
 
-private suspend fun List<Mission>.toUiModel(): List<MissionUiModel> = withContext(Dispatchers.Default) {
-    map { it.toUiModel() }
-}
+private fun List<Mission>.toUiModel(): List<MissionUiModel> = map { it.toUiModel() }
 
 private fun Mission.toUiModel(): MissionUiModel = when (status) {
     Mission.STATUS_NEW -> MissionUiModel.UnjoinedMission(
@@ -164,7 +116,7 @@ private fun Mission.toUiModel(): MissionUiModel = when (status) {
         expirationTime = expiredDate.toDateString(),
         imageUrl = imageUrl,
         progress = when (missionProgress) {
-            is MissionProgress.TypeDaily -> { 100 * missionProgress.currentDay / missionProgress.totalDays }
+            is MissionProgress.TypeDaily -> 100 * missionProgress.currentDay / missionProgress.totalDays
             null -> error("missionProgress null")
         }
     )
@@ -190,4 +142,4 @@ private fun Mission.toUiModel(): MissionUiModel = when (status) {
 
 private fun Long.toDateString(): String =
         SimpleDateFormat("dd/MM/yyyy, HH:mm", Locale.getDefault())
-            .format(Date(this))
+                .format(Date(this))

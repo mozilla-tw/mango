@@ -4,28 +4,30 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class Mission(
-        val mid: String,
-        val missionType: String,
+    val mid: String,
+    val missionType: String,
 
-        val title: String,
-        val description: String,
-        val imageUrl: String,
+    val title: String,
+    val description: String,
+    val imageUrl: String,
 
-        val endpoint: String, // Use this API to request to join the mission
-        val redeem: String?, // Use this API to retrieve the reward
+    val endpoint: String, // Use this API to request to join the mission
+    val redeem: String?, // Use this API to retrieve the reward
 
-        val events: List<String>,
-        val important: Boolean,
-        val minVersion: Int,
+    val events: List<String>,
+    val important: Boolean,
+    val minVersion: Int,
 
-        val joinEndDate: Long,
-        val expiredDate: Long,
-        val redeemedDate: Long,
+    val joinEndDate: Long,
+    val expiredDate: Long,
+    val redeemedDate: Long,
 
-        val status: Int, // STATUS_NEW, STATUS_NEW, STATUS_REDEEMABLE, STATUS_REDEEMED
-        val missionProgress: MissionProgress?
+    val status: Int, // STATUS_NEW, STATUS_NEW, STATUS_REDEEMABLE, STATUS_REDEEMED
+    val missionProgress: MissionProgress?
 ) : Parcelable {
     var unread = false
+    val uniqueId: String
+        get() = "$missionType$mid"
 
     constructor(source: Parcel) : this(
         source.readString()!!,
@@ -85,7 +87,7 @@ data class Mission(
     }
 }
 
-sealed class MissionProgress: Parcelable{
+sealed class MissionProgress : Parcelable {
     data class TypeDaily(
         val joinDate: Long, // the date the user join this mission
         val currentDay: Int, // number of the total days accomplished
