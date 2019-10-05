@@ -7,10 +7,12 @@ import org.mozilla.rocket.content.travel.data.TravelLocalDataSource
 import org.mozilla.rocket.content.travel.data.TravelRemoteDataSource
 import org.mozilla.rocket.content.travel.data.TravelRepository
 import org.mozilla.rocket.content.travel.domain.GetBucketListUseCase
+import org.mozilla.rocket.content.travel.domain.GetCityDetailUseCase
 import org.mozilla.rocket.content.travel.domain.GetExploreUseCase
 import org.mozilla.rocket.content.travel.domain.SearchCityUseCase
 import org.mozilla.rocket.content.travel.ui.TravelBucketListViewModel
 import org.mozilla.rocket.content.travel.ui.TravelCitySearchViewModel
+import org.mozilla.rocket.content.travel.ui.TravelCityViewModel
 import org.mozilla.rocket.content.travel.ui.TravelExploreViewModel
 import javax.inject.Singleton
 
@@ -51,6 +53,11 @@ object TravelModule {
     fun provideSearchCityUseCase(travelRepository: TravelRepository): SearchCityUseCase = SearchCityUseCase(travelRepository)
 
     @JvmStatic
+    @Singleton
+    @Provides
+    fun provideGetCityDetailUseCase(context: Context, travelRepository: TravelRepository): GetCityDetailUseCase = GetCityDetailUseCase(context, travelRepository)
+
+    @JvmStatic
     @Provides
     fun provideTravelExploreViewModel(getExploreUseCase: GetExploreUseCase): TravelExploreViewModel = TravelExploreViewModel(getExploreUseCase)
 
@@ -61,4 +68,8 @@ object TravelModule {
     @JvmStatic
     @Provides
     fun provideTravelCitySearchViewModel(searchCityUseCase: SearchCityUseCase): TravelCitySearchViewModel = TravelCitySearchViewModel(searchCityUseCase)
+
+    @JvmStatic
+    @Provides
+    fun provideTravelCityViewModel(getCityDetailUseCase: GetCityDetailUseCase): TravelCityViewModel = TravelCityViewModel(getCityDetailUseCase)
 }
