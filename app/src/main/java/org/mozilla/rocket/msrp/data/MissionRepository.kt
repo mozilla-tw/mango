@@ -1,18 +1,28 @@
 package org.mozilla.rocket.msrp.data
 
+import android.content.Context
 import androidx.collection.LruCache
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import org.mozilla.rocket.download.SingleLiveEvent
+import org.mozilla.rocket.extension.map
 import org.mozilla.rocket.util.Result
 import org.mozilla.rocket.util.get
 import org.mozilla.rocket.util.isSuccess
 import org.mozilla.rocket.util.map
+import org.mozilla.strictmodeviolator.StrictModeViolation
 
 open class MissionRepository(
+    appContext: Context,
     private val missionLocalDataSource: MissionLocalDataSource,
     private val missionRemoteDataSource: MissionRemoteDataSource
 ) {
+
+    private val preference = StrictModeViolation.tempGrant({ builder ->
+        builder.permitDiskReads()
+    }, {
+        appContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+    })
 
     private val couponCache = LruCache<String, String>(COUPON_CACHE_SIZE) // mission unique id -> coupon code
     private val missionsLiveData = MutableLiveData<List<Mission>>()
@@ -77,7 +87,23 @@ open class MissionRepository(
 
     fun getContentHubClickOnboardingEvent(): SingleLiveEvent<Unit> = showContentHubClickOnboarding
 
+    fun getNotificationMission(): LiveData<Mission?> =
+            missionsLiveData.map {
+                val importantMission = it.firstOrNull(Mission::important)
+                importantMission?.takeIf { mission -> mission.uniqueId != getLastReadNotificationId() }
+            }
+
+    private fun getLastReadNotificationId(): String? =
+            preference.getString(SHARED_PREF_KEY_READ_NOTIFICATIONS, null)
+
+    fun saveLastReadNotificationId(readId: String) {
+        preference.edit().putString(SHARED_PREF_KEY_READ_NOTIFICATIONS, readId).apply()
+    }
+
     companion object {
+        private const val PREF_NAME = "msrp_notification"
+        private const val SHARED_PREF_KEY_READ_NOTIFICATIONS = "shared_pref_key_read_notifications"
+
         private const val COUPON_CACHE_SIZE = 10
     }
 }

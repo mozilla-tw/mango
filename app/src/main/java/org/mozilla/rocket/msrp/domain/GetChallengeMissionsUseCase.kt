@@ -1,7 +1,7 @@
 package org.mozilla.rocket.msrp.domain
 
 import androidx.lifecycle.LiveData
-import org.mozilla.rocket.extension.combineLatest
+import org.mozilla.rocket.extension.combineLatestNonNull
 import org.mozilla.rocket.extension.map
 import org.mozilla.rocket.msrp.data.Mission
 import org.mozilla.rocket.msrp.data.MissionRepository
@@ -13,7 +13,7 @@ class GetChallengeMissionsUseCase(
     operator fun invoke(): LiveData<List<Mission>> {
         val missions = missionRepository.getMissions()
         val readMissionIds: LiveData<List<String>> = missionRepository.getReadMissionIdsLiveData()
-        return combineLatest(missions, readMissionIds)
+        return combineLatestNonNull(missions, readMissionIds)
                 .map { (missions, readIds) ->
                     val (challengeList, _) = divideMissions(missions)
                     challengeList.apply {
