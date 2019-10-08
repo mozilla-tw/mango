@@ -92,8 +92,8 @@ class LogoManNotification : FrameLayout {
         if (animate) {
             startSwipeIn()
         } else {
-            logo_man.translationY = LOGO_MAN_SWIPE_IN_3_END_Y_IN_DP
-            notification_board.translationY = NOTIFICATION_BOARD_SWIPE_IN_2_END_Y_IN_DP
+            logo_man.translationY = dpToPx(LOGO_MAN_SWIPE_IN_3_END_Y_IN_DP).toFloat()
+            notification_board.translationY = dpToPx(NOTIFICATION_BOARD_SWIPE_IN_2_END_Y_IN_DP).toFloat()
         }
     }
 
