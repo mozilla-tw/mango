@@ -1,4 +1,4 @@
-package org.mozilla.rocket.content.ecommerce.ui
+package org.mozilla.rocket.content.game.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,43 +8,47 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.mozilla.rocket.adapter.DelegateAdapter
 import org.mozilla.rocket.content.Result
-import org.mozilla.rocket.content.ecommerce.domain.GetCouponsUseCase
-import org.mozilla.rocket.content.ecommerce.ui.adapter.Coupon
+import org.mozilla.rocket.content.game.domain.GetDownloadGameListUseCase
+import org.mozilla.rocket.content.game.ui.model.Game
 import org.mozilla.rocket.download.SingleLiveEvent
 
-class CouponViewModel(
-    private val getCoupons: GetCouponsUseCase
-) : ViewModel() {
+class DownloadGameViewModel(private val getDownloadGameList: GetDownloadGameListUseCase) : ViewModel() {
 
     private val _isDataLoading = MutableLiveData<State>()
     val isDataLoading: LiveData<State> = _isDataLoading
 
-    private val _couponItems by lazy {
+    private val _downloadGameItems by lazy {
         MutableLiveData<List<DelegateAdapter.UiModel>>().apply {
             launchDataLoad {
-                val result = getCoupons()
+                val result = getDownloadGameList()
                 if (result is Result.Success) {
-                    value = ShoppingMapper.toCoupons(result.data)
+                    value = GameDataMapper.toGameUiModel(result.data)
                 } else if (result is Result.Error) {
                     throw (result.exception)
                 }
             }
         }
     }
+    val downloadGameItems: LiveData<List<DelegateAdapter.UiModel>> = _downloadGameItems
 
-    val couponItems: LiveData<List<DelegateAdapter.UiModel>> = _couponItems
+    var event = SingleLiveEvent<GameAction>()
 
-    val openCoupon = SingleLiveEvent<String>()
+    lateinit var selectedGame: Game
 
-    fun onCouponItemClicked(couponItem: Coupon) {
-        openCoupon.value = couponItem.linkUrl
+    fun onGameItemClicked(gameItem: Game) {
+        event.value = GameAction.Install(gameItem.linkUrl)
+    }
+
+    fun onGameItemLongClicked(gameItem: Game): Boolean {
+        selectedGame = gameItem
+        return false
     }
 
     fun onRetryButtonClicked() {
         launchDataLoad {
-            val result = getCoupons()
+            val result = getDownloadGameList()
             if (result is Result.Success) {
-                _couponItems.postValue(ShoppingMapper.toCoupons(result.data))
+                _downloadGameItems.postValue(GameDataMapper.toGameUiModel(result.data))
             } else if (result is Result.Error) {
                 throw (result.exception)
             }
@@ -67,5 +71,10 @@ class CouponViewModel(
         object Idle : State()
         object Loading : State()
         class Error(val t: Throwable) : State()
+    }
+
+    sealed class GameAction {
+        data class Install(val url: String) : GameAction()
+        data class OpenLink(val url: String) : GameAction()
     }
 }

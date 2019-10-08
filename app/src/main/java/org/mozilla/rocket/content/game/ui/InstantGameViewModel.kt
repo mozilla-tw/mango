@@ -1,42 +1,36 @@
-package org.mozilla.rocket.content.games.ui
+package org.mozilla.rocket.content.game.ui
 
 import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.mozilla.rocket.adapter.DelegateAdapter
-import org.mozilla.rocket.content.games.data.GamesRepo
-import org.mozilla.rocket.content.games.ui.adapter.Game
-import org.mozilla.rocket.content.games.ui.adapter.GameType
+import org.mozilla.rocket.content.Result
+import org.mozilla.rocket.content.game.domain.GetInstantGameListUseCase
+import org.mozilla.rocket.content.game.ui.model.Game
 import org.mozilla.rocket.download.SingleLiveEvent
 
-class GamesViewModel(
-    private val gamesRepo: GamesRepo
-) : ViewModel() {
+class InstantGameViewModel(private val getInstantGameList: GetInstantGameListUseCase) : ViewModel() {
 
     private val _isDataLoading = MutableLiveData<State>()
     val isDataLoading: LiveData<State> = _isDataLoading
 
-    private val _basicGameItems by lazy {
+    private val _instantGameItems by lazy {
         MutableLiveData<List<DelegateAdapter.UiModel>>().apply {
             launchDataLoad {
-                value = gamesRepo.getBasicGameCategoryList()
+                val result = getInstantGameList()
+                if (result is Result.Success) {
+                    value = GameDataMapper.toGameUiModel(result.data)
+                } else if (result is Result.Error) {
+                    throw (result.exception)
+                }
             }
         }
     }
-    val basicGameItems: LiveData<List<DelegateAdapter.UiModel>> = _basicGameItems
-
-    private val _premiumGameItems by lazy {
-        MutableLiveData<List<DelegateAdapter.UiModel>>().apply {
-            launchDataLoad {
-                value = gamesRepo.getPremiumGameCategoryList()
-            }
-        }
-    }
-    val premiumGameItems: LiveData<List<DelegateAdapter.UiModel>> = _premiumGameItems
+    val instantGameItems: LiveData<List<DelegateAdapter.UiModel>> = _instantGameItems
 
     var event = SingleLiveEvent<GameAction>()
     var createShortcutEvent = SingleLiveEvent<GameShortcut>()
@@ -44,10 +38,7 @@ class GamesViewModel(
     lateinit var selectedGame: Game
 
     fun onGameItemClicked(gameItem: Game) {
-        when (gameItem.type) {
-            GameType.BASIC -> event.value = GameAction.Play(gameItem.linkUrl)
-            GameType.PREMIUM -> event.value = GameAction.Install(gameItem.linkUrl)
-        }
+        event.value = GameAction.Play(gameItem.linkUrl)
     }
 
     fun onGameItemLongClicked(gameItem: Game): Boolean {
@@ -55,15 +46,14 @@ class GamesViewModel(
         return false
     }
 
-    fun getLatestBasicGames() {
+    fun onRetryButtonClicked() {
         launchDataLoad {
-            _basicGameItems.postValue(gamesRepo.getBasicGameCategoryList())
-        }
-    }
-
-    fun getLatestPremiumGames() {
-        launchDataLoad {
-            _premiumGameItems.postValue(gamesRepo.getPremiumGameCategoryList())
+            val result = getInstantGameList()
+            if (result is Result.Success) {
+                _instantGameItems.postValue(GameDataMapper.toGameUiModel(result.data))
+            } else if (result is Result.Error) {
+                throw (result.exception)
+            }
         }
     }
 
@@ -87,7 +77,6 @@ class GamesViewModel(
 
     sealed class GameAction {
         data class Play(val url: String) : GameAction()
-        data class Install(val url: String) : GameAction()
         data class OpenLink(val url: String) : GameAction()
     }
 

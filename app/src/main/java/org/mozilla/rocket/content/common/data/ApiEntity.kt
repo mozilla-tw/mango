@@ -8,13 +8,12 @@ data class ApiEntity(
     val subcategories: List<ApiCategory>
 ) {
     companion object {
-        private const val KEY_RESULT = "result"
         private const val KEY_VERSION = "version"
         private const val KEY_SUBCATEGORIES = "subcategories"
 
         fun fromJson(jsonString: String?): ApiEntity {
             return if (jsonString != null) {
-                val jsonObject = jsonString.toJsonObject().optJSONObject(KEY_RESULT)
+                val jsonObject = jsonString.toJsonObject()
                 val jsonArray = jsonObject.optJSONArray(KEY_SUBCATEGORIES)
                 val subcategories =
                     (0 until jsonArray.length())
@@ -70,7 +69,8 @@ data class ApiItem(
     val price: String = "",
     var discount: String = "",
     var score: Float = 0F,
-    var scoreReviews: Int = 0
+    var scoreReviews: Int = 0,
+    var description: String = ""
 ) {
     companion object {
         private const val KEY_SOURCE_NAME = "source_name"
@@ -82,6 +82,7 @@ data class ApiItem(
         private const val KEY_DISCOUNT = "discount"
         private const val KEY_SCORE = "score"
         private const val KEY_SCORE_REVIEWS = "score_reviews"
+        private const val KEY_DESCRIPTION = "description"
 
         fun fromJson(jsonObject: JSONObject): ApiItem =
             ApiItem(
@@ -93,7 +94,8 @@ data class ApiItem(
                 jsonObject.optString(KEY_PRICE),
                 jsonObject.optString(KEY_DISCOUNT),
                 jsonObject.optDouble(KEY_SCORE, 0.toDouble()).toFloat(),
-                jsonObject.optInt(KEY_SCORE_REVIEWS)
+                jsonObject.optInt(KEY_SCORE_REVIEWS),
+                jsonObject.optString(KEY_DESCRIPTION)
             )
     }
 }
