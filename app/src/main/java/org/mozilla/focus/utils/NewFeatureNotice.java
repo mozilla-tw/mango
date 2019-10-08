@@ -10,6 +10,7 @@ public class NewFeatureNotice {
 
     private static final String PREF_KEY_BOOLEAN_FIRSTRUN_SHOWN = "firstrun_shown";
     private static final String PREF_KEY_INT_FEATURE_UPGRADE_VERSION = "firstrun_upgrade_version";
+    private static final String PREF_KEY_BOOLEAN_HOME_PAGE_ONBOARDING = "has_home_page_onboarding_shown";
 
     private static final int MULTI_TAB_FROM_VERSION_1_0_TO_2_0 = 1;
     private static final int FIREBASE_FROM_VERSION_2_0_TO_2_1 = 2;
@@ -41,7 +42,6 @@ public class NewFeatureNotice {
     }
 
     public void setLiteUpdateDidShow() {
-        setFirstRunDidShow();
         setLastShownFeatureVersion(LITE_FROM_VERSION_1_0_0_TO_2_0_0);
     }
 
@@ -92,5 +92,15 @@ public class NewFeatureNotice {
 
     public int getLastShownFeatureVersion() {
         return preferences.getInt(PREF_KEY_INT_FEATURE_UPGRADE_VERSION, 0);
+    }
+
+    public boolean hasHomePageOnboardingShown() {
+        return preferences.getBoolean(PREF_KEY_BOOLEAN_HOME_PAGE_ONBOARDING, false);
+    }
+
+    public void setHomePageOnboardingShown() {
+        preferences.edit()
+                .putBoolean(PREF_KEY_BOOLEAN_HOME_PAGE_ONBOARDING, true)
+                .apply();
     }
 }

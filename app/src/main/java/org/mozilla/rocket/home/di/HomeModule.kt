@@ -12,10 +12,8 @@ import org.mozilla.rocket.home.logoman.data.LogoManNotificationRepo
 import org.mozilla.rocket.home.logoman.domain.DismissLogoManNotificationUseCase
 import org.mozilla.rocket.home.logoman.domain.GetLogoManNotificationUseCase
 import org.mozilla.rocket.msrp.domain.IsMsrpAvailableUseCase
-import org.mozilla.rocket.home.onboarding.CheckFirstRunUseCase
-import org.mozilla.rocket.home.onboarding.CheckLiteUpdate
-import org.mozilla.rocket.home.onboarding.CompleteFirstRunUseCase
-import org.mozilla.rocket.home.onboarding.CompleteLiteUpdate
+import org.mozilla.rocket.home.onboarding.IsNeedToShowHomeOnboardingUseCase
+import org.mozilla.rocket.home.onboarding.CompleteHomeOnboardingUseCase
 import org.mozilla.rocket.home.topsites.data.PinSiteManager
 import org.mozilla.rocket.home.topsites.data.SharedPreferencePinSiteDelegate
 import org.mozilla.rocket.home.topsites.data.TopSitesRepo
@@ -52,10 +50,8 @@ object HomeModule {
         dismissLogoManNotificationUseCase: DismissLogoManNotificationUseCase,
         isMsrpAvailableUseCase: IsMsrpAvailableUseCase,
         isShoppingButtonEnabledUseCase: IsShoppingButtonEnabledUseCase,
-        checkFirstRunUseCase: CheckFirstRunUseCase,
-        completeFirstRunUseCase: CompleteFirstRunUseCase,
-        checkLiteUpdate: CheckLiteUpdate,
-        completeLiteUpdate: CompleteLiteUpdate,
+        isNeedToShowHomeOnboardingUseCase: IsNeedToShowHomeOnboardingUseCase,
+        completeHomeOnboardingUseCase: CompleteHomeOnboardingUseCase,
         checkInMissionUseCase: CheckInMissionUseCase,
         completeJoinMissionOnboardingUseCase: CompleteJoinMissionOnboardingUseCase,
         getContentHubClickOnboardingEventUseCase: GetContentHubClickOnboardingEventUseCase,
@@ -73,10 +69,8 @@ object HomeModule {
         dismissLogoManNotificationUseCase,
         isMsrpAvailableUseCase,
         isShoppingButtonEnabledUseCase,
-        checkFirstRunUseCase,
-        completeFirstRunUseCase,
-        checkLiteUpdate,
-        completeLiteUpdate,
+        isNeedToShowHomeOnboardingUseCase,
+        completeHomeOnboardingUseCase,
         checkInMissionUseCase,
         completeJoinMissionOnboardingUseCase,
         getContentHubClickOnboardingEventUseCase,
@@ -165,24 +159,12 @@ object HomeModule {
     @JvmStatic
     @Singleton
     @Provides
-    fun provideCheckFirstRunUseCase(appContext: Context): CheckFirstRunUseCase =
-        CheckFirstRunUseCase(appContext)
+    fun provideIsNeedToShowHomeOnboardingUseCase(appContext: Context): IsNeedToShowHomeOnboardingUseCase =
+        IsNeedToShowHomeOnboardingUseCase(appContext)
 
     @JvmStatic
     @Singleton
     @Provides
-    fun provideCheckLiteUpdateUseCase(appContext: Context): CheckLiteUpdate =
-        CheckLiteUpdate(appContext)
-
-    @JvmStatic
-    @Singleton
-    @Provides
-    fun provideCompleteFirstRunUseCase(appContext: Context): CompleteFirstRunUseCase =
-        CompleteFirstRunUseCase(appContext)
-
-    @JvmStatic
-    @Singleton
-    @Provides
-    fun provideCompleteLiteUpdateUseCase(appContext: Context): CompleteLiteUpdate =
-        CompleteLiteUpdate(appContext)
+    fun provideCompleteLiteUpdateUseCase(appContext: Context): CompleteHomeOnboardingUseCase =
+        CompleteHomeOnboardingUseCase(appContext)
 }
