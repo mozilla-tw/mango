@@ -29,8 +29,7 @@ data class CitySearchResultUiModel(
 )
 
 data class SectionUiModel(
-    val title: String,
-    val linkUrl: String
+    val type: SectionType
 ) : DelegateAdapter.UiModel()
 
 data class ExploreIgUiModel(
@@ -63,10 +62,15 @@ data class HotelUiModel(
     val name: String,
     val distance: Float,
     val rating: Float,
-    val freeWifi: Boolean,
+    val hasFreeWifi: Boolean,
     val price: Float,
     val currency: String,
-    val freeCancellation: Boolean,
-    val payAtProperty: Boolean,
+    val hasFreeCancellation: Boolean,
+    val canPayAtProperty: Boolean,
     val linkUrl: String
 ) : DelegateAdapter.UiModel()
+
+sealed class SectionType {
+    data class Explore(val name: String) : SectionType()
+    data class TopHotels(val linkUrl: String) : SectionType()
+}

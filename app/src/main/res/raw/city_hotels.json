@@ -6,11 +6,11 @@
         "name": "Heaven in Bali",
         "distance": 1,
         "rating": 4.5,
-        "free_wifi": true,
+        "has_free_wifi": true,
         "price": 34000,
         "currency": "Rp",
-        "free_cancellation": true,
-        "pay_at_property": true,
+        "has_free_cancellation": true,
+        "can_pay_at_property": true,
         "link_url": "https://www.booking.com/hotel/id/orchid-villa.html?label=gen173nr-1DCAEoggI46AdIMFgEaOcBiAEBmAEwuAEHyAEM2AED6AEB-AECiAIBqAIDuALeguLsBcACAQ;sid=f086a0a5fa31aa51435d73202c1f1ebd;dest_id=835;dest_type=region;dist=0;group_adults=2;group_children=0;hapos=4;hpos=4;no_rooms=1;room1=A%2CA;sb_price_type=total;sr_order=popularity;srepoch=1570275689;srpvid=984b52346793023d;type=total;ucfs=1&#hotelTmpl"
     },
     {
@@ -23,8 +23,8 @@
         "freeWifi": true,
         "price": 34000,
         "currency": "Rp",
-        "free_cancellation": true,
-        "pay_at_property": false,
+        "has_free_cancellation": true,
+        "can_pay_at_property": false,
         "link_url": "https://www.booking.com/hotel/id/oyo-190-bsb-blahbatu.html?label=gen173nr-1DCAEoggI46AdIMFgEaOcBiAEBmAEwuAEHyAEM2AED6AEB-AECiAIBqAIDuALeguLsBcACAQ;sid=f086a0a5fa31aa51435d73202c1f1ebd;dest_id=835;dest_type=region;dist=0;group_adults=2;group_children=0;hapos=4;hpos=4;no_rooms=1;room1=A%2CA;sb_price_type=total;sr_order=popularity;srepoch=1570275718;srpvid=c0d55243215e0100;type=total;ucfs=1&#hotelTmpl"
     },
     {
@@ -37,8 +37,8 @@
         "freeWifi": false,
         "price": 12000,
         "currency": "Rp",
-        "free_cancellation": false,
-        "pay_at_property": true,
+        "has_free_cancellation": false,
+        "can_pay_at_property": true,
         "link_url": "https://www.booking.com/hotel/id/bella-kita-mountain-retreat-amp-spa.html?label=gen173nr-1DCAEoggI46AdIMFgEaOcBiAEBmAEwuAEHyAEM2AED6AEB-AECiAIBqAIDuALeguLsBcACAQ;sid=f086a0a5fa31aa51435d73202c1f1ebd;dest_id=835;dest_type=region;dist=0;group_adults=2;group_children=0;hapos=2;hpos=2;no_rooms=1;room1=A%2CA;sb_price_type=total;sr_order=popularity;srepoch=1570275689;srpvid=984b52346793023d;type=total;ucfs=1&#hotelTmpl"
     },
     {
@@ -51,8 +51,8 @@
         "freeWifi": false,
         "price": 10000,
         "currency": "Rp",
-        "free_cancellation": false,
-        "pay_at_property": false,
+        "has_free_cancellation": false,
+        "can_pay_at_property": false,
         "link_url": "https://www.booking.com/hotel/id/the-royal-purnama-art-suites-and-villas.html?label=gen173nr-1DCAEoggI46AdIMFgEaOcBiAEBmAEwuAEHyAEM2AED6AEB-AECiAIBqAIDuALeguLsBcACAQ;sid=f086a0a5fa31aa51435d73202c1f1ebd;dest_id=835;dest_type=region;dist=0;group_adults=2;group_children=0;hapos=1;hpos=1;no_rooms=1;room1=A%2CA;sb_price_type=total;sr_order=popularity;srepoch=1570275689;srpvid=984b52346793023d;type=total;ucfs=1&#hotelTmpl"
     }
 ]

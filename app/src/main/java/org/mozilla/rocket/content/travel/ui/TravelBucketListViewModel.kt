@@ -20,23 +20,15 @@ class TravelBucketListViewModel(private val getBucketListUseCase: GetBucketListU
             launchDataLoad {
                 val result = getBucketListUseCase()
                 if (result is Result.Success) {
-                    value = result.data
+                    value = result.data.map {
+                        TravelMapper.toBucketListCityUiModel(it)
+                    }
                 }
                 // TODO: handle error
             }
         }
     }
     val items: LiveData<List<DelegateAdapter.UiModel>> = _items
-
-    fun getLatestItems() {
-        launchDataLoad {
-            val result = getBucketListUseCase()
-            if (result is Result.Success) {
-                _items.postValue(result.data)
-            }
-            // TODO: handle error
-        }
-    }
 
     private fun launchDataLoad(block: suspend () -> Unit): Job {
         return viewModelScope.launch {

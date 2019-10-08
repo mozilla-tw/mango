@@ -70,10 +70,10 @@ data class Hotel(
     val name: String,
     val distance: Float,
     val rating: Float,
-    val freeWifi: Boolean,
+    val hasFreeWifi: Boolean,
     val price: Float,
     val currency: String,
-    val freeCancellation: Boolean,
-    val payAtProperty: Boolean,
+    val hasFreeCancellation: Boolean,
+    val canPayAtProperty: Boolean,
     val linkUrl: String
 )

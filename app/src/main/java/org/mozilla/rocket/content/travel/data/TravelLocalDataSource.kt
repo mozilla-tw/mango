@@ -227,10 +227,10 @@ private fun createHotel(jsonObject: JSONObject): Hotel =
             jsonObject.optString("name"),
             jsonObject.optDouble("distance", 0.toDouble()).toFloat(),
             jsonObject.optDouble("rating", 0.toDouble()).toFloat(),
-            jsonObject.optBoolean("freeWifi"),
+            jsonObject.optBoolean("has_free_wifi"),
             jsonObject.optDouble("price", 0.toDouble()).toFloat(),
             jsonObject.optString("currency"),
-            jsonObject.optBoolean("free_cancellation"),
-            jsonObject.optBoolean("pay_at_property"),
+            jsonObject.optBoolean("has_free_cancellation"),
+            jsonObject.optBoolean("can_pay_at_property"),
             jsonObject.optString("link_url")
         )
