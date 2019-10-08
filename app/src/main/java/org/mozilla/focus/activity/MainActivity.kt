@@ -186,7 +186,7 @@ class MainActivity : BaseActivity(),
                 }
             }
         }
-        if (NewFeatureNotice.getInstance(this).shouldShowLiteUpdate()) {
+        if (chromeViewModel.shouldShowFirstrun) {
             themeManager?.resetDefaultTheme()
         }
         restoreTabsFromPersistence()

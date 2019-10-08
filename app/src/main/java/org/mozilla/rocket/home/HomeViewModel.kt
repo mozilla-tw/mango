@@ -97,8 +97,9 @@ class HomeViewModel(
             }
         }
         if (!checkFirstRunUseCase() || !checkLiteUpdate()) {
-            completeFirstRunUseCase()
-            completeLiteUpdate()
+            // TODO: to fix
+//            completeFirstRunUseCase()
+//            completeLiteUpdate()
             showOnboardingSpotlight.call()
         }
     }
