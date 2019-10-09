@@ -45,44 +45,20 @@ fun <X, Y> LiveData<X>.switchMap(body: (X) -> LiveData<Y>): LiveData<Y> {
 fun <X, Y> LiveData<X>.switchFrom(source: LiveData<Y>): LiveData<X> =
         source.switchMap { this.map { it } }
 
-fun <A, B> combineLatest(a: LiveData<A>, b: LiveData<B>): LiveData<Pair<A?, B?>> {
-    return MediatorLiveData<Pair<A?, B?>>().apply {
-        var lastA: A? = null
-        var lastB: B? = null
-        var hasDataA = false
-        var hasDataB = false
+fun <A, B> combineLatest(a: LiveData<A>, b: LiveData<B>): LiveData<Pair<A, B>> =
+        MediatorLiveData<Pair<A, B>>().apply {
+            var lastA: WrapperClass<A>? = null
+            var lastB: WrapperClass<B>? = null
 
-        addSource(a) {
-            hasDataA = true
-            lastA = it
-            if (hasDataB) value = lastA to lastB
+            addSource(a) {
+                lastA = WrapperClass(it)
+                if (lastB != null) value = lastA!!.data to lastB!!.data
+            }
+
+            addSource(b) {
+                lastB = WrapperClass(it)
+                if (lastA != null) value = lastA!!.data to lastB!!.data
+            }
         }
 
-        addSource(b) {
-            hasDataB = true
-            lastB = it
-            if (hasDataA) value = lastA to lastB
-        }
-    }
-}
-
-fun <A, B> combineLatestNonNull(a: LiveData<A>, b: LiveData<B>): LiveData<Pair<A, B>> {
-    return MediatorLiveData<Pair<A, B>>().apply {
-        var lastA: A? = null
-        var lastB: B? = null
-        var hasDataA = false
-        var hasDataB = false
-
-        addSource(a) {
-            hasDataA = true
-            lastA = it
-            if (hasDataB) value = lastA!! to lastB!!
-        }
-
-        addSource(b) {
-            hasDataB = true
-            lastB = it
-            if (hasDataA) value = lastA!! to lastB!!
-        }
-    }
-}
+private class WrapperClass<T>(var data: T)
