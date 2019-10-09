@@ -6,7 +6,7 @@ import org.mozilla.rocket.adapter.AdapterDelegate
 import org.mozilla.rocket.adapter.DelegateAdapter
 import org.mozilla.rocket.content.travel.ui.TravelCitySearchViewModel
 
-class CityAdapterDelegate(private val searchViewModel: TravelCitySearchViewModel) : AdapterDelegate {
+class CitySearchAdapterDelegate(private val searchViewModel: TravelCitySearchViewModel) : AdapterDelegate {
     override fun onCreateViewHolder(view: View): DelegateAdapter.ViewHolder = CityViewHolder(view, searchViewModel)
 }
 

@@ -25,7 +25,7 @@ class TravelCitySearchViewModel(private val searchCityUseCase: SearchCityUseCase
 
     private var searchCityJob: Job? = null
     val openCity = SingleLiveEvent<CharSequence>()
-    val clearBtnVisibility = SingleLiveEvent<Int>()
+    val changeClearBtnVisibility = SingleLiveEvent<Int>()
 
     fun search(keyword: String) {
         if (searchCityJob?.isCompleted == false) {
@@ -45,7 +45,7 @@ class TravelCitySearchViewModel(private val searchCityUseCase: SearchCityUseCase
             // TODO: handle error
         }
 
-        clearBtnVisibility.value = if (keyword.isEmpty()) {
+        changeClearBtnVisibility.value = if (keyword.isEmpty()) {
             View.GONE
         } else {
             View.VISIBLE
@@ -53,7 +53,7 @@ class TravelCitySearchViewModel(private val searchCityUseCase: SearchCityUseCase
     }
 
     private fun applyStyle(keyword: String, keywordSerchResult: String): CharSequence {
-        val idx = keywordSerchResult.toLowerCase(Locale.getDefault()).indexOf(keyword)
+        val idx = keywordSerchResult.toLowerCase(Locale.getDefault()).indexOf(keyword.toLowerCase())
         if (idx != -1) {
             return SpannableStringBuilder(keywordSerchResult).apply {
                 setSpan(ForegroundColorSpan(Color.BLACK),
