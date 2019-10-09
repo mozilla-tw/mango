@@ -169,7 +169,7 @@ class HomeViewModel(
     fun onPinTopSiteClicked(site: Site, position: Int) {
         pinTopSiteUseCase(site)
         updateTopSitesData()
-        TelemetryWrapper.pinTopsite(site.url, position)
+        TelemetryWrapper.pinTopSite(site.url, position)
     }
 
     fun onRemoveTopSiteClicked(site: Site) = viewModelScope.launch {

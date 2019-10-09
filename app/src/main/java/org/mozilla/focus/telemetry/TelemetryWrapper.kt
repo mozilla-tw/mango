@@ -152,6 +152,7 @@ object TelemetryWrapper {
         const val UPDATE = "update"
 
         const val ONBOARDING = "onboarding"
+        const val CONTEXTUAL_HINT = "contextual_hint"
         const val CONTENT_HUB = "content_hub"
         const val CONTENT_HOME = "content_home"
         const val CONTENT_TAB = "content_tab"
@@ -230,6 +231,7 @@ object TelemetryWrapper {
         internal const val WHATSNEW = "whatsnew"
         internal const val IN_APP_MESSAGE = "in_app_message"
         internal const val VERTICAL = "vertical"
+        internal const val TAB_SWIPE = "tab_swipe"
         internal const val OPEN_IN_BROWSER = "OPEN_IN_BROWSER"
         internal const val BACK = "back"
         internal const val AUDIENCE_NAME = "audience_name"
@@ -252,6 +254,7 @@ object TelemetryWrapper {
         const val ENGINE = "engine"
         const val DELAY = "delay"
         const val MESSAGE = "message"
+        const val MESSAGE_ID = "message_id"
         const val POSITION = "position"
         const val FEED = "feed"
         const val SUB_CATEGORY = "subcategory"
@@ -2447,6 +2450,78 @@ object TelemetryWrapper {
     }
 
     @TelemetryDoc(
+            name = "Show Firstrun Contextual Hint",
+            category = Category.ACTION,
+            method = Method.SHOW,
+            `object` = Object.CONTEXTUAL_HINT,
+            value = Value.FIRSTRUN,
+            extras = [
+                TelemetryExtra(name = Extra.MESSAGE_ID, value = "message id")
+            ])
+    fun showFirstRunContextualHint(messageId: String) {
+        EventBuilder(Category.ACTION, Method.SHOW, Object.CONTEXTUAL_HINT, Value.FIRSTRUN)
+                .extra(Extra.MESSAGE_ID, messageId)
+                .queue()
+    }
+
+    @TelemetryDoc(
+            name = "Show Whatsnew Contextual Hint",
+            category = Category.ACTION,
+            method = Method.SHOW,
+            `object` = Object.CONTEXTUAL_HINT,
+            value = Value.WHATSNEW,
+            extras = [
+                TelemetryExtra(name = Extra.MESSAGE_ID, value = "message id")
+            ])
+    fun showWhatsnewContextualHint(messageId: String) {
+        EventBuilder(Category.ACTION, Method.SHOW, Object.CONTEXTUAL_HINT, Value.WHATSNEW)
+                .extra(Extra.MESSAGE_ID, messageId)
+                .queue()
+    }
+
+    @TelemetryDoc(
+            name = "Click Firstrun Contextual Hint",
+            category = Category.ACTION,
+            method = Method.CLICK,
+            `object` = Object.CONTEXTUAL_HINT,
+            value = Value.FIRSTRUN,
+            extras = [
+                TelemetryExtra(name = Extra.MESSAGE_ID, value = "message id"),
+                TelemetryExtra(name = Extra.ON, value = "time spent on page"),
+                TelemetryExtra(name = Extra.PAGE, value = "[0-9]"),
+                TelemetryExtra(name = Extra.FINISH, value = "true,false")
+            ])
+    fun clickFirstRunContextualHint(messageId: String, timeSpent: Long, pageIndex: Int, finish: Boolean) {
+        EventBuilder(Category.ACTION, Method.CLICK, Object.CONTEXTUAL_HINT, Value.FIRSTRUN)
+                .extra(Extra.MESSAGE_ID, messageId)
+                .extra(Extra.ON, timeSpent.toString())
+                .extra(Extra.PAGE, pageIndex.toString())
+                .extra(Extra.FINISH, finish.toString())
+                .queue()
+    }
+
+    @TelemetryDoc(
+            name = "Click Whatsnew Contextual Hint",
+            category = Category.ACTION,
+            method = Method.CLICK,
+            `object` = Object.CONTEXTUAL_HINT,
+            value = Value.WHATSNEW,
+            extras = [
+                TelemetryExtra(name = Extra.MESSAGE_ID, value = "message id"),
+                TelemetryExtra(name = Extra.ON, value = "time spent on page"),
+                TelemetryExtra(name = Extra.PAGE, value = "[0-9]"),
+                TelemetryExtra(name = Extra.FINISH, value = "true,false")
+            ])
+    fun clickWhatsnewContextualHint(messageId: String, timeSpent: Long, pageIndex: Int, finish: Boolean) {
+        EventBuilder(Category.ACTION, Method.CLICK, Object.CONTEXTUAL_HINT, Value.WHATSNEW)
+                .extra(Extra.MESSAGE_ID, messageId)
+                .extra(Extra.ON, timeSpent.toString())
+                .extra(Extra.PAGE, pageIndex.toString())
+                .extra(Extra.FINISH, finish.toString())
+                .queue()
+    }
+
+    @TelemetryDoc(
             name = "Show Logoman",
             category = Category.ACTION,
             method = Method.SHOW,
@@ -2481,6 +2556,23 @@ object TelemetryWrapper {
     }
 
     @TelemetryDoc(
+            name = "Click Logoman",
+            category = Category.ACTION,
+            method = Method.SWIPE,
+            `object` = Object.LOGOMAN,
+            value = "",
+            extras = [
+                TelemetryExtra(name = Extra.TYPE, value = "${Extra_Value.SHOPPING},${Extra_Value.GAME},${Extra_Value.TRAVEL},${Extra_Value.LIFESTYLE},${Extra_Value.REWARDS},${Extra_Value.WEATHER},null"),
+                TelemetryExtra(name = Extra.LINK, value = "${Extra_Value.URL},${Extra_Value.DEEPLINK},null")
+            ])
+    fun swipeLogoman(type: String?, link: String?) {
+        EventBuilder(Category.ACTION, Method.SWIPE, Object.LOGOMAN)
+                .extra(Extra.TYPE, type ?: "null")
+                .extra(Extra.LINK, link ?: "null")
+                .queue()
+    }
+
+    @TelemetryDoc(
             name = "Get Notification",
             category = Category.ACTION,
             method = Method.GET,
@@ -2488,12 +2580,12 @@ object TelemetryWrapper {
             value = "",
             extras = [
                 TelemetryExtra(name = Extra.LINK, value = "${Extra_Value.URL},${Extra_Value.DEEPLINK},null"),
-                TelemetryExtra(name = Extra.MESSAGE, value = "message")
+                TelemetryExtra(name = Extra.MESSAGE_ID, value = "messageId")
             ])
-    fun getNotification(link: String?, message: String?) {
+    fun getNotification(link: String?, messageId: String?) {
         EventBuilder(Category.ACTION, Method.GET, Object.NOTIFICATION)
                 .extra(Extra.LINK, link ?: "null")
-                .extra(Extra.MESSAGE, message ?: "null")
+                .extra(Extra.MESSAGE_ID, messageId ?: "null")
                 .queue()
     }
 
@@ -2505,12 +2597,12 @@ object TelemetryWrapper {
             value = "",
             extras = [
                 TelemetryExtra(name = Extra.LINK, value = "${Extra_Value.URL},${Extra_Value.DEEPLINK},null"),
-                TelemetryExtra(name = Extra.MESSAGE, value = "message")
+                TelemetryExtra(name = Extra.MESSAGE_ID, value = "messageId")
             ])
-    fun showNotification(link: String?, message: String?) {
+    fun showNotification(link: String?, messageId: String?) {
         EventBuilder(Category.ACTION, Method.SHOW, Object.NOTIFICATION)
                 .extra(Extra.LINK, link ?: "null")
-                .extra(Extra.MESSAGE, message ?: "null")
+                .extra(Extra.MESSAGE_ID, messageId ?: "null")
                 .queue()
     }
 
@@ -2522,12 +2614,12 @@ object TelemetryWrapper {
             value = Value.DISMISS,
             extras = [
                 TelemetryExtra(name = Extra.LINK, value = "${Extra_Value.URL},${Extra_Value.DEEPLINK},null"),
-                TelemetryExtra(name = Extra.MESSAGE, value = "message")
+                TelemetryExtra(name = Extra.MESSAGE_ID, value = "messageId")
             ])
-    fun dismissNotification(link: String?, message: String?) {
+    fun dismissNotification(link: String?, messageId: String?) {
         EventBuilder(Category.ACTION, Method.SWIPE, Object.NOTIFICATION, Value.DISMISS)
                 .extra(Extra.LINK, link ?: "null")
-                .extra(Extra.MESSAGE, message ?: "null")
+                .extra(Extra.MESSAGE_ID, messageId ?: "null")
                 .queue()
     }
 
@@ -2539,12 +2631,12 @@ object TelemetryWrapper {
             value = "",
             extras = [
                 TelemetryExtra(name = Extra.LINK, value = "${Extra_Value.URL},${Extra_Value.DEEPLINK},null"),
-                TelemetryExtra(name = Extra.MESSAGE, value = "message")
+                TelemetryExtra(name = Extra.MESSAGE_ID, value = "messageId")
             ])
-    fun openNotification(link: String?, message: String?) {
+    fun openNotification(link: String?, messageId: String?) {
         EventBuilder(Category.ACTION, Method.OPEN, Object.NOTIFICATION)
                 .extra(Extra.LINK, link ?: "null")
-                .extra(Extra.MESSAGE, message ?: "null")
+                .extra(Extra.MESSAGE_ID, messageId ?: "null")
                 .queue()
     }
 
@@ -2556,12 +2648,12 @@ object TelemetryWrapper {
             value = Value.IN_APP_MESSAGE,
             extras = [
                 TelemetryExtra(name = Extra.LINK, value = "${Extra_Value.URL},${Extra_Value.DEEPLINK},null"),
-                TelemetryExtra(name = Extra.MESSAGE, value = "message")
+                TelemetryExtra(name = Extra.MESSAGE_ID, value = "messageId")
             ])
-    fun showInAppMessage(link: String?, message: String?) {
+    fun showInAppMessage(link: String?, messageId: String?) {
         EventBuilder(Category.ACTION, Method.SHOW, Object.MESSAGE, Value.IN_APP_MESSAGE)
                 .extra(Extra.LINK, link ?: "null")
-                .extra(Extra.MESSAGE, message ?: "null")
+                .extra(Extra.MESSAGE_ID, messageId ?: "null")
                 .queue()
     }
 
@@ -2573,13 +2665,13 @@ object TelemetryWrapper {
             value = Value.IN_APP_MESSAGE,
             extras = [
                 TelemetryExtra(name = Extra.LINK, value = "${Extra_Value.URL},${Extra_Value.DEEPLINK},null"),
-                TelemetryExtra(name = Extra.MESSAGE, value = "message"),
+                TelemetryExtra(name = Extra.MESSAGE_ID, value = "messageId"),
                 TelemetryExtra(name = Extra.PRIMARY, value = "true,false")
             ])
-    fun clickInAppMessage(link: String?, message: String?, isPrimary: Boolean) {
+    fun clickInAppMessage(link: String?, messageId: String?, isPrimary: Boolean) {
         EventBuilder(Category.ACTION, Method.CLICK, Object.MESSAGE, Value.IN_APP_MESSAGE)
                 .extra(Extra.LINK, link ?: "null")
-                .extra(Extra.MESSAGE, message ?: "null")
+                .extra(Extra.MESSAGE_ID, messageId ?: "null")
                 .extra(Extra.PRIMARY, isPrimary.toString())
                 .queue()
     }
@@ -2649,16 +2741,16 @@ object TelemetryWrapper {
                 TelemetryExtra(name = Extra.FEED, value = "feed"),
                 TelemetryExtra(name = Extra.SOURCE, value = "source"),
                 TelemetryExtra(name = Extra.CATEGORY, value = "category"),
-                TelemetryExtra(name = Extra.SUB_CATEGORY, value = "subcategory"),
+                TelemetryExtra(name = Extra.SUB_CATEGORY, value = "subcategory id"),
                 TelemetryExtra(name = Extra.ID, value = "component id"),
                 TelemetryExtra(name = Extra.VERSION, value = "version")
             ])
-    fun startContentTab(feed: String, source: String, category: String, subCategory: String, componentId: String, version: String) {
+    fun startContentTab(feed: String, source: String, category: String, subCategoryId: String, componentId: String, version: String) {
         EventBuilder(Category.ACTION, Method.START, Object.CONTENT_TAB)
                 .extra(Extra.FEED, feed)
                 .extra(Extra.SOURCE, source)
                 .extra(Extra.CATEGORY, category)
-                .extra(Extra.SUB_CATEGORY, subCategory)
+                .extra(Extra.SUB_CATEGORY, subCategoryId)
                 .extra(Extra.ID, componentId)
                 .extra(Extra.VERSION, version)
                 .queue()
@@ -2674,7 +2766,7 @@ object TelemetryWrapper {
                 TelemetryExtra(name = Extra.FEED, value = "feed"),
                 TelemetryExtra(name = Extra.SOURCE, value = "source"),
                 TelemetryExtra(name = Extra.CATEGORY, value = "category"),
-                TelemetryExtra(name = Extra.SUB_CATEGORY, value = "subcategory"),
+                TelemetryExtra(name = Extra.SUB_CATEGORY, value = "subcategory id"),
                 TelemetryExtra(name = Extra.ID, value = "component id"),
                 TelemetryExtra(name = Extra.VERSION, value = "version"),
                 TelemetryExtra(name = Extra.SESSION_TIME, value = "time duration from entering component"),
@@ -2686,7 +2778,7 @@ object TelemetryWrapper {
         feed: String,
         source: String,
         category: String,
-        subCategory: String,
+        subCategoryId: String,
         componentId: String,
         version: String,
         sessionTime: Long,
@@ -2698,7 +2790,7 @@ object TelemetryWrapper {
                 .extra(Extra.FEED, feed)
                 .extra(Extra.SOURCE, source)
                 .extra(Extra.CATEGORY, category)
-                .extra(Extra.SUB_CATEGORY, subCategory)
+                .extra(Extra.SUB_CATEGORY, subCategoryId)
                 .extra(Extra.ID, componentId)
                 .extra(Extra.VERSION, version)
                 .extra(Extra.SESSION_TIME, sessionTime.toString())
@@ -2760,6 +2852,38 @@ object TelemetryWrapper {
     }
 
     @TelemetryDoc(
+            name = "Start Tab Swipe Process",
+            category = Category.ACTION,
+            method = Method.START,
+            `object` = Object.PROCESS,
+            value = Value.TAB_SWIPE,
+            extras = [
+                TelemetryExtra(name = Extra.TYPE, value = "${Extra_Value.SHOPPING},${Extra_Value.GAME},${Extra_Value.TRAVEL},${Extra_Value.LIFESTYLE},${Extra_Value.ALL}")
+            ])
+    fun startTabSwipeProcess(vertical: String) {
+        EventBuilder(Category.ACTION, Method.START, Object.PROCESS, Value.TAB_SWIPE)
+                .extra(Extra.TYPE, vertical)
+                .queue()
+    }
+
+    @TelemetryDoc(
+            name = "Start Tab Swipe Process",
+            category = Category.ACTION,
+            method = Method.END,
+            `object` = Object.PROCESS,
+            value = Value.TAB_SWIPE,
+            extras = [
+                TelemetryExtra(name = Extra.TYPE, value = "${Extra_Value.SHOPPING},${Extra_Value.GAME},${Extra_Value.TRAVEL},${Extra_Value.LIFESTYLE},${Extra_Value.ALL}"),
+                TelemetryExtra(name = Extra.LOADTIME, value = "[0-9]+")
+            ])
+    fun endTabSwipeProcess(vertical: String, loadTime: Long) {
+        EventBuilder(Category.ACTION, Method.END, Object.PROCESS, Value.TAB_SWIPE)
+                .extra(Extra.TYPE, vertical)
+                .extra(Extra.LOADTIME, loadTime.toString())
+                .queue()
+    }
+
+    @TelemetryDoc(
             name = "Click Toolbar",
             category = Category.ACTION,
             method = Method.CLICK,
@@ -2768,10 +2892,11 @@ object TelemetryWrapper {
             extras = [
                 TelemetryExtra(name = Extra.MODE, value = "webview"),
                 TelemetryExtra(name = Extra.POSITION, value = "[0-9]"),
+                TelemetryExtra(name = Extra.VERTICAL, value = "${Extra_Value.SHOPPING},${Extra_Value.GAME},${Extra_Value.TRAVEL},${Extra_Value.LIFESTYLE}"),
                 TelemetryExtra(name = Extra.FEED, value = "feed"),
                 TelemetryExtra(name = Extra.SOURCE, value = "source"),
                 TelemetryExtra(name = Extra.CATEGORY, value = "category"),
-                TelemetryExtra(name = Extra.SUB_CATEGORY, value = "subcategory"),
+                TelemetryExtra(name = Extra.SUB_CATEGORY, value = "subcategory id"),
                 TelemetryExtra(name = Extra.ID, value = "component id"),
                 TelemetryExtra(name = Extra.VERSION, value = "version")
             ])
@@ -2779,20 +2904,22 @@ object TelemetryWrapper {
         value: String,
         mode: String,
         position: Int,
+        vertical: String,
         feed: String,
         source: String,
         category: String,
-        subCategory: String,
+        subCategoryId: String,
         componentId: String,
         version: String
     ) {
         EventBuilder(Category.ACTION, Method.CLICK, Object.TOOLBAR, value)
                 .extra(Extra.MODE, mode)
                 .extra(Extra.POSITION, position.toString())
+                .extra(Extra.VERTICAL, vertical)
                 .extra(Extra.FEED, feed)
                 .extra(Extra.SOURCE, source)
                 .extra(Extra.CATEGORY, category)
-                .extra(Extra.SUB_CATEGORY, subCategory)
+                .extra(Extra.SUB_CATEGORY, subCategoryId)
                 .extra(Extra.ID, componentId)
                 .extra(Extra.VERSION, version)
                 .queue()
@@ -2808,7 +2935,7 @@ object TelemetryWrapper {
                 TelemetryExtra(name = Extra.SOURCE, value = "buka|toko...|null"),
                 TelemetryExtra(name = Extra.POSITION, value = "[0-9]")
             ])
-    fun pinTopsite(source: String?, position: Int) {
+    fun pinTopSite(source: String?, position: Int) {
         EventBuilder(Category.ACTION, Method.PIN, Object.HOME, Value.LINK)
                 .extra(Extra.SOURCE, source ?: "null")
                 .extra(Extra.POSITION, position.toString())
