@@ -40,6 +40,7 @@ class MissionDetailViewModel(
 
     val requestFxLogin = SingleLiveEvent<String>()
     val startMissionReminder = SingleLiveEvent<Mission>()
+    val stopMissionReminder = SingleLiveEvent<Mission>()
     val closePage = SingleLiveEvent<Unit>()
     val closeAllMissionPages = SingleLiveEvent<Unit>()
     val openCouponPage = SingleLiveEvent<Mission>()
@@ -86,6 +87,7 @@ class MissionDetailViewModel(
         isLoading.value = true
         val quitResult = quitMissionUseCase(mission)
         if (quitResult.isSuccess) {
+            stopMissionReminder.value = mission
             refreshMissionsUseCase()
             closePage.call()
         } else {

@@ -202,6 +202,9 @@ class MissionDetailFragment : Fragment(), NavigationResult {
         missionDetailViewModel.startMissionReminder.observe(this, Observer { mission ->
             DailyMissionReminderWorker.startMissionReminder(appContext(), mission)
         })
+        missionDetailViewModel.stopMissionReminder.observe(this, Observer { mission ->
+            DailyMissionReminderWorker.stopMissionReminder(appContext(), mission)
+        })
         missionDetailViewModel.closePage.observe(this, Observer {
             findNavController().popBackStack()
         })

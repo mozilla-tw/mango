@@ -129,6 +129,12 @@ class DailyMissionReminderWorker(
                     .enqueueUniquePeriodicWork(uniqueWorkName, ExistingPeriodicWorkPolicy.REPLACE, reminderPeriodicWorkRequest)
         }
 
+        fun stopMissionReminder(appContext: Context, mission: Mission) {
+            val uniqueWorkName = getUniqueWorkName(mission.uniqueId)
+            WorkManager.getInstance(appContext)
+                    .cancelUniqueWork(uniqueWorkName)
+        }
+
         private fun getUniqueWorkName(missionId: String): String = "$TAG_DAILY_MISSION_REMINDER_WORKER$missionId"
 
         private fun createMissionReminder(
