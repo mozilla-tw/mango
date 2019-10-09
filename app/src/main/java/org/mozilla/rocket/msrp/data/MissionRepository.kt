@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import org.mozilla.rocket.download.SingleLiveEvent
 import org.mozilla.rocket.extension.map
 import org.mozilla.rocket.util.Result
-import org.mozilla.rocket.util.get
 import org.mozilla.rocket.util.isSuccess
 import org.mozilla.rocket.util.map
 import org.mozilla.strictmodeviolator.StrictModeViolation
@@ -94,15 +93,15 @@ open class MissionRepository(
             }
 
     private fun getLastReadNotificationId(): String? =
-            preference.getString(SHARED_PREF_KEY_READ_NOTIFICATIONS, null)
+            preference.getString(SHARED_PREF_KEY_READ_NOTIFICATION_ID, null)
 
     fun saveLastReadNotificationId(readId: String) {
-        preference.edit().putString(SHARED_PREF_KEY_READ_NOTIFICATIONS, readId).apply()
+        preference.edit().putString(SHARED_PREF_KEY_READ_NOTIFICATION_ID, readId).apply()
     }
 
     companion object {
         private const val PREF_NAME = "msrp_notification"
-        private const val SHARED_PREF_KEY_READ_NOTIFICATIONS = "shared_pref_key_read_notifications"
+        private const val SHARED_PREF_KEY_READ_NOTIFICATION_ID = "shared_pref_key_read_notification_id"
 
         private const val COUPON_CACHE_SIZE = 10
     }

@@ -26,17 +26,17 @@ class LogoManNotificationRepo(appContext: Context) {
             }
 
     private fun getLastReadNotificationId(): LiveData<String> =
-            preference.stringLiveData(SHARED_PREF_KEY_READ_NOTIFICATIONS, "")
+            preference.stringLiveData(SHARED_PREF_KEY_READ_NOTIFICATION_ID, "")
 
     fun saveLastReadNotificationId(readId: String) {
-        preference.edit().putString(SHARED_PREF_KEY_READ_NOTIFICATIONS, readId).apply()
+        preference.edit().putString(SHARED_PREF_KEY_READ_NOTIFICATION_ID, readId).apply()
     }
 
     companion object {
         private const val STR_LOGO_MAN_NOTIFICATION = "str_logo_man_notification"
 
         private const val PREF_NAME = "logo_man_notification"
-        private const val SHARED_PREF_KEY_READ_NOTIFICATIONS = "shared_pref_key_read_notifications"
+        private const val SHARED_PREF_KEY_READ_NOTIFICATION_ID = "shared_pref_key_read_notification_id"
     }
 }
 
