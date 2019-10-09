@@ -5,6 +5,6 @@ import org.mozilla.focus.utils.NewFeatureNotice
 
 class CompleteHomeOnboardingUseCase(private val context: Context) {
     operator fun invoke() {
-        NewFeatureNotice.getInstance(context).setHomePageOnboardingShown()
+        NewFeatureNotice.getInstance(context).setHomePageOnboardingDidShow()
     }
 }

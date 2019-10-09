@@ -98,9 +98,16 @@ public class NewFeatureNotice {
         return preferences.getBoolean(PREF_KEY_BOOLEAN_HOME_PAGE_ONBOARDING, false);
     }
 
-    public void setHomePageOnboardingShown() {
+    public void setHomePageOnboardingDidShow() {
         preferences.edit()
                 .putBoolean(PREF_KEY_BOOLEAN_HOME_PAGE_ONBOARDING, true)
+                .apply();
+    }
+
+    @VisibleForTesting
+    public void resetHomePageOnboardingDidShow() {
+        preferences.edit()
+                .putBoolean(PREF_KEY_BOOLEAN_HOME_PAGE_ONBOARDING, false)
                 .apply();
     }
 }
