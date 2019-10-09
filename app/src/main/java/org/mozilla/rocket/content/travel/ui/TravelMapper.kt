@@ -9,7 +9,7 @@ import org.mozilla.rocket.content.travel.data.RunwayItem
 import org.mozilla.rocket.content.travel.data.Video
 import org.mozilla.rocket.content.travel.data.Wiki
 import org.mozilla.rocket.content.travel.ui.adapter.CityCategoryUiModel
-import org.mozilla.rocket.content.travel.ui.adapter.CityUiModel
+import org.mozilla.rocket.content.travel.ui.adapter.CitySearchResultUiModel
 
 object TravelMapper {
 
@@ -42,13 +42,6 @@ object TravelMapper {
                 category.cityList.map {
                     toCityUiModel(it)
                 }
-            )
-
-    private fun toCityUiModel(city: City): CityUiModel =
-            CityUiModel(
-                city.id,
-                city.imageUrl,
-                city.name
             )
 
     fun toBucketListCityUiModel(city: City): BucketListCityUiModel =

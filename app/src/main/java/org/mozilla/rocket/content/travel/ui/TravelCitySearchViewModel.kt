@@ -6,6 +6,7 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.TypefaceSpan
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,6 +15,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.mozilla.rocket.content.Result
 import org.mozilla.rocket.content.travel.domain.SearchCityUseCase
+import org.mozilla.rocket.content.travel.ui.adapter.CitySearchResultUiModel
 import java.util.Locale
 
 class TravelCitySearchViewModel(private val searchCityUseCase: SearchCityUseCase) : ViewModel() {
@@ -23,6 +25,7 @@ class TravelCitySearchViewModel(private val searchCityUseCase: SearchCityUseCase
 
     private var searchCityJob: Job? = null
     val openCity = SingleLiveEvent<CharSequence>()
+    val clearBtnVisibility = SingleLiveEvent<Int>()
 
     fun search(keyword: String) {
         if (searchCityJob?.isCompleted == false) {
@@ -40,6 +43,12 @@ class TravelCitySearchViewModel(private val searchCityUseCase: SearchCityUseCase
             }
 
             // TODO: handle error
+        }
+
+        clearBtnVisibility.value = if (keyword.isEmpty()) {
+            View.GONE
+        } else {
+            View.VISIBLE
         }
     }
 

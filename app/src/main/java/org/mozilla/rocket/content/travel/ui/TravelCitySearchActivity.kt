@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +17,7 @@ import org.mozilla.rocket.adapter.DelegateAdapter
 import org.mozilla.rocket.content.appComponent
 import org.mozilla.rocket.content.getViewModel
 import org.mozilla.rocket.content.travel.ui.adapter.CityAdapterDelegate
+import org.mozilla.rocket.content.travel.ui.adapter.CitySearchResultUiModel
 import javax.inject.Inject
 
 class TravelCitySearchActivity : AppCompatActivity() {
@@ -34,16 +34,7 @@ class TravelCitySearchActivity : AppCompatActivity() {
         window?.statusBarColor = Color.WHITE
         search_keyword_edit.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val visibility: Int
-                if (s?.isNotEmpty() == true) {
-                    visibility = View.VISIBLE
-                    searchViewModel.search(s.toString().toLowerCase())
-                } else {
-                    visibility = View.GONE
-                }
-
-                recyclerView.visibility = visibility
-                clear.visibility = visibility
+                searchViewModel.search(s.toString().toLowerCase())
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -59,13 +50,12 @@ class TravelCitySearchActivity : AppCompatActivity() {
     }
 
     private fun initCityList() {
-        val adapterDelegate = CityAdapterDelegate(searchViewModel)
-        val adapterDelegatesManager = AdapterDelegatesManager().apply {
-            add(CitySearchResultUiModel::class, R.layout.item_city, adapterDelegate)
-        }
-        val adapter = DelegateAdapter(adapterDelegatesManager)
+        val adapter: DelegateAdapter
         recyclerView.apply {
             layoutManager = LinearLayoutManager(this@TravelCitySearchActivity)
+            adapter = DelegateAdapter(AdapterDelegatesManager().apply {
+                add(CitySearchResultUiModel::class, R.layout.item_city_search, CityAdapterDelegate(searchViewModel))
+            })
             this.adapter = adapter
         }
         searchViewModel.items.observe(this, Observer {
@@ -74,6 +64,12 @@ class TravelCitySearchActivity : AppCompatActivity() {
             }
         })
         searchViewModel.openCity.observe(this, Observer {
+        })
+        searchViewModel.clearBtnVisibility.observe(this, Observer {
+            if (it != null) {
+                clear.visibility = it
+                recyclerView.visibility = it
+            }
         })
     }
 
