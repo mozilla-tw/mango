@@ -33,22 +33,24 @@ class TravelCitySearchViewModel(private val searchCityUseCase: SearchCityUseCase
         }
 
         searchCityJob = viewModelScope.launch {
-            val result = searchCityUseCase(keyword)
-            if (result is Result.Success) {
-                _items.postValue(
-                        result.data.map {
-                            TravelMapper.toCitySearchResultUiModel(it.id, applyStyle(keyword, it.name))
-                        }
-                )
+            val btnVisibility: Int
+            var list: List<CitySearchResultUiModel> = listOf()
+
+            if (keyword.isEmpty()) {
+                btnVisibility = View.GONE
+            } else {
+                btnVisibility = View.VISIBLE
+                val result = searchCityUseCase(keyword)
+                if (result is Result.Success) {
+                    list = result.data.map {
+                        TravelMapper.toCitySearchResultUiModel(it.id, applyStyle(keyword, it.name))
+                    }
+                }
+
+                // TODO: handle error
             }
-
-            // TODO: handle error
-        }
-
-        changeClearBtnVisibility.value = if (keyword.isEmpty()) {
-            View.GONE
-        } else {
-            View.VISIBLE
+            _items.postValue(list)
+            changeClearBtnVisibility.value = btnVisibility
         }
     }
 

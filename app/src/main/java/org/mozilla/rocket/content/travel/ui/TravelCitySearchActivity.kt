@@ -66,7 +66,6 @@ class TravelCitySearchActivity : AppCompatActivity() {
         searchViewModel.changeClearBtnVisibility.observe(this, Observer {
             if (it != null) {
                 clear.visibility = it
-                recyclerView.visibility = it
             }
         })
     }
