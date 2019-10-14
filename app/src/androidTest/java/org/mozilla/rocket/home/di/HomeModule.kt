@@ -4,6 +4,7 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import org.mockito.Mockito.spy
+import org.mozilla.focus.utils.NewFeatureNotice
 import org.mozilla.focus.utils.Settings
 import org.mozilla.rocket.home.HomeViewModel
 import org.mozilla.rocket.home.contenthub.data.ContentHubRepo
@@ -157,12 +158,12 @@ object HomeModule {
     @JvmStatic
     @Singleton
     @Provides
-    fun provideIsNeedToShowHomeOnboardingUseCase(appContext: Context): IsNeedToShowHomeOnboardingUseCase =
-            IsNeedToShowHomeOnboardingUseCase(appContext)
+    fun provideIsNeedToShowHomeOnboardingUseCase(newFeatureNotice: NewFeatureNotice): IsNeedToShowHomeOnboardingUseCase =
+            IsNeedToShowHomeOnboardingUseCase(newFeatureNotice)
 
     @JvmStatic
     @Singleton
     @Provides
-    fun provideCompleteLiteUpdateUseCase(appContext: Context): CompleteHomeOnboardingUseCase =
-            CompleteHomeOnboardingUseCase(appContext)
+    fun provideCompleteLiteUpdateUseCase(newFeatureNotice: NewFeatureNotice): CompleteHomeOnboardingUseCase =
+            CompleteHomeOnboardingUseCase(newFeatureNotice)
 }

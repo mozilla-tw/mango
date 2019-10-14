@@ -1,9 +1,8 @@
 package org.mozilla.rocket.home.onboarding
 
-import android.content.Context
 import org.mozilla.focus.utils.NewFeatureNotice
 
-class IsNeedToShowHomeOnboardingUseCase(private val context: Context) {
+class IsNeedToShowHomeOnboardingUseCase(private val newFeatureNotice: NewFeatureNotice) {
 
-    operator fun invoke(): Boolean = !NewFeatureNotice.getInstance(context).hasHomePageOnboardingShown()
+    operator fun invoke(): Boolean = !newFeatureNotice.hasHomePageOnboardingShown()
 }

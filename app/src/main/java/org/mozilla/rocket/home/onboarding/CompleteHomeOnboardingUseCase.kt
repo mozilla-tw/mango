@@ -1,10 +1,9 @@
 package org.mozilla.rocket.home.onboarding
 
-import android.content.Context
 import org.mozilla.focus.utils.NewFeatureNotice
 
-class CompleteHomeOnboardingUseCase(private val context: Context) {
+class CompleteHomeOnboardingUseCase(private val newFeatureNotice: NewFeatureNotice) {
     operator fun invoke() {
-        NewFeatureNotice.getInstance(context).setHomePageOnboardingDidShow()
+        newFeatureNotice.setHomePageOnboardingDidShow()
     }
 }
