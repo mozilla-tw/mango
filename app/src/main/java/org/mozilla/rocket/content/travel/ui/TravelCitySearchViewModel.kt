@@ -34,7 +34,7 @@ class TravelCitySearchViewModel(private val searchCityUseCase: SearchCityUseCase
 
         searchCityJob = viewModelScope.launch {
             val btnVisibility: Int
-            var list: List<CitySearchResultUiModel> = listOf()
+            var list: List<CitySearchResultUiModel> = emptyList()
 
             if (keyword.isEmpty()) {
                 btnVisibility = View.GONE
