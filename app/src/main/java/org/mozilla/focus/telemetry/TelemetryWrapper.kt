@@ -2586,6 +2586,7 @@ object TelemetryWrapper {
                 TelemetryExtra(name = Extra.LINK, value = "${Extra_Value.URL},${Extra_Value.DEEPLINK},null"),
                 TelemetryExtra(name = Extra.MESSAGE_ID, value = "messageId")
             ])
+    @JvmStatic
     fun getNotification(link: String?, messageId: String?) {
         EventBuilder(Category.ACTION, Method.GET, Object.NOTIFICATION)
                 .extra(Extra.LINK, link ?: "null")
@@ -2603,6 +2604,7 @@ object TelemetryWrapper {
                 TelemetryExtra(name = Extra.LINK, value = "${Extra_Value.URL},${Extra_Value.DEEPLINK},null"),
                 TelemetryExtra(name = Extra.MESSAGE_ID, value = "messageId")
             ])
+    @JvmStatic
     fun showNotification(link: String?, messageId: String?) {
         EventBuilder(Category.ACTION, Method.SHOW, Object.NOTIFICATION)
                 .extra(Extra.LINK, link ?: "null")
@@ -2620,6 +2622,7 @@ object TelemetryWrapper {
                 TelemetryExtra(name = Extra.LINK, value = "${Extra_Value.URL},${Extra_Value.DEEPLINK},null"),
                 TelemetryExtra(name = Extra.MESSAGE_ID, value = "messageId")
             ])
+    @JvmStatic
     fun dismissNotification(link: String?, messageId: String?) {
         EventBuilder(Category.ACTION, Method.SWIPE, Object.NOTIFICATION, Value.DISMISS)
                 .extra(Extra.LINK, link ?: "null")
@@ -2637,6 +2640,7 @@ object TelemetryWrapper {
                 TelemetryExtra(name = Extra.LINK, value = "${Extra_Value.URL},${Extra_Value.DEEPLINK},null"),
                 TelemetryExtra(name = Extra.MESSAGE_ID, value = "messageId")
             ])
+    @JvmStatic
     fun openNotification(link: String?, messageId: String?) {
         EventBuilder(Category.ACTION, Method.OPEN, Object.NOTIFICATION)
                 .extra(Extra.LINK, link ?: "null")
