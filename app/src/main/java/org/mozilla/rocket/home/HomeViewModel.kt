@@ -1,5 +1,7 @@
 package org.mozilla.rocket.home
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,23 +9,32 @@ import kotlinx.coroutines.launch
 import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.utils.Settings
 import org.mozilla.rocket.download.SingleLiveEvent
+import org.mozilla.rocket.extension.first
+import org.mozilla.rocket.extension.map
 import org.mozilla.rocket.home.contenthub.domain.GetContentHubItemsUseCase
 import org.mozilla.rocket.home.contenthub.ui.ContentHub
 import org.mozilla.rocket.home.domain.IsShoppingButtonEnabledUseCase
 import org.mozilla.rocket.home.logoman.domain.DismissLogoManNotificationUseCase
 import org.mozilla.rocket.home.logoman.domain.GetLogoManNotificationUseCase
 import org.mozilla.rocket.home.logoman.ui.LogoManNotification.Notification
-import org.mozilla.rocket.home.msrp.domain.IsMsrpAvailableUseCase
-import org.mozilla.rocket.home.onboarding.CheckFirstRunUseCase
-import org.mozilla.rocket.home.onboarding.CheckLiteUpdate
-import org.mozilla.rocket.home.onboarding.CompleteFirstRunUseCase
-import org.mozilla.rocket.home.onboarding.CompleteLiteUpdate
+import org.mozilla.rocket.home.onboarding.CompleteHomeOnboardingUseCase
+import org.mozilla.rocket.home.onboarding.IsNeedToShowHomeOnboardingUseCase
 import org.mozilla.rocket.home.topsites.domain.GetTopSitesUseCase
 import org.mozilla.rocket.home.topsites.domain.PinTopSiteUseCase
 import org.mozilla.rocket.home.topsites.domain.RemoveTopSiteUseCase
 import org.mozilla.rocket.home.topsites.domain.TopSitesConfigsUseCase
 import org.mozilla.rocket.home.topsites.ui.Site
 import org.mozilla.rocket.home.topsites.ui.SitePage
+import org.mozilla.rocket.msrp.data.Mission
+import org.mozilla.rocket.msrp.data.MissionProgress
+import org.mozilla.rocket.msrp.domain.CheckInMissionUseCase
+import org.mozilla.rocket.msrp.domain.CompleteJoinMissionOnboardingUseCase
+import org.mozilla.rocket.msrp.domain.GetContentHubClickOnboardingEventUseCase
+import org.mozilla.rocket.msrp.domain.GetIsFxAccountUseCase
+import org.mozilla.rocket.msrp.domain.HasUnreadMissionsUseCase
+import org.mozilla.rocket.msrp.domain.IsMsrpAvailableUseCase
+import org.mozilla.rocket.msrp.domain.RefreshMissionsUseCase
+import org.mozilla.rocket.util.ToastMessage
 
 class HomeViewModel(
     private val settings: Settings,
@@ -32,24 +43,29 @@ class HomeViewModel(
     private val pinTopSiteUseCase: PinTopSiteUseCase,
     private val removeTopSiteUseCase: RemoveTopSiteUseCase,
     private val getContentHubItemsUseCase: GetContentHubItemsUseCase,
-    getLogoManNotificationUseCase: GetLogoManNotificationUseCase,
+    private val getLogoManNotificationUseCase: GetLogoManNotificationUseCase,
     private val dismissLogoManNotificationUseCase: DismissLogoManNotificationUseCase,
     private val isMsrpAvailableUseCase: IsMsrpAvailableUseCase,
     private val isShoppingButtonEnabledUseCase: IsShoppingButtonEnabledUseCase,
-    checkFirstRunUseCase: CheckFirstRunUseCase,
-    completeFirstRunUseCase: CompleteFirstRunUseCase,
-    checkLiteUpdate: CheckLiteUpdate,
-    completeLiteUpdate: CompleteLiteUpdate
+    isNeedToShowHomeOnboardingUseCase: IsNeedToShowHomeOnboardingUseCase,
+    completeHomeOnboardingUseCase: CompleteHomeOnboardingUseCase,
+    private val checkInMissionUseCase: CheckInMissionUseCase,
+    private val completeJoinMissionOnboardingUseCase: CompleteJoinMissionOnboardingUseCase,
+    getContentHubClickOnboardingEventUseCase: GetContentHubClickOnboardingEventUseCase,
+    refreshMissionsUseCase: RefreshMissionsUseCase,
+    hasUnreadMissionsUseCase: HasUnreadMissionsUseCase,
+    getIsFxAccountUseCase: GetIsFxAccountUseCase
 ) : ViewModel() {
 
     val sitePages = MutableLiveData<List<SitePage>>()
     val topSitesPageIndex = MutableLiveData<Int>()
     val pinEnabled = MutableLiveData<Boolean>().apply { value = topSitesConfigsUseCase().isPinEnabled }
     val contentHubItems = MutableLiveData<List<ContentHub.Item>>().apply { value = getContentHubItemsUseCase() }
-    val hasPendingMissions = MutableLiveData<Boolean>()
-    val logoManNotification = MutableLiveData<StateNotification?>()
+    val logoManNotification = MediatorLiveData<StateNotification?>()
     val isAccountLayerVisible = MutableLiveData<Boolean>().apply { value = isMsrpAvailableUseCase() }
     val isShoppingSearchEnabled = MutableLiveData<Boolean>().apply { value = isShoppingButtonEnabledUseCase() }
+    val hasUnreadMissions: LiveData<Boolean> = hasUnreadMissionsUseCase()
+    val isFxAccount: LiveData<Boolean> = getIsFxAccountUseCase()
 
     val toggleBackgroundColor = SingleLiveEvent<Unit>()
     val resetBackgroundColor = SingleLiveEvent<Unit>()
@@ -57,17 +73,40 @@ class HomeViewModel(
     val openPrivateMode = SingleLiveEvent<Unit>()
     val openBrowser = SingleLiveEvent<Site>()
     val showTopSiteMenu = SingleLiveEvent<ShowTopSiteMenuData>()
-    val navigateToContentPage = SingleLiveEvent<ContentHub.Item>()
-    val showOnboardingSpotlight = SingleLiveEvent<Unit> ()
+    val openContentPage = SingleLiveEvent<ContentHub.Item>()
+    val showOnboardingSpotlight = SingleLiveEvent<Unit>()
+    val showToast = SingleLiveEvent<ToastMessage>()
+    val openRewardPage = SingleLiveEvent<Unit>()
+    val openProfilePage = SingleLiveEvent<Unit>()
+    val showMissionCompleteDialog = SingleLiveEvent<Mission>()
+    val openMissionDetailPage = SingleLiveEvent<Mission>()
+    val showContentHubClickOnboarding = getContentHubClickOnboardingEventUseCase()
+
+    private var logoManClickAction: GetLogoManNotificationUseCase.LogoManAction? = null
 
     init {
-        getLogoManNotificationUseCase()?.let { notification ->
-            logoManNotification.value = StateNotification(notification, true)
+        initLogoManData()
+
+        viewModelScope.launch {
+            if (isMsrpAvailableUseCase()) {
+                refreshMissionsUseCase()
+            }
         }
-        if (!checkFirstRunUseCase() || !checkLiteUpdate()) {
-            completeFirstRunUseCase()
-            completeLiteUpdate()
+        if (isNeedToShowHomeOnboardingUseCase()) {
+            completeHomeOnboardingUseCase()
             showOnboardingSpotlight.call()
+        }
+    }
+
+    private fun initLogoManData() {
+        logoManNotification.addSource(
+                getLogoManNotificationUseCase().first()
+                        .map {
+                            logoManClickAction = it?.action
+                            it?.run { StateNotification(it.toUiModel(), true) }
+                        }
+        ) {
+            logoManNotification.value = it
         }
     }
 
@@ -140,9 +179,29 @@ class HomeViewModel(
         TelemetryWrapper.removeTopSite(site.isDefault)
     }
 
-    fun onContentHubItemClicked(item: ContentHub.Item) {
-        navigateToContentPage.value = item
+    fun onContentHubItemClicked(item: ContentHub.Item) = viewModelScope.launch {
+        openContentPage.value = item
         TelemetryWrapper.clickContentHub(item)
+        val checkInResult = checkInMissionUseCase(
+            when (item) {
+                is ContentHub.Item.Travel -> CheckInMissionUseCase.PingType.Travel()
+                is ContentHub.Item.Shopping -> CheckInMissionUseCase.PingType.Shopping()
+                is ContentHub.Item.News -> CheckInMissionUseCase.PingType.Lifestyle()
+                is ContentHub.Item.Games -> CheckInMissionUseCase.PingType.Game()
+            }
+        )
+        checkInResult.data?.let { (mission, hasMissionCompleted) ->
+            val message = when (val progress = mission.missionProgress) {
+                is MissionProgress.TypeDaily -> progress.message
+                null -> error("Unknown MissionProgress type")
+            }
+            if (message.isNotEmpty()) {
+                showToast.value = ToastMessage(message)
+            }
+            if (hasMissionCompleted) {
+                showMissionCompleteDialog.value = mission
+            }
+        }
     }
 
     fun onLogoManShown() {
@@ -150,11 +209,35 @@ class HomeViewModel(
         logoManNotification.value?.animate = false
     }
 
+    fun onLogoManNotificationClicked() {
+        logoManClickAction?.let {
+            when (it) {
+                is GetLogoManNotificationUseCase.LogoManAction.OpenMissionPage -> openMissionDetailPage.value = it.mission
+            }
+        }
+    }
+
     fun onLogoManDismissed() {
         logoManNotification.value?.let {
             dismissLogoManNotificationUseCase(it.notification)
         }
         logoManNotification.value = null
+    }
+
+    fun onRewardButtonClicked() {
+        openRewardPage.call()
+    }
+
+    fun onProfileButtonClicked() {
+        openProfilePage.call()
+    }
+
+    fun onRedeemCompletedMissionButtonClicked(mission: Mission) {
+        openMissionDetailPage.value = mission
+    }
+
+    fun onContentHubRequestClickHintDismissed() {
+        completeJoinMissionOnboardingUseCase()
     }
 
     data class ShowTopSiteMenuData(
@@ -173,3 +256,5 @@ class HomeViewModel(
         private const val TOP_SITES_PER_PAGE = 8
     }
 }
+
+private fun GetLogoManNotificationUseCase.Notification.toUiModel() = Notification(id, title, subtitle)

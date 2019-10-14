@@ -11,7 +11,6 @@ import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.view.WindowManager;
 
-import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
@@ -39,14 +38,6 @@ public class Settings {
     private static final boolean DID_SHOW_RATE_APP_DEFAULT = false;
     private static final boolean DID_SHOW_SHARE_APP_DEFAULT = false;
 
-    public final static int PRIORITY_SYSTEM = 0;
-    public final static int PRIORITY_FIREBASE = 1;
-    public final static int PRIORITY_USER = 2;
-
-    @IntDef({PRIORITY_SYSTEM, PRIORITY_FIREBASE, PRIORITY_USER})
-    public @interface SettingPriority {
-
-    }
     public synchronized static Settings getInstance(Context context) {
         if (instance == null) {
             instance = new Settings(context.getApplicationContext());
@@ -57,14 +48,12 @@ public class Settings {
     private final SharedPreferences preferences;
     private final Resources resources;
     private final EventHistory eventHistory;
-    private final NewFeatureNotice newFeatureNotice;
     private final SettingPreferenceWrapper settingPreferenceWrapper;
 
     private Settings(Context context) {
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
         resources = context.getResources();
         eventHistory = new EventHistory(preferences);
-        newFeatureNotice = NewFeatureNotice.getInstance(context);
         settingPreferenceWrapper = new SettingPreferenceWrapper(context.getContentResolver());
     }
 
@@ -115,10 +104,6 @@ public class Settings {
     public boolean showNightModeSpotlight() {
         return settingPreferenceWrapper.getBoolean(resources.getString(R.string.pref_key_night_mode_brightness_dirty),
                 false);
-    }
-
-    public boolean shouldShowFirstrun() {
-        return newFeatureNotice.shouldShowLiteUpdate() && newFeatureNotice.hasShownFirstRun();
     }
 
     public boolean shouldSaveToRemovableStorage() {
@@ -172,21 +157,6 @@ public class Settings {
         preferences.edit()
                 .putInt(key, type)
                 .apply();
-    }
-
-    @Nullable
-    public String getNewsSource() {
-        return preferences.getString(getPreferenceKey(R.string.pref_s_news), null);
-    }
-
-    public void setNewsSource(String source) {
-        preferences.edit()
-                .putString(getPreferenceKey(R.string.pref_s_news), source)
-                .apply();
-    }
-
-    public String getLifeFeedSettings() {
-        return preferences.getString(getPreferenceKey(R.string.pref_key_developer_option_life_feed), "0");
     }
 
     @Nullable
@@ -310,15 +280,6 @@ public class Settings {
 
     /* package */ String getPreferenceKey(int resourceId) {
         return resources.getString(resourceId);
-    }
-
-    public boolean canOverride(String prefKey, @Settings.SettingPriority int priority) {
-        final int currPriority = preferences.getInt(prefKey, Integer.MAX_VALUE);
-        return priority > currPriority;
-    }
-
-    public void setPriority(String prefKey, @Settings.SettingPriority int priority) {
-        preferences.edit().putInt(prefKey, priority).apply();
     }
 
     public SharedPreferenceLiveData<Integer> intLiveData(int keyResId, Integer defValue) {

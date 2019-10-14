@@ -53,7 +53,6 @@ import org.mozilla.focus.utils.Constants
 import org.mozilla.focus.utils.DialogUtils
 import org.mozilla.focus.utils.FirebaseHelper
 import org.mozilla.focus.utils.IntentUtils
-import org.mozilla.focus.utils.NewFeatureNotice
 import org.mozilla.focus.utils.SafeIntent
 import org.mozilla.focus.utils.ShortcutUtils
 import org.mozilla.focus.utils.SupportUtils
@@ -186,7 +185,7 @@ class MainActivity : BaseActivity(),
                 }
             }
         }
-        if (NewFeatureNotice.getInstance(this).shouldShowLiteUpdate()) {
+        if (chromeViewModel.shouldShowFirstrun) {
             themeManager?.resetDefaultTheme()
         }
         restoreTabsFromPersistence()
@@ -263,7 +262,7 @@ class MainActivity : BaseActivity(),
     private fun observeChromeAction() {
         chromeViewModel.run {
             showToast.nonNullObserve(this@MainActivity) { message ->
-                Toast.makeText(this@MainActivity, getString(message.stringResId, *message.args), message.duration).show()
+                Toast.makeText(this@MainActivity, getString(message.stringResId!!, *message.args), message.duration).show()
             }
             openUrl.nonNullObserve(this@MainActivity) { action ->
                 screenNavigator.showBrowserScreen(action.url, action.withNewTab, action.isFromExternal)
