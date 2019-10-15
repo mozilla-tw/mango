@@ -10,6 +10,7 @@ import org.mozilla.rocket.content.travel.data.Video
 import org.mozilla.rocket.content.travel.data.Wiki
 import org.mozilla.rocket.content.travel.ui.adapter.CityCategoryUiModel
 import org.mozilla.rocket.content.travel.ui.adapter.CitySearchResultUiModel
+import org.mozilla.rocket.content.travel.ui.adapter.CityUiModel
 
 object TravelMapper {
 
@@ -43,6 +44,13 @@ object TravelMapper {
                     toCityUiModel(it)
                 }
             )
+
+    private fun toCityUiModel(city: City): CityUiModel =
+        CityUiModel(
+            city.id,
+            city.imageUrl,
+            city.name
+        )
 
     fun toBucketListCityUiModel(city: City): BucketListCityUiModel =
             BucketListCityUiModel(

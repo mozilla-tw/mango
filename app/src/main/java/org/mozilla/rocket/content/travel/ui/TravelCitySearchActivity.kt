@@ -15,7 +15,7 @@ import org.mozilla.rocket.adapter.AdapterDelegatesManager
 import org.mozilla.rocket.adapter.DelegateAdapter
 import org.mozilla.rocket.content.appComponent
 import org.mozilla.rocket.content.getViewModel
-import org.mozilla.rocket.content.travel.ui.adapter.CitySearchAdapterDelegate
+import org.mozilla.rocket.content.travel.ui.adapter.CitySearchResultAdapterDelegate
 import org.mozilla.rocket.content.travel.ui.adapter.CitySearchResultUiModel
 import javax.inject.Inject
 
@@ -52,7 +52,7 @@ class TravelCitySearchActivity : AppCompatActivity() {
         recyclerView.let {
             it.layoutManager = LinearLayoutManager(this@TravelCitySearchActivity)
             adapter = DelegateAdapter(AdapterDelegatesManager().apply {
-                add(CitySearchResultUiModel::class, R.layout.item_city_search, CitySearchAdapterDelegate(searchViewModel))
+                add(CitySearchResultUiModel::class, R.layout.item_city_search, CitySearchResultAdapterDelegate(searchViewModel))
             })
             it.adapter = adapter
         }
