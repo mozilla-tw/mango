@@ -119,6 +119,7 @@ object TelemetryWrapper {
         const val SHOW = "show"
         const val LAUNCH = "launch"
         const val KILL = "kill"
+        const val SIGN_IN = "sign_in"
     }
 
     internal object Object {
@@ -166,6 +167,11 @@ object TelemetryWrapper {
         const val CATEGORY = "category"
         const val PROCESS = "process"
         const val AUDIENCE = "audience"
+        const val CHALLENGE_PAGE = "challenge_page"
+        const val TASK = "task"
+        const val ACCOUNT = "account"
+        const val REDEEM_PAGE = "redeem_page"
+        const val PROFILE = "profile"
     }
 
     object Value {
@@ -239,6 +245,14 @@ object TelemetryWrapper {
         internal const val OPEN_IN_BROWSER = "OPEN_IN_BROWSER"
         internal const val BACK = "back"
         internal const val AUDIENCE_NAME = "audience_name"
+        internal const val JOIN = "join"
+        internal const val TASK = "task"
+        internal const val CHALLENGE_COMPLETE = "challenge_complete"
+        internal const val CODE = "code"
+        internal const val USE = "use"
+        internal const val REWARD = "reward"
+        internal const val ITEM = "item"
+        internal const val LOGIN = "login"
     }
 
     internal object Extra {
@@ -281,6 +295,9 @@ object TelemetryWrapper {
         const val IMPRESSION = "impression"
         const val LOADTIME = "loadtime"
         const val AUDIENCE_NAME = "audience_name"
+        const val ITEM_NAME = "item_name"
+        const val TASK = "task"
+        const val FINISHED = "finished"
     }
 
     object Extra_Value {
@@ -314,6 +331,9 @@ object TelemetryWrapper {
         const val DEEPLINK = "deeplink"
         const val OPEN = "open"
         const val INSTALL = "install"
+        const val LATER = "later"
+        const val LOGIN = "login"
+        const val CLOSE = "close"
     }
 
     enum class FIND_IN_PAGE {
@@ -2969,6 +2989,163 @@ object TelemetryWrapper {
     fun predictAudience(audienceName: String) {
         EventBuilder(Category.ACTION, Method.PREDICTED, Object.AUDIENCE, Value.AUDIENCE_NAME)
                 .extra(Extra.AUDIENCE_NAME, audienceName)
+                .queue()
+    }
+
+    @TelemetryDoc(
+            name = "Click Challenge Page Join",
+            category = Category.ACTION,
+            method = Method.CLICK,
+            `object` = Object.CHALLENGE_PAGE,
+            value = Value.JOIN,
+            extras = [])
+    fun clickChallengePageJoin() {
+        EventBuilder(Category.ACTION, Method.CLICK, Object.CHALLENGE_PAGE, Value.JOIN)
+                .queue()
+    }
+
+    @TelemetryDoc(
+            name = "Show Task Contextual Hint",
+            category = Category.ACTION,
+            method = Method.SHOW,
+            `object` = Object.CONTEXTUAL_HINT,
+            value = Value.TASK,
+            extras = [])
+    fun showTaskContextualHint() {
+        EventBuilder(Category.ACTION, Method.SHOW, Object.CONTEXTUAL_HINT, Value.TASK)
+                .queue()
+    }
+
+    @TelemetryDoc(
+            name = "End Task",
+            category = Category.ACTION,
+            method = Method.END,
+            `object` = Object.TASK,
+            value = "",
+            extras = [
+                TelemetryExtra(name = Extra.TASK, value = "[0-9]+"),
+                TelemetryExtra(name = Extra.FINISHED, value = "false|true")
+            ])
+    fun endMissionTask(day: Int, finished: Boolean) {
+        EventBuilder(Category.ACTION, Method.END, Object.TASK, null)
+                .extra(Extra.TASK, day.toString())
+                .extra(Extra.FINISHED, finished.toString())
+                .queue()
+    }
+
+    @TelemetryDoc(
+            name = "Show Challenge Complete Message",
+            category = Category.ACTION,
+            method = Method.SHOW,
+            `object` = Object.MESSAGE,
+            value = Value.CHALLENGE_COMPLETE,
+            extras = [])
+    fun showChallengeCompleteMessage() {
+        EventBuilder(Category.ACTION, Method.SHOW, Object.MESSAGE, Value.CHALLENGE_COMPLETE)
+                .queue()
+    }
+
+    @TelemetryDoc(
+            name = "Click Challenge Complete Message",
+            category = Category.ACTION,
+            method = Method.CLICK,
+            `object` = Object.MESSAGE,
+            value = Value.CHALLENGE_COMPLETE,
+            extras = [
+                TelemetryExtra(name = Extra.ACTION, value = "${Extra_Value.DISMISS}|${Extra_Value.LATER}|${Extra_Value.LOGIN}|${Extra_Value.CLOSE}")
+            ])
+    fun clickChallengeCompleteMessage(action: String) {
+        EventBuilder(Category.ACTION, Method.CLICK, Object.MESSAGE, Value.CHALLENGE_COMPLETE)
+                .extra(Extra.ACTION, action)
+                .queue()
+    }
+
+    @TelemetryDoc(
+            name = "Account Sign In",
+            category = Category.ACTION,
+            method = Method.SIGN_IN,
+            `object` = Object.ACCOUNT,
+            value = "",
+            extras = [])
+    fun accountSignIn() {
+        EventBuilder(Category.ACTION, Method.SIGN_IN, Object.ACCOUNT, null)
+                .queue()
+    }
+
+    @TelemetryDoc(
+            name = "Show Redeem Page",
+            category = Category.ACTION,
+            method = Method.SHOW,
+            `object` = Object.REDEEM_PAGE,
+            value = "",
+            extras = [])
+    fun showCouponPage() {
+        EventBuilder(Category.ACTION, Method.SHOW, Object.REDEEM_PAGE, null)
+                .queue()
+    }
+
+    @TelemetryDoc(
+            name = "Copy Code on Redeem Page",
+            category = Category.ACTION,
+            method = Method.COPY,
+            `object` = Object.REDEEM_PAGE,
+            value = Value.CODE,
+            extras = [])
+    fun copyCodeOnCouponPage() {
+        EventBuilder(Category.ACTION, Method.COPY, Object.REDEEM_PAGE, Value.CODE)
+                .queue()
+    }
+
+    @TelemetryDoc(
+            name = "Click Redeem on Redeem Page",
+            category = Category.ACTION,
+            method = Method.CLICK,
+            `object` = Object.REDEEM_PAGE,
+            value = Value.USE,
+            extras = [])
+    fun clickGoUseOnCouponPage() {
+        EventBuilder(Category.ACTION, Method.CLICK, Object.REDEEM_PAGE, Value.USE)
+                .queue()
+    }
+
+    @TelemetryDoc(
+            name = "Click Reward Profile",
+            category = Category.ACTION,
+            method = Method.CLICK,
+            `object` = Object.PROFILE,
+            value = Value.REWARD,
+            extras = [])
+    fun clickRewardButton() {
+        EventBuilder(Category.ACTION, Method.CLICK, Object.PROFILE, Value.REWARD)
+                .queue()
+    }
+
+    @TelemetryDoc(
+            name = "Click Item Content Home",
+            category = Category.ACTION,
+            method = Method.CLICK,
+            `object` = Object.CONTENT_HOME,
+            value = Value.ITEM,
+            extras = [
+                TelemetryExtra(name = Extra.VERTICAL, value = "${Extra_Value.SHOPPING}|${Extra_Value.GAME}|${Extra_Value.TRAVEL}|${Extra_Value.LIFESTYLE}|${Extra_Value.REWARDS}"),
+                TelemetryExtra(name = Extra.CATEGORY, value = "category")
+            ])
+    fun clickItemContentHome(vertical: String, category: String) {
+        EventBuilder(Category.ACTION, Method.CLICK, Object.CONTENT_HOME, Value.ITEM)
+                .extra(Extra.VERTICAL, vertical)
+                .extra(Extra.CATEGORY, category)
+                .queue()
+    }
+
+    @TelemetryDoc(
+            name = "Click Chellenge Page Login",
+            category = Category.ACTION,
+            method = Method.CLICK,
+            `object` = Object.CHALLENGE_PAGE,
+            value = Value.LOGIN,
+            extras = [])
+    fun clickChellengePageLogin() {
+        EventBuilder(Category.ACTION, Method.CLICK, Object.CHALLENGE_PAGE, Value.LOGIN)
                 .queue()
     }
 
