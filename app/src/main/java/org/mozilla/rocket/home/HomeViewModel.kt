@@ -191,8 +191,8 @@ class HomeViewModel(
             }
         )
         checkInResult.data?.let { (mission, hasMissionCompleted) ->
-            val message = when (val progress = mission.missionProgress) {
-                is MissionProgress.TypeDaily -> progress.message
+            val (message, currentDay) = when (val progress = mission.missionProgress) {
+                is MissionProgress.TypeDaily -> progress.message to progress.currentDay
                 null -> error("Unknown MissionProgress type")
             }
             if (message.isNotEmpty()) {
@@ -200,7 +200,9 @@ class HomeViewModel(
             }
             if (hasMissionCompleted) {
                 showMissionCompleteDialog.value = mission
+                TelemetryWrapper.showChallengeCompleteMessage()
             }
+            TelemetryWrapper.endMissionTask(currentDay, hasMissionCompleted)
         }
     }
 
@@ -228,6 +230,7 @@ class HomeViewModel(
     }
 
     fun onRewardButtonClicked() {
+        TelemetryWrapper.clickRewardButton()
         openRewardPage.call()
     }
 
@@ -237,10 +240,23 @@ class HomeViewModel(
 
     fun onRedeemCompletedMissionButtonClicked(mission: Mission) {
         openMissionDetailPage.value = mission
+        TelemetryWrapper.clickChallengeCompleteMessage(TelemetryWrapper.Extra_Value.LOGIN)
     }
 
     fun onContentHubRequestClickHintDismissed() {
         completeJoinMissionOnboardingUseCase()
+    }
+
+    fun onShowClickContentHubOnboarding() {
+        TelemetryWrapper.showTaskContextualHint()
+    }
+
+    fun onRedeemCompletedLaterButtonClicked() {
+        TelemetryWrapper.clickChallengeCompleteMessage(TelemetryWrapper.Extra_Value.LATER)
+    }
+
+    fun onRedeemCompletedDialogClosed() {
+        TelemetryWrapper.clickChallengeCompleteMessage(TelemetryWrapper.Extra_Value.CLOSE)
     }
 
     data class ShowTopSiteMenuData(

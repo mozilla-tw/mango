@@ -334,6 +334,8 @@ object TelemetryWrapper {
         const val LATER = "later"
         const val LOGIN = "login"
         const val CLOSE = "close"
+        const val MISSION = "mission"
+        const val GIFT = "gift"
     }
 
     enum class FIND_IN_PAGE {
@@ -3128,7 +3130,7 @@ object TelemetryWrapper {
             value = Value.ITEM,
             extras = [
                 TelemetryExtra(name = Extra.VERTICAL, value = "${Extra_Value.SHOPPING}|${Extra_Value.GAME}|${Extra_Value.TRAVEL}|${Extra_Value.LIFESTYLE}|${Extra_Value.REWARDS}"),
-                TelemetryExtra(name = Extra.CATEGORY, value = "category")
+                TelemetryExtra(name = Extra.CATEGORY, value = "${Extra_Value.MISSION}|${Extra_Value.GIFT}")
             ])
     fun clickItemContentHome(vertical: String, category: String) {
         EventBuilder(Category.ACTION, Method.CLICK, Object.CONTENT_HOME, Value.ITEM)
