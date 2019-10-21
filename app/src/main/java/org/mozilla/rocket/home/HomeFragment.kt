@@ -469,7 +469,7 @@ class HomeFragment : LocaleAwareFragment(), ScreenNavigator.HomeScreen {
     }
 
     private fun showMissionCompleteDialog(mission: Mission) {
-        DialogUtils.createMissionCompleteDialog(requireContext())
+        DialogUtils.createMissionCompleteDialog(requireContext(), mission.imageUrl)
                 .onPositive {
                     homeViewModel.onRedeemCompletedMissionButtonClicked(mission)
                 }
