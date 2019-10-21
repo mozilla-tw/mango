@@ -14,7 +14,6 @@ import androidx.navigation.fragment.findNavController
 import dagger.Lazy
 import kotlinx.android.synthetic.main.fragment_shopping_search_keyword_input.*
 import org.mozilla.focus.R
-import org.mozilla.focus.utils.ViewUtils
 import org.mozilla.rocket.content.appComponent
 import org.mozilla.rocket.content.getViewModel
 import org.mozilla.rocket.shopping.search.data.ShoppingSearchMode
@@ -68,14 +67,6 @@ class ShoppingSearchKeywordInputFragment : Fragment(), View.OnClickListener {
                 }
             }
             return@setOnKeyListener false
-        }
-        search_keyword_edit.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            // Avoid showing keyboard again when returning to the previous page by back key.
-            if (hasFocus) {
-                ViewUtils.showKeyboard(search_keyword_edit)
-            } else {
-                ViewUtils.hideKeyboard(search_keyword_edit)
-            }
         }
 
         clear.setOnClickListener(this)
