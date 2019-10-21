@@ -72,7 +72,7 @@ class MissionDetailViewModel(
             startMissionReminder.value = mission
             refreshMissionsUseCase()
             if (isNeedJoinMissionOnboardingUseCase()) {
-                requestContentHubClickOnboardingUseCase()
+                requestContentHubClickOnboardingUseCase(mission.title)
                 closeAllMissionPages.call()
             } else {
                 closePage.call()

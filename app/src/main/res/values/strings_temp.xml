@@ -17,7 +17,6 @@
     <string name="travel_detail_ig_title" translatable="false" tools:ignore="MissingTranslation">#%s on Instagram</string>
     <string name="travel_detail_video_view_count" translatable="false" tools:ignore="MissingTranslation">%d view</string>
     <string name="travel_detail_video_view_count_pural" translatable="false" tools:ignore="MissingTranslation">%d views</string>
-    <string name="msrp_try_content_hubs" tools:ignore="MissingTranslation">Try new features to check in.</string>
     <string name="search_city_hint" translatable="false" tools:ignore="MissingTranslation">Enter a city</string>
     <string name="mission_no_quota" translatable="false" tools:ignore="MissingTranslation">Voucher is out of stock</string>
     <string name="travel_details_onboarding_title" tools:ignore="MissingTranslation">Love %s?</string>
