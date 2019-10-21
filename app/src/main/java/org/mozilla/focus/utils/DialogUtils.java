@@ -373,9 +373,9 @@ public class DialogUtils {
                 activity,
                 targetView,
                 container,
-                activity.getResources().getDimensionPixelSize(R.dimen.shopping_focus_view_radius),
-                activity.getResources().getDimensionPixelSize(R.dimen.shopping_focus_view_height),
-                activity.getResources().getDimensionPixelSize(R.dimen.shopping_focus_view_width));
+                activity.getResources().getDimensionPixelSize(R.dimen.travel_focus_view_radius),
+                activity.getResources().getDimensionPixelSize(R.dimen.travel_focus_view_height),
+                activity.getResources().getDimensionPixelSize(R.dimen.travel_focus_view_width));
 
         dialog.setOnDismissListener(dismissListener);
         dialog.show();
