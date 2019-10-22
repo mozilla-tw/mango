@@ -1,9 +1,9 @@
 package org.mozilla.rocket.home.onboarding.domain
 
-import org.mozilla.rocket.home.onboarding.data.HomeOnboardingRepository
+import org.mozilla.focus.utils.NewFeatureNotice
 
-class SetShoppingSearchOnboardingIsShownUseCase(private val repository: HomeOnboardingRepository) {
+class SetShoppingSearchOnboardingIsShownUseCase(private val newFeatureNotice: NewFeatureNotice) {
     operator fun invoke() {
-        repository.setShoppingSearchOnboardingIsShown()
+        newFeatureNotice.setHomeShoppingSearchOnboardingDidShow()
     }
 }

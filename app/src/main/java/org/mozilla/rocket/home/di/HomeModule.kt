@@ -14,7 +14,6 @@ import org.mozilla.rocket.home.logoman.domain.DismissLogoManNotificationUseCase
 import org.mozilla.rocket.home.logoman.domain.GetLogoManNotificationUseCase
 import org.mozilla.rocket.home.onboarding.CompleteHomeOnboardingUseCase
 import org.mozilla.rocket.home.onboarding.IsNeedToShowHomeOnboardingUseCase
-import org.mozilla.rocket.home.onboarding.data.HomeOnboardingRepository
 import org.mozilla.rocket.home.onboarding.domain.SetShoppingSearchOnboardingIsShownUseCase
 import org.mozilla.rocket.home.onboarding.domain.ShouldShowShoppingSearchOnboardingUseCase
 import org.mozilla.rocket.home.topsites.data.PinSiteManager
@@ -179,17 +178,12 @@ object HomeModule {
     @JvmStatic
     @Singleton
     @Provides
-    fun provideHomeOnboardingRepo(appContext: Context): HomeOnboardingRepository = HomeOnboardingRepository(appContext)
+    fun provideShouldShowShoppingSearchOnboardingUseCase(newFeatureNotice: NewFeatureNotice): ShouldShowShoppingSearchOnboardingUseCase =
+        ShouldShowShoppingSearchOnboardingUseCase(newFeatureNotice)
 
     @JvmStatic
     @Singleton
     @Provides
-    fun provideShouldShowShoppingSearchOnboardingUseCase(repository: HomeOnboardingRepository): ShouldShowShoppingSearchOnboardingUseCase =
-        ShouldShowShoppingSearchOnboardingUseCase(repository)
-
-    @JvmStatic
-    @Singleton
-    @Provides
-    fun provideSetShoppingSearchOnboardingIsShownUseCase(repository: HomeOnboardingRepository): SetShoppingSearchOnboardingIsShownUseCase =
-        SetShoppingSearchOnboardingIsShownUseCase(repository)
+    fun provideSetShoppingSearchOnboardingIsShownUseCase(newFeatureNotice: NewFeatureNotice): SetShoppingSearchOnboardingIsShownUseCase =
+        SetShoppingSearchOnboardingIsShownUseCase(newFeatureNotice)
 }
