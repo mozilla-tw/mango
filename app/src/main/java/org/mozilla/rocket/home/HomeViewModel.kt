@@ -162,7 +162,9 @@ class HomeViewModel(
             is Site.RemovableSite -> site.isDefault
         }
         val title = if (allowToLogTitle) site.title else ""
-        TelemetryWrapper.clickTopSiteOn(position, title)
+        val pageIndex = requireNotNull(topSitesPageIndex.value)
+        val topSitePosition = position + pageIndex * TOP_SITES_PER_PAGE
+        TelemetryWrapper.clickTopSiteOn(topSitePosition, title)
     }
 
     fun onTopSiteLongClicked(site: Site, position: Int): Boolean =
