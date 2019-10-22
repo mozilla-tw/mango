@@ -19,6 +19,7 @@ import org.mozilla.rocket.home.logoman.domain.GetLogoManNotificationUseCase
 import org.mozilla.rocket.home.logoman.ui.LogoManNotification.Notification
 import org.mozilla.rocket.home.onboarding.CompleteHomeOnboardingUseCase
 import org.mozilla.rocket.home.onboarding.IsNeedToShowHomeOnboardingUseCase
+import org.mozilla.rocket.home.onboarding.domain.IsNewUserUseCase
 import org.mozilla.rocket.home.onboarding.domain.SetShoppingSearchOnboardingIsShownUseCase
 import org.mozilla.rocket.home.onboarding.domain.ShouldShowShoppingSearchOnboardingUseCase
 import org.mozilla.rocket.home.topsites.domain.GetTopSitesUseCase
@@ -58,7 +59,8 @@ class HomeViewModel(
     hasUnreadMissionsUseCase: HasUnreadMissionsUseCase,
     getIsFxAccountUseCase: GetIsFxAccountUseCase,
     shouldShowShoppingSearchOnboardingUseCase: ShouldShowShoppingSearchOnboardingUseCase,
-    setShoppingSearchOnboardingIsShownUseCase: SetShoppingSearchOnboardingIsShownUseCase
+    setShoppingSearchOnboardingIsShownUseCase: SetShoppingSearchOnboardingIsShownUseCase,
+    private val isNewUserUseCase: IsNewUserUseCase
 ) : ViewModel() {
 
     val sitePages = MutableLiveData<List<SitePage>>()
@@ -86,8 +88,10 @@ class HomeViewModel(
     val openMissionDetailPage = SingleLiveEvent<Mission>()
     val showContentHubClickOnboarding = getContentHubClickOnboardingEventUseCase()
     val showShoppingSearchOnboardingSpotlight = SingleLiveEvent<Unit>()
+    val dismissContentServiceOnboardingDialog = SingleLiveEvent<Unit>()
 
     private var logoManClickAction: GetLogoManNotificationUseCase.LogoManAction? = null
+    private var contentServicesOnboardingTimeSpent = 0L
 
     init {
         initLogoManData()
@@ -99,6 +103,12 @@ class HomeViewModel(
         }
         if (isNeedToShowHomeOnboardingUseCase()) {
             completeHomeOnboardingUseCase()
+            contentServicesOnboardingTimeSpent = System.currentTimeMillis()
+            if (isNewUserUseCase()) {
+                TelemetryWrapper.showFirstRunContextualHint("onboarding_2_content_services_news_shopping_games")
+            } else {
+                TelemetryWrapper.showWhatsnewContextualHint("onboarding_2_content_services_news_shopping_games")
+            }
             showContentServicesOnboardingSpotlight.call()
         } else if (shouldShowShoppingSearchOnboardingUseCase()) {
             setShoppingSearchOnboardingIsShownUseCase()
@@ -268,6 +278,16 @@ class HomeViewModel(
 
     fun onRedeemCompletedDialogClosed() {
         TelemetryWrapper.clickChallengeCompleteMessage(TelemetryWrapper.Extra_Value.CLOSE)
+    }
+
+    fun onContentServiceOnboardingButtonClicked() {
+        val timeSpent = System.currentTimeMillis() - contentServicesOnboardingTimeSpent
+        if (isNewUserUseCase()) {
+            TelemetryWrapper.clickFirstRunContextualHint("onboarding_2_content_services_news_shopping_games", timeSpent, 0, true)
+        } else {
+            TelemetryWrapper.clickWhatsnewContextualHint("onboarding_2_content_services_news_shopping_games", timeSpent, 0, true)
+        }
+        dismissContentServiceOnboardingDialog.call()
     }
 
     data class ShowTopSiteMenuData(
