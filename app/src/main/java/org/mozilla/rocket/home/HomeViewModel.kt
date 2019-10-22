@@ -174,7 +174,8 @@ class HomeViewModel(
         val title = if (allowToLogTitle) site.title else ""
         val pageIndex = requireNotNull(topSitesPageIndex.value)
         val topSitePosition = position + pageIndex * TOP_SITES_PER_PAGE
-        TelemetryWrapper.clickTopSiteOn(topSitePosition, title)
+        val isAffiliate = site is Site.FixedSite
+        TelemetryWrapper.clickTopSiteOn(topSitePosition, title, isAffiliate)
     }
 
     fun onTopSiteLongClicked(site: Site, position: Int): Boolean =

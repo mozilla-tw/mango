@@ -66,10 +66,6 @@ object TelemetryWrapper {
     private const val SEARCHCLEAR_TELEMETRY_VERSION = "2"
     private const val SEARCHDISMISS_TELEMETRY_VERSION = "2"
 
-    // List of site title which are the partners of affiliate program.
-    // Please use the exact title name from pin_sites.json
-    private val AFFILIATE_SITES = listOf("Bukalapak", "Tokopedia")
-
     @JvmStatic
     private val sRefCount = AtomicInteger(0)
 
@@ -1283,7 +1279,7 @@ object TelemetryWrapper {
                 TelemetryExtra(name = Extra.VERSION, value = OPEN_HOME_LINK_VERSION)
             ])
     @JvmStatic
-    fun clickTopSiteOn(index: Int, source: String) {
+    fun clickTopSiteOn(index: Int, source: String, isAffiliate: Boolean) {
         EventBuilder(Category.ACTION, Method.OPEN, Object.HOME, Value.LINK)
                 .extra(Extra.ON, Integer.toString(index))
                 .extra(Extra.SOURCE, source)
@@ -1294,7 +1290,7 @@ object TelemetryWrapper {
                 .queue()
 
         // Record a separate click count from those affiliate program partners.
-        if (AFFILIATE_SITES.contains(source)) {
+        if (isAffiliate) {
             AdjustHelper.trackEvent(EVENT_CLICK_AFFILIATE_LINK)
         }
     }
@@ -2629,6 +2625,7 @@ object TelemetryWrapper {
                 .extra(Extra.SUB_CATEGORY_ID, contentTabTelemetryData.subCategoryId)
                 .extra(Extra.VERSION_ID, contentTabTelemetryData.versionId.toString())
                 .queue()
+        AdjustHelper.trackEvent(EVENT_START_CONTENT_TAB)
     }
 
     @TelemetryDoc(
@@ -2698,6 +2695,7 @@ object TelemetryWrapper {
         EventBuilder(Category.ACTION, Method.START, Object.PROCESS, Value.VERTICAL)
                 .extra(Extra.VERTICAL, vertical)
                 .queue()
+        AdjustHelper.trackEvent(EVENT_START_VERTICAL_PROCESS)
     }
 
     @TelemetryDoc(
@@ -2730,6 +2728,7 @@ object TelemetryWrapper {
         EventBuilder(Category.ACTION, Method.START, Object.PROCESS, Value.TAB_SWIPE)
                 .extra(Extra.TYPE, vertical)
                 .queue()
+        AdjustHelper.trackEvent(EVENT_START_TAB_SWIPE_PROCESS)
     }
 
     @TelemetryDoc(
