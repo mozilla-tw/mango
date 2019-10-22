@@ -13,9 +13,9 @@ package org.mozilla.focus.telemetry
 import android.content.Context
 import android.os.StrictMode.ThreadPolicy.Builder
 import android.preference.PreferenceManager
-import android.util.ArrayMap
 import android.util.Log
 import android.webkit.PermissionRequest
+import androidx.collection.ArrayMap
 import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient
 import org.mozilla.focus.BuildConfig
 import org.mozilla.focus.R
@@ -72,8 +72,6 @@ object TelemetryWrapper {
 
     @JvmStatic
     private val sRefCount = AtomicInteger(0)
-
-    private var verticalProcessStartTime = ArrayMap<String, Long>()
 
     internal object Category {
         const val ACTION = "action"
@@ -2697,7 +2695,6 @@ object TelemetryWrapper {
                 TelemetryExtra(name = Extra.VERTICAL, value = "${Extra_Value.SHOPPING},${Extra_Value.GAME},${Extra_Value.TRAVEL},${Extra_Value.LIFESTYLE},${Extra_Value.ALL}")
             ])
     fun startVerticalProcess(vertical: String) {
-        verticalProcessStartTime[vertical] = TimeUtils.getTimestampNow()
         EventBuilder(Category.ACTION, Method.START, Object.PROCESS, Value.VERTICAL)
                 .extra(Extra.VERTICAL, vertical)
                 .queue()
@@ -2713,13 +2710,7 @@ object TelemetryWrapper {
                 TelemetryExtra(name = Extra.VERTICAL, value = "${Extra_Value.SHOPPING},${Extra_Value.GAME},${Extra_Value.TRAVEL},${Extra_Value.LIFESTYLE},${Extra_Value.ALL}"),
                 TelemetryExtra(name = Extra.LOADTIME, value = "[0-9]+")
             ])
-    fun endVerticalProcess(vertical: String) {
-        val startTime = verticalProcessStartTime[vertical]
-        val loadTime = if (startTime != null) {
-            TimeUtils.getTimestampNow() - startTime
-        } else {
-            -1
-        }
+    fun endVerticalProcess(vertical: String, loadTime: Long) {
         EventBuilder(Category.ACTION, Method.END, Object.PROCESS, Value.VERTICAL)
                 .extra(Extra.VERTICAL, vertical)
                 .extra(Extra.LOADTIME, loadTime.toString())
