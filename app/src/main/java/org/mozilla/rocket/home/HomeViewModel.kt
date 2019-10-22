@@ -190,7 +190,9 @@ class HomeViewModel(
     fun onPinTopSiteClicked(site: Site, position: Int) {
         pinTopSiteUseCase(site)
         updateTopSitesData()
-        TelemetryWrapper.pinTopSite(site.url, position)
+        val pageIndex = requireNotNull(topSitesPageIndex.value)
+        val topSitePosition = position + pageIndex * TOP_SITES_PER_PAGE
+        TelemetryWrapper.pinTopSite(site.title, topSitePosition)
     }
 
     fun onRemoveTopSiteClicked(site: Site) = viewModelScope.launch {
