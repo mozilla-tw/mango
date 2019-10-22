@@ -230,7 +230,7 @@ class HomeViewModel(
     fun onLogoManShown() {
         // Make it only animate once. Remove this when Home Screen doesn't recreate whenever goes back from browser
         logoManNotification.value?.animate = false
-        TelemetryWrapper.showLogoman(null, null)
+        TelemetryWrapper.showLogoman(TelemetryWrapper.Extra_Value.REWARDS, null)
     }
 
     fun onLogoManNotificationClicked() {
@@ -239,7 +239,7 @@ class HomeViewModel(
                 is GetLogoManNotificationUseCase.LogoManAction.OpenMissionPage -> openMissionDetailPage.value = it.mission
             }
         }
-        TelemetryWrapper.clickLogoman(null, null)
+        TelemetryWrapper.clickLogoman(TelemetryWrapper.Extra_Value.REWARDS, null)
     }
 
     fun onLogoManDismissed() {
@@ -247,7 +247,7 @@ class HomeViewModel(
             dismissLogoManNotificationUseCase(it)
         }
         logoManNotification.value = null
-        TelemetryWrapper.swipeLogoman(null, null)
+        TelemetryWrapper.swipeLogoman(TelemetryWrapper.Extra_Value.REWARDS, null)
     }
 
     fun onRewardButtonClicked() {
