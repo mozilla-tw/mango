@@ -73,6 +73,8 @@ object FirebaseHelper {
     const val STR_TOP_SITES_FIXED_ITEMS = "str_top_sites_fixed_items"
     const val STR_TOP_SITES_DEFAULT_ITEMS = "str_top_sites_default_items"
 
+    const val STR_EXPERIMENT_NAME = "str_experiment_name"
+
     private const val NEWLINE_PLACE_HOLDER = "<BR>"
 
     private lateinit var firebaseContract: FirebaseContract

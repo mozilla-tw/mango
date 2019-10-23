@@ -26,6 +26,7 @@ import org.mozilla.focus.telemetry.TelemetryWrapper.FIND_IN_PAGE.CLICK_PREVIOUS
 import org.mozilla.focus.telemetry.TelemetryWrapper.FIND_IN_PAGE.OPEN_BY_MENU
 import org.mozilla.focus.telemetry.TelemetryWrapper.Value.SETTINGS
 import org.mozilla.focus.utils.AdjustHelper
+import org.mozilla.focus.utils.AppConfigWrapper
 import org.mozilla.focus.utils.AppConstants
 import org.mozilla.focus.utils.Browsers
 import org.mozilla.focus.utils.FirebaseHelper
@@ -3206,6 +3207,7 @@ object TelemetryWrapper {
             addCustomPing(configuration, CaptureCountMeasurement(context))
             addCustomPing(configuration, InstallReferrerMeasurement(context))
             addCustomPing(configuration, ExperimentBucketMeasurement(context))
+            addCustomPing(configuration, ExperimentNameMeasurement())
         }
 
         internal fun addCustomPing(
@@ -3305,6 +3307,21 @@ object TelemetryWrapper {
         companion object {
             private const val MEASUREMENT_EXPERIMENT_BUCKET = "experiment_bucket"
             private val NUMBER_RANGE = (1..20)
+        }
+    }
+
+    private class ExperimentNameMeasurement internal constructor() : TelemetryMeasurement(MEASUREMENT_EXPERIMENT_NAME) {
+
+        override fun flush(): Any {
+            return getExperimentName()
+        }
+
+        private fun getExperimentName(): String {
+            return FirebaseHelper.getFirebase().getRcString(FirebaseHelper.STR_EXPERIMENT_NAME)
+        }
+
+        companion object {
+            private const val MEASUREMENT_EXPERIMENT_NAME = "experiment_name"
         }
     }
 }
