@@ -313,12 +313,12 @@ class MissionDetailFragment : Fragment(), NavigationResult {
     }
 
     private fun openFaqPage() {
-        val intent = ContentTabActivity.getStartIntent(requireContext(), FAQ_PAGE_URL, false)
+        val intent = ContentTabActivity.getStartIntent(requireContext(), FAQ_PAGE_URL, enableTurboMode = false)
         startActivity(intent)
     }
 
     private fun openTermsOfUsePage() {
-        val intent = ContentTabActivity.getStartIntent(requireContext(), TERMS_OF_USE_PAGE_URL, false)
+        val intent = ContentTabActivity.getStartIntent(requireContext(), TERMS_OF_USE_PAGE_URL, enableTurboMode = false)
         startActivity(intent)
     }
 

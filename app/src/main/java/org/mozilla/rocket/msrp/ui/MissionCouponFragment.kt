@@ -132,7 +132,7 @@ class MissionCouponFragment : Fragment() {
     }
 
     private fun openFaqPage() {
-        val intent = ContentTabActivity.getStartIntent(requireContext(), FAQ_PAGE_URL, false)
+        val intent = ContentTabActivity.getStartIntent(requireContext(), FAQ_PAGE_URL, enableTurboMode = false)
         startActivity(intent)
     }
 
