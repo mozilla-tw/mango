@@ -21,12 +21,16 @@ class ShoppingSearchResultViewModel(
 
     private val searchKeyword = MutableLiveData<String>()
     private val shoppingSearchSites: LiveData<List<ShoppingSearchSite>> = searchKeyword.switchMap { getShoppingSearchSites(it) }
+    private var lastShoppingSearchSite: List<ShoppingSearchSite> = arrayListOf()
     val goPreferences = SingleLiveEvent<Unit>()
     val showOnboardingDialog = SingleLiveEvent<Unit>()
 
     val uiModel = MediatorLiveData<ShoppingSearchResultUiModel>().apply {
         addSource(shoppingSearchSites) {
-            value = ShoppingSearchResultUiModel(it, shouldEnableTurboMode())
+            if (!lastShoppingSearchSite.equalsTo(it)) {
+                lastShoppingSearchSite = it
+                value = ShoppingSearchResultUiModel(it, shouldEnableTurboMode())
+            }
         }
     }
 
@@ -45,4 +49,20 @@ class ShoppingSearchResultViewModel(
         val shoppingSearchSiteList: List<ShoppingSearchSite>,
         val shouldEnableTurboMode: Boolean
     )
+}
+
+private fun <E> List<E>.equalsTo(other: List<E>): Boolean {
+    if (this !== other) {
+        if (this.size != other.size) {
+            return false
+        }
+        val areNotEqual = this.asSequence()
+            .zip(other.asSequence())
+            .map { (fromThis, fromOther) -> fromThis == fromOther }
+            .contains(false)
+        if (areNotEqual) {
+            return false
+        }
+    }
+    return true
 }
