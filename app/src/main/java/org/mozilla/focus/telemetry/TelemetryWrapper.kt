@@ -3205,6 +3205,7 @@ object TelemetryWrapper {
             addCustomPing(configuration, ThemeToyMeasurement(context))
             addCustomPing(configuration, CaptureCountMeasurement(context))
             addCustomPing(configuration, InstallReferrerMeasurement(context))
+            addCustomPing(configuration, ExperimentBucketMeasurement(context))
         }
 
         internal fun addCustomPing(
@@ -3279,6 +3280,31 @@ object TelemetryWrapper {
 
         companion object {
             private const val MEASUREMENT_INSTALL_REFERRER = "install_referrer"
+        }
+    }
+
+    private class ExperimentBucketMeasurement internal constructor(internal var context: Context) : TelemetryMeasurement(MEASUREMENT_EXPERIMENT_BUCKET) {
+
+        override fun flush(): Any {
+            return getExperimentBucket(context)
+        }
+
+        private fun getExperimentBucket(context: Context): Int {
+            val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+            val prefKey = context.getString(R.string.pref_key_experiment_bucket)
+
+            var userGroup = sharedPref.getInt(prefKey, -1)
+            if (userGroup < 0) {
+                userGroup = NUMBER_RANGE.random()
+                sharedPref.edit().putInt(prefKey, userGroup).apply()
+            }
+
+            return userGroup
+        }
+
+        companion object {
+            private const val MEASUREMENT_EXPERIMENT_BUCKET = "experiment_bucket"
+            private val NUMBER_RANGE = (1..20)
         }
     }
 }
