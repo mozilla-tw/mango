@@ -18,6 +18,7 @@ import org.mozilla.rocket.msrp.domain.ReadMissionUseCase
 import org.mozilla.rocket.msrp.domain.RedeemUseCase
 import org.mozilla.rocket.msrp.domain.RefreshMissionsUseCase
 import org.mozilla.rocket.msrp.domain.RequestContentHubClickOnboardingUseCase
+import org.mozilla.rocket.msrp.ui.MissionDetailViewModel.LoginAction.Companion.REDEEM_LOGIN
 import org.mozilla.rocket.util.ToastMessage
 import org.mozilla.rocket.util.isSuccess
 
@@ -39,7 +40,7 @@ class MissionDetailViewModel(
     val missionImage = MutableLiveData<String>()
     val isLoading = MutableLiveData<Boolean>()
 
-    val requestFxLogin = SingleLiveEvent<String>()
+    val requestFxLogin = SingleLiveEvent<LoginAction>()
     val startMissionReminder = SingleLiveEvent<Mission>()
     val stopMissionReminder = SingleLiveEvent<Mission>()
     val closePage = SingleLiveEvent<Unit>()
@@ -127,15 +128,17 @@ class MissionDetailViewModel(
             }
         } else {
             val uid = getUserIdUseCase()
-            requestFxLogin.value = uid
+            requestFxLogin.value = LoginAction.RedeemLoginAction(uid)
         }
         isLoading.value = false
     }
 
-    fun onFxLoginCompleted(jwt: String?) = viewModelScope.launch {
+    fun onFxLoginToCompleted(actionId: Int, jwt: String?) = viewModelScope.launch {
         if (bindFxAccountUseCase(jwt).isSuccess) {
             TelemetryWrapper.accountSignIn()
-            redeem(mission)
+            if (actionId == REDEEM_LOGIN) {
+                redeem(mission)
+            }
         } else {
             showToast.value = ToastMessage(R.string.msrp_reward_challenge_nointernet)
         }
@@ -147,5 +150,23 @@ class MissionDetailViewModel(
 
     fun onTermsOfUseButtonClick() {
         openTermsOfUsePage.call()
+    }
+
+    fun onLoginButtonClicked() {
+        if (isFxAccountUseCase()) {
+            return
+        }
+        val uid = getUserIdUseCase()
+        requestFxLogin.value = LoginAction.PureLoginAction(uid)
+    }
+
+    sealed class LoginAction(val actionId: Int, val uid: String) {
+        class PureLoginAction(uid: String) : LoginAction(PURE_LOGIN, uid)
+        class RedeemLoginAction(uid: String) : LoginAction(REDEEM_LOGIN, uid)
+
+        companion object {
+            const val PURE_LOGIN = 0
+            const val REDEEM_LOGIN = 1
+        }
     }
 }
