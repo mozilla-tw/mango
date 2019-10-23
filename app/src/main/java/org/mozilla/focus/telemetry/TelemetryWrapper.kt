@@ -15,7 +15,6 @@ import android.os.StrictMode.ThreadPolicy.Builder
 import android.preference.PreferenceManager
 import android.util.Log
 import android.webkit.PermissionRequest
-import androidx.collection.ArrayMap
 import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient
 import org.mozilla.focus.BuildConfig
 import org.mozilla.focus.R
@@ -33,7 +32,6 @@ import org.mozilla.focus.utils.Settings
 import org.mozilla.rocket.content.common.data.ContentTabTelemetryData
 import org.mozilla.rocket.home.contenthub.ui.ContentHub
 import org.mozilla.rocket.theme.ThemeManager
-import org.mozilla.rocket.util.TimeUtils
 import org.mozilla.strictmodeviolator.StrictModeViolation
 import org.mozilla.telemetry.Telemetry
 import org.mozilla.telemetry.TelemetryHolder
