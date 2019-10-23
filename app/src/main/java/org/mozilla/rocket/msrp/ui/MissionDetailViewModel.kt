@@ -47,6 +47,7 @@ class MissionDetailViewModel(
     val openCouponPage = SingleLiveEvent<Mission>()
     val showToast = SingleLiveEvent<ToastMessage>()
     val openFaqPage = SingleLiveEvent<Unit>()
+    val openTermsOfUsePage = SingleLiveEvent<Unit>()
 
     private lateinit var mission: Mission
 
@@ -142,5 +143,9 @@ class MissionDetailViewModel(
 
     fun onFaqButtonClick() {
         openFaqPage.call()
+    }
+
+    fun onTermsOfUseButtonClick() {
+        openTermsOfUsePage.call()
     }
 }

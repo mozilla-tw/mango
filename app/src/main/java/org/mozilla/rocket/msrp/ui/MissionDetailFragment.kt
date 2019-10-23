@@ -87,6 +87,7 @@ class MissionDetailFragment : Fragment(), NavigationResult {
     private fun initViews() {
         mission_step_text_1.text = getString(R.string.msrp_challenge_details_body_1, getString(R.string.app_name))
         initFaqText()
+        initJoinTermsText()
         join_button.setOnClickListener {
             if (missionDetailViewModel.isLoading.value != true) {
                 missionDetailViewModel.onJoinMissionButtonClicked()
@@ -119,6 +120,23 @@ class MissionDetailFragment : Fragment(), NavigationResult {
             }, contextUsIndex, contextUsIndex + contextUsStr.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
         faq_text.apply {
+            movementMethod = LinkMovementMethod.getInstance()
+            text = str
+        }
+    }
+
+    private fun initJoinTermsText() {
+        val termsOfUseStr = getString(R.string.msrp_challenge_tou_terms_of_use)
+        val joinTermsStr = getString(R.string.msrp_challenge_tou, termsOfUseStr)
+        val termsOfUseIndex = joinTermsStr.indexOf(termsOfUseStr)
+        val str = SpannableString(joinTermsStr).apply {
+            setSpan(object : ClickableSpan() {
+                override fun onClick(widget: View) {
+                    missionDetailViewModel.onTermsOfUseButtonClick()
+                }
+            }, termsOfUseIndex, termsOfUseIndex + termsOfUseStr.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+        join_terms.apply {
             movementMethod = LinkMovementMethod.getInstance()
             text = str
         }
@@ -256,6 +274,9 @@ class MissionDetailFragment : Fragment(), NavigationResult {
         missionDetailViewModel.openFaqPage.observe(this, Observer {
             openFaqPage()
         })
+        missionDetailViewModel.openTermsOfUsePage.observe(this, Observer {
+            openTermsOfUsePage()
+        })
     }
 
     override fun onNavigationResult(result: Bundle) {
@@ -276,6 +297,11 @@ class MissionDetailFragment : Fragment(), NavigationResult {
         startActivity(intent)
     }
 
+    private fun openTermsOfUsePage() {
+        val intent = ContentTabActivity.getStartIntent(requireContext(), TERMS_OF_USE_PAGE_URL, false)
+        startActivity(intent)
+    }
+
     data class DateUiModel(
         val dateText: String,
         val isCompleted: Boolean
@@ -284,6 +310,7 @@ class MissionDetailFragment : Fragment(), NavigationResult {
     companion object {
         const val RESULT_STR_JWT = "result_str_jwt"
         private const val FAQ_PAGE_URL = "https://qsurvey.mozilla.com/s3/Firefox-Lite-Reward-Help"
+        private const val TERMS_OF_USE_PAGE_URL = "https://www.mozilla.org/about/legal/terms/firefox-lite/reward/"
     }
 }
 
