@@ -46,6 +46,7 @@ class MissionDetailViewModel(
     val closeAllMissionPages = SingleLiveEvent<Unit>()
     val openCouponPage = SingleLiveEvent<Mission>()
     val showToast = SingleLiveEvent<ToastMessage>()
+    val openFaqPage = SingleLiveEvent<Unit>()
 
     private lateinit var mission: Mission
 
@@ -137,5 +138,9 @@ class MissionDetailViewModel(
         } else {
             showToast.value = ToastMessage(R.string.msrp_reward_challenge_nointernet)
         }
+    }
+
+    fun onFaqButtonClick() {
+        openFaqPage.call()
     }
 }
