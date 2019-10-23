@@ -7,15 +7,13 @@ package org.mozilla.focus.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-
-import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-
 import android.graphics.Point;
 import android.util.AttributeSet;
 import android.view.Display;
 import android.view.View;
-import android.view.ViewGroup;
+
+import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import org.mozilla.focus.R;
 
@@ -58,7 +56,8 @@ public class ResizableKeyboardLayout extends CoordinatorLayout {
             styleAttributeArray.recycle();
         }
         this.setOnApplyWindowInsetsListener((v, insets) -> {
-            final int difference = insets.getSystemWindowInsetBottom();
+            final int insetBottom = insets.getSystemWindowInsetBottom();
+            final int insetTop = insets.getSystemWindowInsetTop();
 
             final Point point = new Point();
             final Display display = getDisplay();
@@ -67,9 +66,9 @@ public class ResizableKeyboardLayout extends CoordinatorLayout {
             } else {
                 display.getSize(point);
             }
-            final int paddingBottom = difference - (point.y - getBottom());
+            final int paddingBottom = insetBottom - (point.y - getBottom()) - insetTop;
 
-            if (difference != 0) {
+            if (insetBottom != 0) {
                 if (getPaddingBottom() != paddingBottom) {
                     setPadding(0, 0, 0, paddingBottom);
                 }
