@@ -75,7 +75,7 @@ class MissionDetailViewModel(
             startMissionReminder.value = mission
             refreshMissionsUseCase()
             if (isNeedJoinMissionOnboardingUseCase()) {
-                requestContentHubClickOnboardingUseCase(mission.title)
+                requestContentHubClickOnboardingUseCase(couponName = mission.description)
                 closeAllMissionPages.call()
             } else {
                 closePage.call()
