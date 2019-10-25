@@ -22,6 +22,7 @@ import org.mozilla.focus.R
 import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.utils.AppConstants
 import org.mozilla.focus.widget.BackKeyHandleable
+import org.mozilla.focus.widget.ResizableKeyboardLayout.OnKeyboardVisibilityChangedListener
 import org.mozilla.rocket.chrome.BottomBarItemAdapter
 import org.mozilla.rocket.chrome.ChromeViewModel
 import org.mozilla.rocket.content.appComponent
@@ -208,7 +209,12 @@ class ShoppingSearchResultTabFragment : Fragment(), ContentTabViewContract, Back
         shoppingSearchResultViewModel.uiModel.observe(this, Observer { uiModel ->
             tabItems.clear()
             tabItems.addAll(uiModel.shoppingSearchSiteList.mapIndexed { index, site ->
-                TabItem(site.title, site.searchUrl, createTabSession(site.searchUrl, index == 0, uiModel.shouldEnableTurboMode))
+                TabItem(
+                    site.title,
+                    site.searchUrl,
+                    site.displayUrl,
+                    createTabSession(site.searchUrl, index == 0, uiModel.shouldEnableTurboMode)
+                )
             })
             val shoppingSearchTabsAdapter = ShoppingSearchTabsAdapter(childFragmentManager, tabItems)
             view_pager.adapter = shoppingSearchTabsAdapter
@@ -220,11 +226,27 @@ class ShoppingSearchResultTabFragment : Fragment(), ContentTabViewContract, Back
 
                 override fun onPageSelected(position: Int) {
                     getCurrentSession()?.unregisterObservers()
-                    (shoppingSearchTabsAdapter.getRegisteredFragment(position) as ContentTabFragment).switchToFocusTab()
+                    val contentFragment = (shoppingSearchTabsAdapter.getRegisteredFragment(position) as ContentTabFragment)
+                    contentFragment.switchToFocusTab()
                     getCurrentSession()?.register(contentTabObserver)
+
+                    if (tabItems.size > position) {
+                        telemetryViewModel.onTabSelected(tabItems[position].displayUrl, tabItems[position].displayUrl)
+                    }
+
+                    contentFragment.setOnKeyboardVisibilityChangedListener(OnKeyboardVisibilityChangedListener { visible ->
+                        if (visible) {
+                            contentFragment.setOnKeyboardVisibilityChangedListener(null)
+                            telemetryViewModel.onKeyboardShown()
+                        }
+                    })
                 }
             })
             view_pager.setSwipeable(false)
+
+            if (tabItems.isNotEmpty()) {
+                telemetryViewModel.onTabSelected(tabItems[0].displayUrl, tabItems[0].displayUrl)
+            }
         })
     }
 
@@ -270,6 +292,10 @@ class ShoppingSearchResultTabFragment : Fragment(), ContentTabViewContract, Back
             chromeViewModel.currentUrl.value?.let { url ->
                 onShareClicked(url)
             }
+        })
+
+        chromeViewModel.currentUrl.observe(this, Observer {
+            telemetryViewModel.onUrlOpened()
         })
     }
 
