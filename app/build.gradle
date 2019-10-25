@@ -180,7 +180,7 @@ repositories {
 
 dependencies {
     implementation project(':telemetry-annotation')
-    kapt project(':telemetry-compiler')
+    annotationProcessor project(':telemetry-compiler')
 
     implementation project(':third_party:subsampling-scale-image-view')
     implementation project(':third_party:glide:annotation')
