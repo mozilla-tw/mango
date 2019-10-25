@@ -11,7 +11,10 @@ import org.mozilla.telemetry.annotation.TelemetryExtra;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -24,12 +27,12 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
+import javax.tools.JavaFileObject;
 
 public class TelemetryAnnotationProcessor extends AbstractProcessor {
 
-    private static final String FILE_MAPPING = "amplitdue.json";
-    static final String FILE_README = "./docs/events.md";          // tracked
-    static final String FILE_CSV = "./app/build/amplitude.csv";    // not tracked
+    static final String FILE_README = "../../../../../../docs/events.md";          // tracked
+    static final String FILE_CSV    = "../../../../../../app/build/amplitude.csv";    // not tracked
 
     // TODO: TelemetryEvent's fields are private, I'll create a PR to make them public so I can
     // test the ping format in compile time.
@@ -58,22 +61,24 @@ public class TelemetryAnnotationProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
+        String root = fetchSourcePath();
         Collection<? extends Element> annotatedElements =
                 env.getElementsAnnotatedWith(TelemetryDoc.class);
-
+        System.out.println("====TEL-COM====");
         if (annotatedElements.size() == 0) {
             return false;
         }
         try {
             final String header = "| Event | category | method | object | value | extra |\n" +
                     "| ---- | ---- | ---- | ---- | ---- | ---- |\n";
-            genDoc(annotatedElements, header, FILE_README, '|');
+            genDoc(annotatedElements, header, root + FILE_README, '|');
 
 
-            genDoc(annotatedElements, "", FILE_CSV, ',');
+            genDoc(annotatedElements, "", root + FILE_CSV, ',');
 
 
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "=======Exception=========:" + e);
             e.printStackTrace();
         }
 
@@ -181,5 +186,21 @@ public class TelemetryAnnotationProcessor extends AbstractProcessor {
             }
         }
 
+    }
+
+    String fetchSourcePath() {
+        try {
+            JavaFileObject generationForPath = processingEnv.getFiler().createSourceFile("PathFor" + getClass().getSimpleName());
+            Writer writer = generationForPath.openWriter();
+            String sourcePath = new File(generationForPath.toUri().getPath()).getParentFile().getAbsolutePath()+"/";
+            writer.close();
+            generationForPath.delete();
+
+            return sourcePath;
+        } catch (IOException e) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, "Unable to determine source file path!");
+        }
+
+        return "";
     }
 }
