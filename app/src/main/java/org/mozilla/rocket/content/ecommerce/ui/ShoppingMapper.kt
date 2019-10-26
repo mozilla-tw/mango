@@ -36,6 +36,8 @@ object ShoppingMapper {
     private fun toRunwayItem(item: ApiItem): RunwayItem =
         RunwayItem(
             item.sourceName,
+            item.categoryName,
+            item.subCategoryId,
             item.image,
             item.destination,
             item.title,
@@ -45,6 +47,8 @@ object ShoppingMapper {
     private fun toProductItem(item: ApiItem): ProductItem =
         ProductItem(
             item.sourceName,
+            item.categoryName,
+            item.subCategoryId,
             item.image,
             item.destination,
             item.title,
@@ -60,6 +64,8 @@ object ShoppingMapper {
             .map { item ->
                 Coupon(
                     item.sourceName,
+                    item.categoryName,
+                    item.subCategoryId,
                     item.image,
                     item.destination,
                     item.title,
