@@ -21,6 +21,8 @@ import org.mozilla.rocket.content.game.domain.GetBitmapFromImageLinkUseCase
 import org.mozilla.rocket.content.game.domain.GetInstantGameListUseCase
 import org.mozilla.rocket.content.game.domain.GetRecentlyPlayedGameListUseCase
 import org.mozilla.rocket.content.game.domain.RemoveRecentlyPlayedGameUseCase
+import org.mozilla.rocket.content.game.domain.SetRecentPlayedSpotlightIsShownUseCase
+import org.mozilla.rocket.content.game.domain.ShouldShowRecentPlayedSpotlightUseCase
 import org.mozilla.rocket.content.game.ui.model.Game
 import org.mozilla.rocket.content.game.ui.model.GameCategory
 import org.mozilla.rocket.content.game.ui.model.GameType
@@ -32,7 +34,9 @@ class InstantGameViewModel(
     private val addRecentlyPlayedGame: AddRecentlyPlayedGameUseCase,
     private val removeRecentlyPlayedGame: RemoveRecentlyPlayedGameUseCase,
     private val getRecentlyPlayedGameList: GetRecentlyPlayedGameListUseCase,
-    private val getBitmapFromImageLinkUseCase: GetBitmapFromImageLinkUseCase
+    private val getBitmapFromImageLinkUseCase: GetBitmapFromImageLinkUseCase,
+    private val shouldShowRecentPlayedSpotlightUseCase: ShouldShowRecentPlayedSpotlightUseCase,
+    private val setRecentPlayedSpotlightIsShownUseCase: SetRecentPlayedSpotlightIsShownUseCase
 ) : ViewModel() {
 
     private val _isDataLoading = MutableLiveData<State>()
@@ -44,6 +48,8 @@ class InstantGameViewModel(
     private lateinit var selectedGame: Game
 
     var event = SingleLiveEvent<GameAction>()
+    val showRecentPlayedSpotlight = SingleLiveEvent<Unit>()
+    val dismissRecentPlayedSpotlight = SingleLiveEvent<Unit>()
 
     var versionId = 0L
 
@@ -90,6 +96,11 @@ class InstantGameViewModel(
         getGameUiModelList()
     }
 
+    fun onRecentPlayedSpotlightButtonClicked() {
+        setRecentPlayedSpotlightIsShownUseCase()
+        dismissRecentPlayedSpotlight.call()
+    }
+
     private fun getGameUiModelList() {
         launchDataLoad {
             val result = getInstantGameList()
@@ -123,6 +134,12 @@ class InstantGameViewModel(
         }
         if (recentlyPlayedGameListCategory is GameCategory && recentlyPlayedGameListCategory.items.isNotEmpty()) {
             (gameUiModelList as ArrayList).add(mergePosition, recentlyPlayedGameListCategory)
+        }
+    }
+
+    fun checkRecentPlayedSpotlight() {
+        if (shouldShowRecentPlayedSpotlightUseCase()) {
+            showRecentPlayedSpotlight.call()
         }
     }
 
