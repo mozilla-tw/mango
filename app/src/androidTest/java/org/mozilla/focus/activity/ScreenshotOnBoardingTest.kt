@@ -168,7 +168,6 @@ class ScreenshotOnBoardingTest {
      * 4. Check no screenshot on-boarding
      * */
     @Test
-    @Ignore
     fun closeScreenshotOnboarding_WhenOpenMyshotsFromHistory() {
 
         session {
