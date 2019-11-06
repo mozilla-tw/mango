@@ -112,7 +112,6 @@ public class BookmarksTest {
      * 4. Show "No Bookmarks" in bookmarks panel
      */
     @Test
-    @Ignore
     public void openBookmarksPanel_showEmptyBookmarksView() {
         // Tap menu
         AndroidTestUtils.tapHomeMenuButton();
