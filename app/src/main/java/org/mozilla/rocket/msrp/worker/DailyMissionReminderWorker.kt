@@ -100,7 +100,7 @@ class DailyMissionReminderWorker(
         fun startMissionReminder(appContext: Context, mission: Mission) {
             val missionId = mission.uniqueId
             val couponName = mission.description
-            val totalDays = (mission.missionProgress as MissionProgress.TypeDaily).totalDays
+            val totalDays = mission.totalDays
             val uniqueWorkName = getUniqueWorkName(missionId)
 
             val expiredDate = Calendar.getInstance().apply {
