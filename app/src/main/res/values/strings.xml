@@ -437,7 +437,7 @@
     <!--In-app Promotion, Share app.-->
     <!-- The title of the Message to prompt users to share Rocket with friends, %1$s is the App name i.e. Rocket. -->
     <string name="share_app_dialog_text_title">Share %1$s with friends!</string>
-    <string name="share_app_dialog_text_content">- Fast and lightweight\n- Data saving\n- Powerful screenshots</string>
+    <string name="share_app_dialog_text_content">- Fast and lightweight\n- Smart Shopping Search\n- Free Games, trending news</string>
     <string name="share_app_dialog_btn_share">Share</string>
     <string name="share_app_google_play_url" translatable="false">https://mzl.la/2kScptw</string>
     <!-- The message template used when user shares Rocket with friends. %1$s is the App name i.e. Rocket, and %2$s is the Google Play url, and %3$s is "Mozilla"-->
