@@ -2,12 +2,15 @@ package org.mozilla.rocket.content.travel.data
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import mozilla.components.concept.fetch.MutableHeaders
 import mozilla.components.concept.fetch.Request
+import org.mozilla.focus.utils.FirebaseHelper
 import org.mozilla.rocket.content.Result
 import org.mozilla.rocket.content.common.data.ApiEntity
 import org.mozilla.rocket.util.safeApiCall
 import org.mozilla.rocket.util.sendHttpRequest
 import org.mozilla.rocket.util.toJsonObject
+import java.util.Locale
 
 class TravelRemoteDataSource : TravelDataSource {
 
@@ -19,8 +22,20 @@ class TravelRemoteDataSource : TravelDataSource {
         TODO("not implemented")
     }
 
-    override suspend fun searchCity(keyword: String): Result<BcAutocompleteApiEntity> {
-        TODO("not implemented")
+    override suspend fun searchCity(keyword: String): Result<BcAutocompleteApiEntity> = withContext(Dispatchers.IO) {
+        return@withContext safeApiCall(
+                call = {
+                    sendHttpRequest(request = Request(url = getSearchCityApiEndpoint(keyword), method = Request.Method.GET, headers = createHeaders()),
+                            onSuccess = {
+                                Result.Success(BcAutocompleteApiEntity.fromJson(it.body.string()))
+                            },
+                            onError = {
+                                Result.Error(it)
+                            }
+                    )
+                },
+                errorMessage = "Unable to get search city result"
+        )
     }
 
     override suspend fun getCityPriceItems(name: String): Result<List<PriceItem>> {
@@ -83,6 +98,28 @@ class TravelRemoteDataSource : TravelDataSource {
         TODO("not implemented")
     }
 
+    private fun getBaseApiEndpoint(): String {
+        val bookingComEndpoint = FirebaseHelper.getFirebase().getRcString(STR_BOOKING_COM_ENDPOINT)
+        return if (bookingComEndpoint.isNotEmpty()) {
+            bookingComEndpoint
+        } else {
+            DEFAULT_BOOKING_COM_ENDPOINT
+        }
+    }
+
+    private fun getSearchCityApiEndpoint(text: String): String {
+        val baseApiEndpoint = getBaseApiEndpoint()
+        val lang = Locale.getDefault().toLanguageTag()
+        return "$baseApiEndpoint/$BOOKING_COM_PATH_AUTOCOMPLETE?$BOOKING_COM_QUERY_PARAM_TEXT=$text&$BOOKING_COM_QUERY_PARAM_LANGUAGE=$lang"
+    }
+
+    private fun createHeaders() = MutableHeaders().apply {
+        val authorization = FirebaseHelper.getFirebase().getRcString(STR_BOOKING_COM_AUTHORIZATION)
+        if (authorization.isNotEmpty()) {
+            set("Authorization", authorization)
+        }
+    }
+
     private fun getWikiExtractApiEndpoint(name: String): String = WIKI_EXTRACT_API + name
 
     private fun getWikiExtractFromJson(jsonString: String): String {
@@ -104,6 +141,12 @@ class TravelRemoteDataSource : TravelDataSource {
     }
 
     companion object {
+        private const val STR_BOOKING_COM_ENDPOINT = "str_booking_com_endpoint"
+        private const val STR_BOOKING_COM_AUTHORIZATION = "str_booking_com_authorization"
+        private const val DEFAULT_BOOKING_COM_ENDPOINT = "https://distribution-xml.booking.com/2.0/json"
+        private const val BOOKING_COM_PATH_AUTOCOMPLETE = "autocomplete"
+        private const val BOOKING_COM_QUERY_PARAM_TEXT = "text"
+        private const val BOOKING_COM_QUERY_PARAM_LANGUAGE = "language"
         private const val WIKI_JSON_KEY_QUERY = "query"
         private const val WIKI_JSON_KEY_PAGES = "pages"
         private const val WIKI_JSON_KEY_EXTRACT = "extract"
